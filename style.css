@@ -132,8 +132,8 @@ header p{
 }
 
 .sticky-panel{
-  position:sticky;
-  top:20px;
+  position:relative;
+  top:auto;
 }
 
 .news-item{
