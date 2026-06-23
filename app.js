@@ -243,8 +243,8 @@ async function fetchNews(topic){
     }
 
     const fresh = [];
-
-    data.results.forEach(item=>{
+const results = Array.isArray(data.results) ? data.results : [];
+   results.forEach(item=>{
       const title = (item.title || "").trim();
       const cleanTitle = title.toLowerCase();
 
