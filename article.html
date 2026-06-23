@@ -13,27 +13,52 @@
     <div>
       <a href="./index.html">← Back to Home</a>
     </div>
-
     <h1>Global Intel Times</h1>
-
     <div></div>
   </div>
 </header>
 
 <main class="article-page">
+  <article id="articleBox" class="article-detail">
+    Loading article...
+  </article>
 
-<article id="articleBox" class="article-detail">
-Loading article...
-</article>
-
-<section class="related-section">
-<h2>Related Stories</h2>
-<div id="relatedNews" class="below-grid"></div>
-</section>
-
+  <section class="related-section">
+    <h2>Related Stories</h2>
+    <div id="relatedNews" class="below-grid"></div>
+  </section>
 </main>
 
 <script>
+function cleanText(text){
+  if(!text) return "This story is developing and more updates may follow soon.";
+
+  return text
+    .replace("NEW", "")
+    .replace("You can now listen to Fox News articles!", "")
+    .replace(/\[\.\.\.\]/g, "")
+    .replace(/The post .* appeared first on .*?\./gi, "")
+    .trim();
+}
+
+function generateAISummary(article){
+  const title = article.title || "This story";
+  const desc = cleanText(article.description);
+
+  return `
+    <h2>AI Summary</h2>
+    <p>${desc}</p>
+
+    <h2>Key Takeaways</h2>
+    <ul>
+      <li>${title}</li>
+      <li>This story is currently developing.</li>
+      <li>More updates may come from official and trusted sources.</li>
+      <li>Readers should watch for new details in the coming hours.</li>
+    </ul>
+  `;
+}
+
 const params = new URLSearchParams(window.location.search);
 const id = Number(params.get("id"));
 
@@ -45,32 +70,9 @@ const relatedNews = document.getElementById("relatedNews");
 
 if(article){
 
+  const cleanDesc = cleanText(article.description);
   document.title = article.title + " | Global Intel Times";
 
-  function generateAISummary(article){
-  const title = article.title || "";
-  const desc = article.description || "";
-
-  return `
-    <h2>AI Summary</h2>
-    <p>${desc || "This story is developing and more updates may follow soon."}</p>
-
-    <h2>Key Points</h2>
-    <ul>
-      <li>This update is connected to: <b>${article.section || "News"}</b>.</li>
-      <li>The main focus is: <b>${title}</b>.</li>
-      <li>Readers should watch for more updates from official and trusted sources.</li>
-    </ul>
-
-    <h2>Simple Explanation</h2>
-    <p>
-      In simple words, this news matters because it may affect people, markets,
-      public discussion, business, technology, sports, travel, or daily life depending
-      on the topic.
-    </p>
-  `;
-}
-  
   articleBox.innerHTML = `
     ${article.image ? `<img src="${article.image}" onerror="this.style.display='none'">` : ""}
 
@@ -78,33 +80,20 @@ if(article){
 
     <h1>${article.title}</h1>
 
+    <p class="article-meta">
+      By Global Intel Desk • ${new Date().toLocaleDateString("en-US")} • 3 min read
+    </p>
+
     <p class="article-summary">
-      ${article.description || "This developing story is being monitored by Global Intel Times."}
+      ${cleanDesc}
     </p>
 
     <hr>
 
-${generateAISummary(article)}
+    ${generateAISummary(article)}
 
-    <h2>What Happened</h2>
-    <p>
-      ${article.description || "Officials and news sources are reporting updates on this developing story. More details may become available as the situation develops."}
-    </p>
-
-    <h2>Why It Matters</h2>
-    <p>
-      This story may affect readers depending on the topic, location, economy, public safety, technology, markets, or daily life. Global Intel Times tracks these updates to help readers understand the key impact.
-    </p>
-
-    <h2>Who Is Affected</h2>
-    <p>
-      Depending on the event, this may affect local residents, investors, businesses, travelers, consumers, workers, students, or online users.
-    </p>
-
-    <h2>What Happens Next</h2>
-    <p>
-      More updates are expected as official sources and trusted news outlets release additional information.
-    </p>
+    <h2>Original Story</h2>
+    <p>${cleanDesc}</p>
 
     <p class="source-credit">
       Source: ${article.source || "News Source"}
@@ -119,12 +108,12 @@ ${generateAISummary(article)}
     .filter((item, index) => index !== id)
     .slice(0, 6);
 
-  relatedNews.innerHTML = related.map((item, index) => `
+  relatedNews.innerHTML = related.map((item) => `
     <article class="news-card">
       ${item.image ? `<img src="${item.image}" onerror="this.style.display='none'">` : ""}
       <span class="section-label">${item.section || "News"}</span>
       <h2>${item.title}</h2>
-      <p>${item.description || ""}</p>
+      <p>${cleanText(item.description)}</p>
       <a href="./article.html?id=${saved.indexOf(item)}">Read more ›</a>
     </article>
   `).join("");
