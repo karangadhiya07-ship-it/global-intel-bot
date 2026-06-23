@@ -8,11 +8,12 @@ const leadLeft = document.getElementById("leadLeft");
 const leadMain = document.getElementById("leadMain");
 const leadRight = document.getElementById("leadRight");
 const todayDate = document.getElementById("todayDate");
+const mostReadList = document.getElementById("mostReadList");
 
 let allNews = [];
 let seenTitles = new Set();
 let isLoading = false;
-let pageTopicIndex = 0;
+let topicIndex = 0;
 
 const topicPool = [
   "usa breaking news",
@@ -20,9 +21,11 @@ const topicPool = [
   "stock market finance news",
   "artificial intelligence news",
   "bitcoin crypto news",
-  "new york news",
   "sports news usa",
-  "weather alert news"
+  "weather alert news",
+  "entertainment news usa",
+  "technology news usa",
+  "new york news"
 ];
 
 todayDate.textContent = new Date().toLocaleDateString("en-US", {
@@ -40,23 +43,28 @@ function detectSection(title){
   if(t.includes("ai") || t.includes("openai") || t.includes("technology")) return "Technology";
   if(t.includes("weather") || t.includes("storm") || t.includes("heatwave")) return "Weather";
   if(t.includes("sport") || t.includes("nfl") || t.includes("nba") || t.includes("world cup")) return "Sports";
+  if(t.includes("music") || t.includes("movie") || t.includes("celebrity")) return "Culture";
 
   return "News";
 }
 
 function cleanText(text){
-  if(!text) return "";
-  return text.length > 160 ? text.slice(0,160) + "..." : text;
+  if(!text || text === "undefined") return "This story is developing and more updates may follow soon.";
+
+  return String(text)
+    .replace("NEW", "")
+    .replace("You can now listen to Fox News articles!", "")
+    .replace(/\[\.\.\.\]/g, "")
+    .replace(/The post .* appeared first on .*?\./gi, "")
+    .trim();
 }
 
-function createArticleCard(item, big=false){
+function createArticleCard(item){
+  const id = allNews.indexOf(item);
+
   return `
     ${item.image ? `
-      <img
-        src="${item.image}"
-        onerror="this.style.display='none'"
-        alt="news image"
-      >
+      <img src="${item.image}" onerror="this.style.display='none'" alt="news image">
     ` : ""}
 
     <span class="section-label">${item.section}</span>
@@ -67,21 +75,14 @@ function createArticleCard(item, big=false){
 
     <small>Source: ${item.source}</small><br>
 
-    <a href="./article.html?id=${allNews.indexOf(item)}">Read more ›</a>
+    <a href="./article.html?id=${id}">Read more ›</a>
   `;
 }
 
 function renderLeads(){
-  const top = allNews.slice(0,3);
-
-  leadLeft.innerHTML =
-    top[0] ? createArticleCard(top[0]) : "";
-
-  leadMain.innerHTML =
-    top[1] ? createArticleCard(top[1], true) : "";
-
-  leadRight.innerHTML =
-    top[2] ? createArticleCard(top[2]) : "";
+  leadLeft.innerHTML = allNews[0] ? createArticleCard(allNews[0]) : "";
+  leadMain.innerHTML = allNews[1] ? createArticleCard(allNews[1]) : "";
+  leadRight.innerHTML = allNews[2] ? createArticleCard(allNews[2]) : "";
 }
 
 function renderBelowNews(){
@@ -93,6 +94,8 @@ function renderBelowNews(){
     article.innerHTML = createArticleCard(item);
     newsFeed.appendChild(article);
   });
+
+  localStorage.setItem("articles", JSON.stringify(allNews));
 }
 
 function updateTicker(){
@@ -104,9 +107,24 @@ function updateTicker(){
   breakingTicker.textContent =
     "LIVE • " +
     allNews
-      .slice(0,6)
+      .slice(0,8)
       .map(item=>item.title)
       .join(" • ");
+}
+
+function updateMostRead(){
+  if(!mostReadList) return;
+
+  mostReadList.innerHTML = allNews
+    .slice(0,8)
+    .map((item, i)=>`
+      <li>
+        <a href="./article.html?id=${i}">
+          ${item.title}
+        </a>
+      </li>
+    `)
+    .join("");
 }
 
 function renderPage(){
@@ -114,10 +132,12 @@ function renderPage(){
   renderLeads();
   renderBelowNews();
   updateTicker();
+  updateMostRead();
 }
 
 async function fetchNews(topic){
   if(isLoading) return;
+
   isLoading = true;
 
   const loading = document.createElement("div");
@@ -129,9 +149,9 @@ async function fetchNews(topic){
     topic ||
     searchBox.value.trim() ||
     category.value ||
-    topicPool[pageTopicIndex % topicPool.length];
+    topicPool[topicIndex % topicPool.length];
 
-  pageTopicIndex++;
+  topicIndex++;
 
   try{
     const response = await fetch(`/api/news?q=${encodeURIComponent(finalTopic)}`);
@@ -155,7 +175,7 @@ async function fetchNews(topic){
 
         fresh.push({
           title,
-          description: item.description || "",
+          description: item.description || item.content || item.summary || "",
           section: detectSection(title),
           source: item.source_id || "NewsData",
           link: item.link || "#",
@@ -178,12 +198,13 @@ async function fetchNews(topic){
 async function searchNews(){
   allNews = [];
   seenTitles = new Set();
-  pageTopicIndex = 0;
+  topicIndex = 0;
 
   leadLeft.innerHTML = "";
   leadMain.innerHTML = "";
   leadRight.innerHTML = "";
   newsFeed.innerHTML = `<div class="loading">Loading live news...</div>`;
+  mostReadList.innerHTML = `<li>Loading...</li>`;
 
   await fetchNews(searchBox.value.trim() || category.value);
 }
@@ -193,9 +214,7 @@ window.addEventListener("scroll", ()=>{
     window.innerHeight + window.scrollY >= document.body.offsetHeight - 700;
 
   if(nearBottom){
-    const nextTopic =
-      topicPool[pageTopicIndex % topicPool.length];
-
+    const nextTopic = topicPool[topicIndex % topicPool.length];
     fetchNews(nextTopic);
   }
 });
