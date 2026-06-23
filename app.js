@@ -158,10 +158,21 @@ function renderNews(){
 
 async function searchNews(){
 
-  const query =
+const baseQuery =
     searchBox.value.trim()
     || category.value
     || "world";
+
+const extraTopics = [
+  baseQuery,
+  baseQuery + " latest",
+  baseQuery + " breaking",
+  baseQuery + " today",
+  baseQuery + " analysis"
+];
+
+const query =
+  extraTopics[Math.floor(Math.random() * extraTopics.length)];
 
   newsFeed.innerHTML =
     `<div class="news-item">
@@ -270,9 +281,7 @@ loadMoreBtn.addEventListener(
   "click",
   function(){
 
-    visibleCount += 10;
-
-    renderNews();
+searchNews();
 
   }
 );
