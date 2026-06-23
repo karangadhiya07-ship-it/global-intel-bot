@@ -98,10 +98,7 @@ function renderBelowNews(){
   newsFeed.innerHTML = "";
 
   allNews.slice(3).forEach((item, index)=>{
-    if(index > 0 && index % 6 === 0){
-      newsFeed.innerHTML += createReelCard(index);
-    }
-
+ 
     const article = document.createElement("article");
     article.className = "news-card";
     article.innerHTML = createArticleCard(item);
