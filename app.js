@@ -114,7 +114,44 @@ function updateTicker(){
 
 function updateMostRead(){
   if(!mostReadList) return;
+  
+function updateTrendAnalysis(){
+  const box = document.getElementById("trendAnalysis");
+  if(!box) return;
 
+  const crypto = allNews.filter(x => x.section === "Crypto").length;
+  const ai = allNews.filter(x => x.section === "Technology").length;
+  const finance = allNews.filter(x => x.section === "Business").length;
+  const weather = allNews.filter(x => x.section === "Weather").length;
+
+  const total = allNews.length || 1;
+
+  const trendingScore = Math.min(
+    100,
+    crypto * 12 + ai * 10 + finance * 9 + weather * 6 + total * 2
+  );
+
+  let topCategory = "News";
+  const counts = {
+    Crypto: crypto,
+    Technology: ai,
+    Business: finance,
+    Weather: weather
+  };
+
+  topCategory = Object.keys(counts).sort((a,b)=>counts[b]-counts[a])[0];
+
+  box.innerHTML = `
+    <p><b>Trending Score:</b> ${trendingScore}/100</p>
+    <p><b>Top Category:</b> ${topCategory}</p>
+    <p><b>Total Headlines:</b> ${allNews.length}</p>
+    <p><b>Crypto Mentions:</b> ${crypto}</p>
+    <p><b>AI/Tech Mentions:</b> ${ai}</p>
+    <p><b>Finance Mentions:</b> ${finance}</p>
+    <p><b>Weather Mentions:</b> ${weather}</p>
+  `;
+}
+  
   mostReadList.innerHTML = allNews
     .slice(0,8)
     .map((item, i)=>`
