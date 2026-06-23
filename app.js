@@ -8,300 +8,296 @@ const riskPanel = document.getElementById("riskPanel");
 const searchBtn = document.getElementById("searchBtn");
 const searchBox = document.getElementById("searchBox");
 const category = document.getElementById("category");
+const loadMoreBtn = document.getElementById("loadMoreBtn");
 
-function detectCategory(title) {
+let allNews = [];
+let visibleCount = 10;
 
-const t = title.toLowerCase();
+function detectCategory(title){
+  const t = title.toLowerCase();
 
-if (
-t.includes("bitcoin") ||
-t.includes("crypto") ||
-t.includes("ethereum")
-) return "Crypto";
+  if(t.includes("bitcoin") || t.includes("crypto") || t.includes("ethereum")) return "Crypto";
+  if(t.includes("market") || t.includes("stock") || t.includes("economy")) return "Finance";
+  if(t.includes("ai") || t.includes("openai") || t.includes("technology")) return "AI News";
+  if(t.includes("weather") || t.includes("storm")) return "Weather";
 
-if (
-t.includes("market") ||
-t.includes("stock") ||
-t.includes("fed") ||
-t.includes("economy")
-) return "Finance";
-
-if (
-t.includes("ai") ||
-t.includes("openai") ||
-t.includes("technology")
-) return "AI News";
-
-if (
-t.includes("weather") ||
-t.includes("storm")
-) return "Weather";
-
-return "Global News";
+  return "Global News";
 }
 
 function detectRisk(title){
+  const t = title.toLowerCase();
 
-const t = title.toLowerCase();
+  if(
+    t.includes("war") ||
+    t.includes("attack") ||
+    t.includes("crash") ||
+    t.includes("plunge")
+  ){
+    return "High";
+  }
 
-if(
-t.includes("war") ||
-t.includes("crash") ||
-t.includes("attack") ||
-t.includes("plunge")
-){
-return "High";
-}
+  if(
+    t.includes("bitcoin") ||
+    t.includes("market") ||
+    t.includes("inflation") ||
+    t.includes("ai")
+  ){
+    return "Medium";
+  }
 
-if(
-t.includes("bitcoin") ||
-t.includes("market") ||
-t.includes("inflation") ||
-t.includes("ai")
-){
-return "Medium";
-}
-
-return "Low";
+  return "Low";
 }
 
 function updateTicker(items){
+  const ticker = document.getElementById("breakingTicker");
 
-const ticker =
-document.getElementById("breakingTicker");
+  if(!ticker) return;
 
-if(!ticker) return;
-
-ticker.innerHTML =
-"🔥 BREAKING: " +
-items
-.slice(0,5)
-.map(item => item.title)
-.join(" • ");
+  ticker.innerHTML =
+    "🔥 BREAKING: " +
+    items
+      .slice(0,8)
+      .map(x => x.title)
+      .join(" • ");
 }
 
 function renderRiskPanel(items){
 
-riskPanel.innerHTML = "";
+  riskPanel.innerHTML = "";
 
-items.forEach(item=>{
+  items.slice(0,6).forEach(item => {
 
-const div =
-document.createElement("div");
+    const div = document.createElement("div");
 
-if(item.risk === "High"){
-div.className = "risk-box red";
-}
-else if(item.risk === "Medium"){
-div.className = "risk-box yellow";
-}
-else{
-div.className = "risk-box green";
-}
+    if(item.risk === "High"){
+      div.className = "risk-box red";
+    }else if(item.risk === "Medium"){
+      div.className = "risk-box yellow";
+    }else{
+      div.className = "risk-box green";
+    }
 
-div.textContent =
-`${item.category}: ${item.risk}`;
+    div.textContent =
+      `${item.category}: ${item.risk}`;
 
-riskPanel.appendChild(div);
+    riskPanel.appendChild(div);
 
-});
+  });
+
 }
 
-function renderNews(items){
+function renderNews(){
 
-newsFeed.innerHTML = "";
+  newsFeed.innerHTML = "";
 
-if(items.length === 0){
+  const items =
+    allNews.slice(0, visibleCount);
 
-newsFeed.innerHTML =
-`<div class="news-item">
-No live news found.
-</div>`;
+  items.forEach(item => {
 
-return;
-}
+    const div =
+      document.createElement("div");
 
-items.forEach(item=>{
+    div.className = "news-item";
 
-const div =
-document.createElement("div");
+    div.innerHTML = `
 
-div.className = "news-item";
+    ${item.image ? `
+    <img
+    src="${item.image}"
+    onerror="this.style.display='none'"
+    style="
+    width:100%;
+    max-height:350px;
+    object-fit:cover;
+    border-radius:12px;
+    margin-bottom:12px;
+    ">
+    ` : ""}
 
-div.innerHTML = `
+    <h3>${item.title}</h3>
 
-${item.image
-? `<img
-src="${item.image}"
-onerror="this.style.display='none'"
-style="
-width:100%;
-max-height:360px;
-object-fit:cover;
-border-radius:12px;
-margin-bottom:12px;
-">`
-: ""}
-<h3>${item.title}</h3>
+    <p><b>Category:</b> ${item.category}</p>
+    <p><b>Risk:</b> ${item.risk}</p>
+    <p><b>Source:</b> ${item.source}</p>
 
-<p>
-Category:
-${item.category}
-</p>
+    <a href="${item.link}"
+    target="_blank">
+    Read Full Story →
+    </a>
 
-<p>
-Risk:
-${item.risk}
-</p>
+    `;
 
-<p>
-Source:
-${item.source}
-</p>
+    newsFeed.appendChild(div);
 
-<a
-href="${item.link}"
-target="_blank"
->
-Read Full Story →
-</a>
+  });
 
-`;
+  headlineCount.textContent =
+    allNews.length;
 
-newsFeed.appendChild(div);
+  financeRisk.textContent =
+    allNews.some(x=>x.risk==="High")
+    ? "High"
+    : "Low";
 
-});
+  cryptoAlert.textContent =
+    allNews.some(x=>x.category==="Crypto")
+    ? "High Alert"
+    : "Normal";
 
-headlineCount.textContent =
-items.length;
+  aiWatch.textContent =
+    allNews.some(x=>x.category==="AI News")
+    ? "Active"
+    : "Monitoring";
 
-financeRisk.textContent =
-items.some(x=>x.risk==="High")
-? "High"
-: "Low";
+  renderRiskPanel(allNews);
 
-cryptoAlert.textContent =
-items.some(x=>x.category==="Crypto")
-? "High Alert"
-: "Normal";
+  updateTicker(allNews);
 
-aiWatch.textContent =
-items.some(x=>x.category==="AI News")
-? "Active"
-: "Monitoring";
-
-renderRiskPanel(items);
-
-updateTicker(items);
 }
 
 async function searchNews(){
 
-const query =
-searchBox.value.trim()
-|| category.value
-|| "world";
+  const query =
+    searchBox.value.trim()
+    || category.value
+    || "world";
 
-newsFeed.innerHTML =
-`<div class="news-item">
-Loading live news...
-</div>`;
+  newsFeed.innerHTML =
+    `<div class="news-item">
+      Loading live news...
+    </div>`;
 
-try{
+  try{
 
-const response =
-await fetch(
-`/api/news?q=${encodeURIComponent(query)}`
-);
+    const response =
+      await fetch(
+        `/api/news?q=${encodeURIComponent(query)}`
+      );
 
-const data =
-await response.json();
+    const data =
+      await response.json();
 
-if(
-!data.results ||
-data.results.length===0
-){
-renderNews([]);
-return;
-}
+    if(!data.results){
+      return;
+    }
 
-const uniqueResults = [];
-const seenTitles = new Set();
+    const uniqueResults = [];
+    const seenTitles = new Set();
 
-data.results.forEach(item => {
-  const cleanTitle = (item.title || "").toLowerCase().trim();
+    data.results.forEach(item=>{
 
-  if (cleanTitle && !seenTitles.has(cleanTitle)) {
-    seenTitles.add(cleanTitle);
-    uniqueResults.push(item);
+      const title =
+        (item.title || "")
+        .toLowerCase()
+        .trim();
+
+      if(
+        title &&
+        !seenTitles.has(title)
+      ){
+        seenTitles.add(title);
+        uniqueResults.push(item);
+      }
+
+    });
+
+    allNews =
+      uniqueResults
+      .slice(0,30)
+      .map(item=>{
+
+        const title =
+          item.title || "Untitled";
+
+        return {
+
+          title,
+
+          category:
+            detectCategory(title),
+
+          risk:
+            detectRisk(title),
+
+          source:
+            item.source_id ||
+            "NewsData",
+
+          link:
+            item.link || "#",
+
+          image:
+            item.image_url || ""
+
+        };
+
+      });
+
+    visibleCount = 10;
+
+    renderNews();
+
   }
-});
+  catch(err){
 
-const items =
-uniqueResults
-.slice(0,10)
-.map(item=>{
+    console.error(err);
 
-const title =
-item.title ||
-"Untitled";
+    newsFeed.innerHTML =
+      `<div class="news-item">
+      Failed to load live news.
+      </div>`;
 
-return{
+  }
 
-title,
-
-category:
-detectCategory(title),
-
-risk:
-detectRisk(title),
-
-source:
-item.source_id ||
-"NewsData",
-
-link:
-item.link || "#",
-
-image:
-item.image_url || ""
-
-};
-
-});
-
-renderNews(items);
-
-}
-catch(err){
-
-console.error(err);
-
-newsFeed.innerHTML =
-`<div class="news-item">
-Failed to load live news.
-</div>`;
-
-}
 }
 
 searchBtn.addEventListener(
-"click",
-searchNews
+  "click",
+  searchNews
 );
 
 searchBox.addEventListener(
-"keydown",
-function(e){
-if(e.key==="Enter"){
-searchNews();
-}
-}
+  "keydown",
+  function(e){
+    if(e.key==="Enter"){
+      searchNews();
+    }
+  }
 );
+
+loadMoreBtn.addEventListener(
+  "click",
+  function(){
+
+    visibleCount += 10;
+
+    renderNews();
+
+  }
+);
+
+document
+.querySelectorAll(".topicBtn")
+.forEach(btn => {
+
+  btn.addEventListener(
+    "click",
+    function(){
+
+      searchBox.value =
+        this.dataset.topic;
+
+      searchNews();
+
+    }
+  );
+
+});
 
 searchNews();
 
 setInterval(
-searchNews,
-300000
+  searchNews,
+  300000
 );
