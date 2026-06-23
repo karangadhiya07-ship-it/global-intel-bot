@@ -279,3 +279,50 @@ document.querySelectorAll(".topicBtn").forEach(btn=>{
 });
 
 searchNews();
+const marketItems = [
+  { name:"Apple", symbol:"AAPL", change:"+1.24%", trend:"up" },
+  { name:"Microsoft", symbol:"MSFT", change:"+0.82%", trend:"up" },
+  { name:"Nvidia", symbol:"NVDA", change:"+2.31%", trend:"up" },
+  { name:"Amazon", symbol:"AMZN", change:"-0.44%", trend:"down" },
+  { name:"Meta", symbol:"META", change:"+1.09%", trend:"up" },
+  { name:"Tesla", symbol:"TSLA", change:"-1.76%", trend:"down" },
+  { name:"Google", symbol:"GOOGL", change:"+0.55%", trend:"up" },
+  { name:"Netflix", symbol:"NFLX", change:"-0.69%", trend:"down" },
+  { name:"JPMorgan", symbol:"JPM", change:"+0.28%", trend:"up" },
+  { name:"Walmart", symbol:"WMT", change:"+0.39%", trend:"up" },
+  { name:"Gold", symbol:"GOLD", change:"+0.61%", trend:"up" },
+  { name:"Silver", symbol:"SILVER", change:"-0.22%", trend:"down" },
+  { name:"Crude Oil", symbol:"OIL", change:"+1.18%", trend:"up" },
+  { name:"Bitcoin", symbol:"BTC", change:"+2.14%", trend:"up" }
+];
+
+let marketIndex = 0;
+let lockedMarket = null;
+
+function updateTopMarket(){
+  const box = document.getElementById("topTrendBox");
+  if(!box) return;
+
+  const search = searchBox.value.trim().toLowerCase();
+
+  const found = marketItems.find(item =>
+    item.name.toLowerCase().includes(search) ||
+    item.symbol.toLowerCase().includes(search)
+  );
+
+  const item = search && found
+    ? found
+    : marketItems[marketIndex % marketItems.length];
+
+  box.className = "top-trend-box " + item.trend;
+  box.innerHTML = `${item.symbol} ${item.change} ${item.trend === "up" ? "↑" : "↓"}`;
+
+  if(!search){
+    marketIndex++;
+  }
+}
+
+setInterval(updateTopMarket, 5000);
+updateTopMarket();
+
+searchBox.addEventListener("input", updateTopMarket);
