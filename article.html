@@ -31,14 +31,23 @@
 
 <script>
 function cleanText(text){
+  if(!text || text === "undefined" || text === undefined){
+    return "This story is developing. More updates may follow soon.";
+  }
+
+  return String(text)
+    .replace("NEW", "")
+    .replace("You can now listen to Fox News articles!", "")
+    .replace(/\[\.\.\.\]/g, "")
+    .replace(/The post .* appeared first on .*?\./gi, "")
+    .trim();
 }
 
-/* અહીં paste કર */
 function generateAISummary(article){
 
 const title = article.title || "";
 const desc = cleanText(
-  article.description || article.content || article.summary || article.title
+  article.description || article.content || article.summary || article.full_description || article.title
 );
 
 return `
@@ -104,8 +113,8 @@ const relatedNews = document.getElementById("relatedNews");
 
 if(article){
 
-  const cleanDesc = cleanText(
-  article.description || article.content || article.summary || article.title
+const cleanDesc = cleanText(
+  article.description || article.content || article.summary || article.full_description || article.title
 );
   document.title = article.title + " | Global Intel Times";
 
