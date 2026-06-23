@@ -37,20 +37,17 @@ todayDate.textContent = new Date().toLocaleDateString("en-US", {
 
 function detectSection(title){
   const t = title.toLowerCase();
-
   if(t.includes("bitcoin") || t.includes("crypto")) return "Crypto";
   if(t.includes("stock") || t.includes("market") || t.includes("economy") || t.includes("fed")) return "Business";
   if(t.includes("ai") || t.includes("openai") || t.includes("technology")) return "Technology";
   if(t.includes("weather") || t.includes("storm") || t.includes("heatwave")) return "Weather";
   if(t.includes("sport") || t.includes("nfl") || t.includes("nba") || t.includes("world cup")) return "Sports";
   if(t.includes("music") || t.includes("movie") || t.includes("celebrity")) return "Culture";
-
   return "News";
 }
 
 function cleanText(text){
   if(!text || text === "undefined") return "This story is developing and more updates may follow soon.";
-
   return String(text)
     .replace("NEW", "")
     .replace("You can now listen to Fox News articles!", "")
@@ -61,20 +58,12 @@ function cleanText(text){
 
 function createArticleCard(item){
   const id = allNews.indexOf(item);
-
   return `
-    ${item.image ? `
-      <img src="${item.image}" onerror="this.style.display='none'" alt="news image">
-    ` : ""}
-
+    ${item.image ? `<img src="${item.image}" onerror="this.style.display='none'" alt="news image">` : ""}
     <span class="section-label">${item.section}</span>
-
     <h2>${item.title}</h2>
-
     <p>${cleanText(item.description)}</p>
-
     <small>Source: ${item.source}</small><br>
-
     <a href="./article.html?id=${id}">Read more ›</a>
   `;
 }
@@ -105,68 +94,12 @@ function updateTicker(){
   }
 
   breakingTicker.textContent =
-    "LIVE • " +
-    allNews
-      .slice(0,8)
-      .map(item=>item.title)
-      .join(" • ");
+    "LIVE • " + allNews.slice(0,8).map(item=>item.title).join(" • ");
 }
 
 function updateMostRead(){
   if(!mostReadList) return;
 
-    function updateTrendAnalysis(){
-
-  const box = document.getElementById("trendAnalysis");
-
-  if(!box) return;
-
-  const crypto =
-    allNews.filter(x => x.section === "Crypto").length;
-
-  const ai =
-    allNews.filter(x => x.section === "Technology").length;
-
-  const finance =
-    allNews.filter(x => x.section === "Business").length;
-
-  const weather =
-    allNews.filter(x => x.section === "Weather").length;
-
-  const total = allNews.length || 1;
-
-  const trendingScore = Math.min(
-    100,
-    crypto * 12 +
-    ai * 10 +
-    finance * 9 +
-    weather * 6 +
-    total * 2
-  );
-
-  const counts = {
-    Crypto: crypto,
-    Technology: ai,
-    Business: finance,
-    Weather: weather
-  };
-
-  const topCategory =
-    Object.keys(counts)
-    .sort((a,b)=>counts[b]-counts[a])[0];
-
-  box.innerHTML = `
-    <p><b>Trending Score:</b> ${trendingScore}/100</p>
-    <p><b>Top Category:</b> ${topCategory}</p>
-    <p><b>Total Headlines:</b> ${allNews.length}</p>
-    <p><b>Crypto Mentions:</b> ${crypto}</p>
-    <p><b>AI Mentions:</b> ${ai}</p>
-    <p><b>Finance Mentions:</b> ${finance}</p>
-    <p><b>Weather Mentions:</b> ${weather}</p>
-  `;
-}
-}
-  
   mostReadList.innerHTML = allNews
     .slice(0,8)
     .map((item, i)=>`
@@ -179,6 +112,42 @@ function updateMostRead(){
     .join("");
 }
 
+function updateTrendAnalysis(){
+  const box = document.getElementById("trendAnalysis");
+  if(!box) return;
+
+  const crypto = allNews.filter(x => x.section === "Crypto").length;
+  const ai = allNews.filter(x => x.section === "Technology").length;
+  const finance = allNews.filter(x => x.section === "Business").length;
+  const weather = allNews.filter(x => x.section === "Weather").length;
+
+  const total = allNews.length || 1;
+
+  const trendingScore = Math.min(
+    100,
+    crypto * 12 + ai * 10 + finance * 9 + weather * 6 + total * 2
+  );
+
+  const counts = {
+    Crypto: crypto,
+    Technology: ai,
+    Business: finance,
+    Weather: weather
+  };
+
+  const topCategory = Object.keys(counts).sort((a,b)=>counts[b]-counts[a])[0];
+
+  box.innerHTML = `
+    <p><b>Trending Score:</b> ${trendingScore}/100</p>
+    <p><b>Top Category:</b> ${topCategory}</p>
+    <p><b>Total Headlines:</b> ${allNews.length}</p>
+    <p><b>Crypto Mentions:</b> ${crypto}</p>
+    <p><b>AI Mentions:</b> ${ai}</p>
+    <p><b>Finance Mentions:</b> ${finance}</p>
+    <p><b>Weather Mentions:</b> ${weather}</p>
+  `;
+}
+
 function renderPage(){
   localStorage.setItem("articles", JSON.stringify(allNews));
   renderLeads();
@@ -187,6 +156,7 @@ function renderPage(){
   updateMostRead();
   updateTrendAnalysis();
 }
+
 async function fetchNews(topic){
   if(isLoading) return;
 
