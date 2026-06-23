@@ -149,6 +149,7 @@ function updateTrendAnalysis(){
 }
 
 function updateTopTrendBox(){
+
   const box = document.getElementById("topTrendBox");
   if(!box) return;
 
@@ -156,19 +157,18 @@ function updateTopTrendBox(){
   const ai = allNews.filter(x => x.section === "Technology").length;
   const finance = allNews.filter(x => x.section === "Business").length;
 
-  let text = "Nasdaq -1.76% ↓";
-  let cls = "down";
-
   if(crypto > ai && crypto > finance){
-    text = "BTC +2.14% ↑";
-    cls = "up";
-  }else if(ai > crypto && ai > finance){
-    text = "AI Trend +8.2% ↑";
-    cls = "up";
+    box.className = "top-trend-box up";
+    box.innerHTML = "BTC +2.14% ↑";
   }
-
-  box.className = "top-trend-box " + cls;
-  box.textContent = text;
+  else if(ai > crypto && ai > finance){
+    box.className = "top-trend-box up";
+    box.innerHTML = "AI +8.20% ↑";
+  }
+  else{
+    box.className = "top-trend-box down";
+    box.innerHTML = "Nasdaq -1.76% ↓";
+  }
 }
 
 function renderPage(){
