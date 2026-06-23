@@ -110,6 +110,7 @@ function updateTicker(){
 }
 
 function renderPage(){
+  localStorage.setItem("articles", JSON.stringify(allNews));
   renderLeads();
   renderBelowNews();
   updateTicker();
