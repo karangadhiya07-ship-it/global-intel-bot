@@ -131,7 +131,7 @@ div.className = "news-item";
 div.innerHTML = `
 
 ${item.image
-? <img
+? `<img
 src="${item.image}"
 onerror="this.style.display='none'"
 style="
@@ -140,9 +140,8 @@ max-height:360px;
 object-fit:cover;
 border-radius:12px;
 margin-bottom:12px;
-">
+">`
 : ""}
-
 <h3>${item.title}</h3>
 
 <p>
