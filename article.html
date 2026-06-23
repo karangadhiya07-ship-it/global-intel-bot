@@ -31,16 +31,49 @@
 
 <script>
 function cleanText(text){
-  if(!text) return "This story is developing and more updates may follow soon.";
-
-  return text
-    .replace("NEW", "")
-    .replace("You can now listen to Fox News articles!", "")
-    .replace(/\[\.\.\.\]/g, "")
-    .replace(/The post .* appeared first on .*?\./gi, "")
-    .trim();
+  ...
 }
 
+/* અહીં paste કર */
+function generateAISummary(article){
+
+const title = article.title || "";
+const desc = cleanText(article.description);
+
+return `
+<h2>AI Summary</h2>
+
+<p>${desc}</p>
+
+<h2>Background</h2>
+
+<p>
+This story has attracted attention because of its potential impact on people,
+businesses, governments, investors, consumers, and global markets.
+</p>
+
+<h2>Key Takeaways</h2>
+
+<ul>
+<li>${title}</li>
+<li>This remains a developing story.</li>
+<li>Further updates are expected soon.</li>
+</ul>
+
+<h2>Why This Matters</h2>
+
+<p>
+The significance of this story extends beyond the immediate headlines.
+</p>
+
+<h2>What Happens Next</h2>
+
+<p>
+More announcements and official statements are expected.
+</p>
+`;
+}
+  
 function generateAISummary(article){
   const title = article.title || "This story";
   const desc = cleanText(article.description);
@@ -73,37 +106,34 @@ if(article){
   const cleanDesc = cleanText(article.description);
   document.title = article.title + " | Global Intel Times";
 
-  articleBox.innerHTML = `
-    ${article.image ? `<img src="${article.image}" onerror="this.style.display='none'">` : ""}
+ articleBox.innerHTML = `
 
-    <span class="section-label">${article.section || "News"}</span>
+${article.image ? `<img src="${article.image}">` : ""}
 
-    <h1>${article.title}</h1>
+<h1>${article.title}</h1>
 
-    <p class="article-meta">
-      By Global Intel Desk • ${new Date().toLocaleDateString("en-US")} • 3 min read
-    </p>
+<p>${cleanDesc}</p>
 
-    <p class="article-summary">
-      ${cleanDesc}
-    </p>
+<hr>
 
-    <hr>
+${generateAISummary(article)}
 
-    ${generateAISummary(article)}
+<h2>Original Story</h2>
 
-    <h2>Original Story</h2>
-    <p>${cleanDesc}</p>
+<p>${cleanDesc}</p>
 
-    <p class="source-credit">
-      Source: ${article.source || "News Source"}
-    </p>
+<p class="source-credit">
+Source: ${article.source || "News Source"}
+</p>
 
-    <a class="source-button" href="${article.link}" target="_blank">
-      Open Original Source
-    </a>
-  `;
+<a
+class="source-button"
+href="${article.link}"
+target="_blank">
+Open Original Source
+</a>
 
+`;
   const related = saved
     .filter((item, index) => index !== id)
     .slice(0, 6);
