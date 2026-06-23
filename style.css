@@ -488,3 +488,20 @@ body{
   background:#111;
   margin-bottom:12px;
 }
+.news-card{
+  max-height:620px;
+  overflow:hidden;
+  position:relative;
+}
+
+.news-card p{
+  display:-webkit-box;
+  -webkit-line-clamp:8;
+  -webkit-box-orient:vertical;
+  overflow:hidden;
+}
+
+.news-card a{
+  display:inline-block;
+  margin-top:10px;
+}
