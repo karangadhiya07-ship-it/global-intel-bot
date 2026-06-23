@@ -67,7 +67,27 @@ function createArticleCard(item){
     <a href="./article.html?id=${id}">Read more ›</a>
   `;
 }
+function createReelCard(index){
+  const reels = [
+    "🔥 60-Second Global Update",
+    "📹 Market Watch: What changed today",
+    "⚡ AI & Tech quick briefing",
+    "🌎 World News in one minute",
+    "₿ Crypto pulse: latest movement"
+  ];
 
+  return `
+    <article class="reel-card">
+      <div class="reel-icon">▶</div>
+      <div>
+        <span class="section-label">VIDEO</span>
+        <h2>${reels[index % reels.length]}</h2>
+        <p>Quick visual-style news update for readers who want fast highlights.</p>
+        <a href="#">Watch brief ›</a>
+      </div>
+    </article>
+  `;
+}
 function renderLeads(){
   leadLeft.innerHTML = allNews[0] ? createArticleCard(allNews[0]) : "";
   leadMain.innerHTML = allNews[1] ? createArticleCard(allNews[1]) : "";
@@ -77,7 +97,11 @@ function renderLeads(){
 function renderBelowNews(){
   newsFeed.innerHTML = "";
 
-  allNews.slice(3).forEach(item=>{
+  allNews.slice(3).forEach((item, index)=>{
+    if(index > 0 && index % 6 === 0){
+      newsFeed.innerHTML += createReelCard(index);
+    }
+
     const article = document.createElement("article");
     article.className = "news-card";
     article.innerHTML = createArticleCard(item);
@@ -86,7 +110,6 @@ function renderBelowNews(){
 
   localStorage.setItem("articles", JSON.stringify(allNews));
 }
-
 function updateTicker(){
   if(!allNews.length){
     breakingTicker.textContent = "LIVE • Loading latest updates...";
