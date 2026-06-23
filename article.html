@@ -37,7 +37,9 @@ function cleanText(text){
 function generateAISummary(article){
 
 const title = article.title || "";
-const desc = cleanText(article.description);
+const desc = cleanText(
+  article.description || article.content || article.summary || article.title
+);
 
 return `
 <h2>AI Summary</h2>
@@ -102,7 +104,9 @@ const relatedNews = document.getElementById("relatedNews");
 
 if(article){
 
-  const cleanDesc = cleanText(article.description);
+  const cleanDesc = cleanText(
+  article.description || article.content || article.summary || article.title
+);
   document.title = article.title + " | Global Intel Times";
 
  articleBox.innerHTML = `
