@@ -46,26 +46,32 @@ const marketItems = [
   { name:"Bitcoin", symbol:"BTC", change:"+2.14%", trend:"up" }
 ];
 
-todayDate.textContent = new Date().toLocaleDateString("en-US", {
-  weekday:"long",
-  year:"numeric",
-  month:"long",
-  day:"numeric"
-});
+if(todayDate){
+  todayDate.textContent = new Date().toLocaleDateString("en-US", {
+    weekday:"long",
+    year:"numeric",
+    month:"long",
+    day:"numeric"
+  });
+}
 
 function detectSection(title){
-  const t = title.toLowerCase();
-  if(t.includes("bitcoin") || t.includes("crypto")) return "Crypto";
-  if(t.includes("stock") || t.includes("market") || t.includes("economy") || t.includes("fed")) return "Business";
-  if(t.includes("ai") || t.includes("openai") || t.includes("technology")) return "Technology";
-  if(t.includes("weather") || t.includes("storm") || t.includes("heatwave")) return "Weather";
-  if(t.includes("sport") || t.includes("nfl") || t.includes("nba") || t.includes("world cup")) return "Sports";
+  const t = String(title || "").toLowerCase();
+
+  if(t.includes("bitcoin") || t.includes("crypto") || t.includes("ethereum")) return "Crypto";
+  if(t.includes("stock") || t.includes("market") || t.includes("economy") || t.includes("fed") || t.includes("nasdaq")) return "Business";
+  if(t.includes("ai") || t.includes("openai") || t.includes("technology") || t.includes("tech")) return "Technology";
+  if(t.includes("weather") || t.includes("storm") || t.includes("heatwave") || t.includes("rain")) return "Weather";
+  if(t.includes("sport") || t.includes("nfl") || t.includes("nba") || t.includes("world cup") || t.includes("fifa")) return "Sports";
   if(t.includes("music") || t.includes("movie") || t.includes("celebrity")) return "Culture";
+
   return "News";
 }
 
 function cleanText(text){
-  if(!text || text === "undefined") return "This story is developing and more updates may follow soon.";
+  if(!text || text === "undefined"){
+    return "This story is developing and more updates may follow soon.";
+  }
 
   return String(text)
     .replace("NEW", "")
@@ -75,58 +81,68 @@ function cleanText(text){
     .trim();
 }
 
+function shortText(text, limit = 180){
+  const clean = cleanText(text);
+  return clean.length > limit ? clean.slice(0, limit) + "..." : clean;
+}
+
 function createArticleCard(item){
   const id = allNews.indexOf(item);
 
   return `
-    ${item.image ? `<img src="${item.image}" onerror="this.style.display='none'" alt="news image">` : ""}
+    ${item.image ? `
+      <img src="${item.image}" onerror="this.style.display='none'" alt="news image">
+    ` : ""}
+
     <span class="section-label">${item.section}</span>
+
     <h2>${item.title}</h2>
-    <p>${cleanText(item.description)}</p>
+
+    <p>${shortText(item.description, 190)}</p>
+
     <small>Source: ${item.source}</small><br>
+
     <a href="./article.html?id=${id}">Read more ›</a>
   `;
 }
 
 function createSmallVideoCard(index){
-  const videos = [
-    {
-      title:"60-Second Global Update",
-      src:"https://www.w3schools.com/html/mov_bbb.mp4"
-    },
-    {
-      title:"Market Watch Brief",
-      src:"https://www.w3schools.com/html/movie.mp4"
-    }
-  ];
-
-  const video = videos[index % videos.length];
+  const item = allNews[index + 3];
+  const title = item?.title || "Latest Video Brief";
 
   return `
     <article class="news-card video-news-card">
-      <video class="video-player" controls muted>
-        <source src="${video.src}" type="video/mp4">
-      </video>
+      <div class="video-thumb">
+        <span>▶</span>
+      </div>
 
       <span class="section-label">VIDEO</span>
-      <h2>${video.title}</h2>
-      <p>Quick video-style news update.</p>
+
+      <h2>${title}</h2>
+
+      <p>Watch related video coverage for this story.</p>
+
+      <a href="https://www.youtube.com/results?search_query=${encodeURIComponent(title)}" target="_blank">
+        Watch video ›
+      </a>
     </article>
   `;
 }
 
 function renderLeads(){
-  leadLeft.innerHTML = allNews[0] ? createArticleCard(allNews[0]) : "";
-  leadMain.innerHTML = allNews[1] ? createArticleCard(allNews[1]) : "";
-  leadRight.innerHTML = allNews[2] ? createArticleCard(allNews[2]) : "";
+  if(leadLeft) leadLeft.innerHTML = allNews[0] ? createArticleCard(allNews[0]) : "";
+  if(leadMain) leadMain.innerHTML = allNews[1] ? createArticleCard(allNews[1]) : "";
+  if(leadRight) leadRight.innerHTML = allNews[2] ? createArticleCard(allNews[2]) : "";
 }
 
 function renderBelowNews(){
+  if(!newsFeed) return;
+
   newsFeed.innerHTML = "";
 
   allNews.slice(3).forEach((item, index)=>{
     if(index > 0 && index % 6 === 0){
-      newsFeed.innerHTML += createSmallVideoCard(index);
+      newsFeed.insertAdjacentHTML("beforeend", createSmallVideoCard(index));
     }
 
     const article = document.createElement("article");
@@ -139,6 +155,8 @@ function renderBelowNews(){
 }
 
 function updateTicker(){
+  if(!breakingTicker) return;
+
   if(!allNews.length){
     breakingTicker.textContent = "LIVE • Loading latest updates...";
     return;
@@ -168,10 +186,20 @@ function updateTrendAnalysis(){
   const finance = allNews.filter(x => x.section === "Business").length;
   const weather = allNews.filter(x => x.section === "Weather").length;
 
-  const total = allNews.length || 1;
-  const trendingScore = Math.min(100, crypto * 12 + ai * 10 + finance * 9 + weather * 6 + total * 2);
+  const total = allNews.length;
+  const trendingScore = Math.min(
+    100,
+    crypto * 12 + ai * 10 + finance * 9 + weather * 6 + total * 2
+  );
 
-  const counts = { Crypto: crypto, Technology: ai, Business: finance, Weather: weather };
+  const counts = {
+    Crypto: crypto,
+    Technology: ai,
+    Business: finance,
+    Weather: weather,
+    News: allNews.filter(x => x.section === "News").length
+  };
+
   const topCategory = Object.keys(counts).sort((a,b)=>counts[b]-counts[a])[0];
 
   box.innerHTML = `
@@ -187,7 +215,7 @@ function updateTrendAnalysis(){
 
 function updateTopMarket(){
   const box = document.getElementById("topTrendBox");
-  if(!box) return;
+  if(!box || !searchBox) return;
 
   const search = searchBox.value.trim().toLowerCase();
 
@@ -196,12 +224,16 @@ function updateTopMarket(){
     item.symbol.toLowerCase().includes(search)
   );
 
-  const item = search && found ? found : marketItems[marketIndex % marketItems.length];
+  const item = search && found
+    ? found
+    : marketItems[marketIndex % marketItems.length];
 
   box.className = "top-trend-box " + item.trend;
   box.innerHTML = `${item.symbol} ${item.change} ${item.trend === "up" ? "↑" : "↓"}`;
 
-  if(!search) marketIndex++;
+  if(!search){
+    marketIndex++;
+  }
 }
 
 function renderPage(){
@@ -215,7 +247,8 @@ function renderPage(){
 }
 
 async function fetchNews(topic){
-  if(isLoading) return;
+  if(isLoading || !newsFeed) return;
+
   isLoading = true;
 
   const loading = document.createElement("div");
@@ -225,8 +258,8 @@ async function fetchNews(topic){
 
   const finalTopic =
     topic ||
-    searchBox.value.trim() ||
-    category.value ||
+    searchBox?.value.trim() ||
+    category?.value ||
     topicPool[topicIndex % topicPool.length];
 
   topicIndex++;
@@ -237,14 +270,19 @@ async function fetchNews(topic){
 
     loading.remove();
 
-    if(!data.results){
+    const results = Array.isArray(data.results) ? data.results : [];
+
+    if(results.length === 0){
+      if(allNews.length === 0){
+        newsFeed.innerHTML = `<div class="loading">No news found. Try another topic.</div>`;
+      }
       isLoading = false;
       return;
     }
 
     const fresh = [];
-const results = Array.isArray(data.results) ? data.results : [];
-   results.forEach(item=>{
+
+    results.forEach(item=>{
       const title = (item.title || "").trim();
       const cleanTitle = title.toLowerCase();
 
@@ -255,7 +293,7 @@ const results = Array.isArray(data.results) ? data.results : [];
           title,
           description: item.description || item.content || item.summary || "",
           section: detectSection(title),
-          source: item.source_id || "NewsData",
+          source: item.source_id || item.source_name || "NewsData",
           link: item.link || "#",
           image: item.image_url || ""
         });
@@ -263,7 +301,12 @@ const results = Array.isArray(data.results) ? data.results : [];
     });
 
     allNews = allNews.concat(fresh);
-    renderPage();
+
+    if(allNews.length === 0){
+      newsFeed.innerHTML = `<div class="loading">No fresh news found. Try another topic.</div>`;
+    }else{
+      renderPage();
+    }
 
   }catch(error){
     console.error(error);
@@ -278,17 +321,18 @@ async function searchNews(){
   seenTitles = new Set();
   topicIndex = 0;
 
-  leadLeft.innerHTML = "";
-  leadMain.innerHTML = "";
-  leadRight.innerHTML = "";
-  newsFeed.innerHTML = `<div class="loading">Loading live news...</div>`;
-  mostReadList.innerHTML = `<li>Loading...</li>`;
+  if(leadLeft) leadLeft.innerHTML = "";
+  if(leadMain) leadMain.innerHTML = "";
+  if(leadRight) leadRight.innerHTML = "";
+  if(newsFeed) newsFeed.innerHTML = `<div class="loading">Loading live news...</div>`;
+  if(mostReadList) mostReadList.innerHTML = `<li>Loading...</li>`;
 
-  await fetchNews(searchBox.value.trim() || category.value);
+  await fetchNews(searchBox?.value.trim() || category?.value || "usa breaking news");
 }
 
 window.addEventListener("scroll", ()=>{
-  const nearBottom = window.innerHeight + window.scrollY >= document.body.offsetHeight - 700;
+  const nearBottom =
+    window.innerHeight + window.scrollY >= document.body.offsetHeight - 700;
 
   if(nearBottom){
     const nextTopic = topicPool[topicIndex % topicPool.length];
@@ -296,17 +340,21 @@ window.addEventListener("scroll", ()=>{
   }
 });
 
-searchBtn.addEventListener("click", searchNews);
+if(searchBtn){
+  searchBtn.addEventListener("click", searchNews);
+}
 
-searchBox.addEventListener("keydown", e=>{
-  if(e.key === "Enter") searchNews();
-});
+if(searchBox){
+  searchBox.addEventListener("keydown", e=>{
+    if(e.key === "Enter") searchNews();
+  });
 
-searchBox.addEventListener("input", updateTopMarket);
+  searchBox.addEventListener("input", updateTopMarket);
+}
 
 document.querySelectorAll(".topicBtn").forEach(btn=>{
   btn.addEventListener("click", ()=>{
-    searchBox.value = btn.dataset.topic;
+    if(searchBox) searchBox.value = btn.dataset.topic;
     searchNews();
   });
 });
