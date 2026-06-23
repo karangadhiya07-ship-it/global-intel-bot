@@ -3,67 +3,101 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Global Intel Bot</title>
+<title>Global Intelligence Dashboard</title>
+
 <link rel="stylesheet" href="./style.css">
 </head>
 <body>
-  
+
 <div class="ticker-wrap">
   <div class="ticker" id="breakingTicker">
     🔥 Loading Breaking News...
   </div>
 </div>
-  
+
 <div class="container">
-  <header>
-    <h1>🌎 Global Intelligence Dashboard</h1>
-    <p>Live News • Finance • Crypto • Weather • AI Watch</p>
-  </header>
 
-  <div class="top-bar">
-    <select id="category">
-      <option value="world">Global News</option>
-      <option value="finance">Finance</option>
-      <option value="bitcoin">Crypto</option>
-      <option value="artificial intelligence">AI News</option>
-      <option value="weather">Weather</option>
-      <option value="geopolitics">Geopolitics</option>
-    </select>
+<header>
+<h1>🌎 Global Intelligence Dashboard</h1>
+<p>Live News • Finance • Crypto • Weather • AI Watch</p>
+</header>
 
-    <input id="searchBox" type="text" placeholder="Search Bitcoin, AI, Trump, NYC...">
-    <button id="searchBtn">Search</button>
-  </div>
+<div class="search-area">
 
-  <div class="stats-grid">
-    <div class="card"><h3>📰 Headlines</h3><p id="headlineCount">0</p></div>
-    <div class="card"><h3>📈 Finance Risk</h3><p id="financeRisk">Low</p></div>
-    <div class="card"><h3>₿ Crypto Alert</h3><p id="cryptoAlert">Normal</p></div>
-    <div class="card"><h3>🤖 AI Watch</h3><p id="aiWatch">Monitoring</p></div>
-  </div>
+<select id="category">
+<option value="world">Global News</option>
+<option value="bitcoin">Crypto</option>
+<option value="finance">Finance</option>
+<option value="artificial intelligence">AI News</option>
+<option value="weather">Weather</option>
+</select>
 
-  <div class="dashboard">
-    <div class="panel">
-      <h2>🔥 Live Intelligence Feed</h2>
-      <div id="newsFeed">
-        <div class="news-item">Waiting for live data...</div>
-      </div>
-    </div>
+<input
+type="text"
+id="searchBox"
+placeholder="Search Bitcoin, AI, Trump, NYC..."
+>
 
-    <div class="panel">
-      <h2>⚠️ Global Risk Monitor</h2>
-      <div id="riskPanel">
-        <div class="risk-box green">Market Stable</div>
-        <div class="risk-box yellow">Monitoring Events</div>
-      </div>
-    </div>
-  </div>
+<button id="searchBtn">
+Search
+</button>
 
-  <div class="panel full-width">
-    <h2>🗺️ World Monitoring Map</h2>
-    <div class="world-map">LIVE GLOBAL INTEL</div>
-  </div>
+</div>
+
+<div class="stats-grid">
+
+<div class="card">
+<h3>📰 Headlines</h3>
+<p id="headlineCount">0</p>
+</div>
+
+<div class="card">
+<h3>📈 Finance Risk</h3>
+<p id="financeRisk">Low</p>
+</div>
+
+<div class="card">
+<h3>₿ Crypto Alert</h3>
+<p id="cryptoAlert">Normal</p>
+</div>
+
+<div class="card">
+<h3>🤖 AI Watch</h3>
+<p id="aiWatch">Monitoring</p>
+</div>
+
+</div>
+
+<div class="dashboard">
+
+<div class="panel">
+<h2>🔥 Live Intelligence Feed</h2>
+
+<div id="newsFeed">
+<div class="news-item">
+Loading live news...
+</div>
+</div>
+
+</div>
+
+<div class="panel">
+
+<h2>⚠️ Global Risk Monitor</h2>
+
+<div id="riskPanel">
+<div class="risk-box green">
+Market Stable
+</div>
+</div>
+
+</div>
+
+</div>
+
 </div>
 
 <script src="./app.js"></script>
+
 </body>
 </html>
