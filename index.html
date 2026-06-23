@@ -3,107 +3,62 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Global Intelligence Dashboard V5</title>
+<title>Global Intel Times</title>
 <link rel="stylesheet" href="./style.css">
 </head>
-
 <body>
 
-<div class="ticker-wrap">
-  <div class="ticker" id="breakingTicker">🔥 Loading Breaking News...</div>
-</div>
+<header class="top-header">
+  <div class="top-row">
+    <div>
+      <span id="todayDate">Tuesday, June 23, 2026</span><br>
+      <small>Global Intel Daily</small>
+    </div>
 
-<div class="container">
+    <h1>Global Intel Times</h1>
 
-<header>
-<h1>🌎 Global Intelligence Dashboard V5</h1>
-<p>USA News • Finance • Crypto • AI • Weather • Risk Monitor</p>
+    <button class="subscribe-btn">Subscribe</button>
+  </div>
+
+  <nav class="nav-bar">
+    <button class="topicBtn" data-topic="usa breaking news">U.S.</button>
+    <button class="topicBtn" data-topic="world breaking news">World</button>
+    <button class="topicBtn" data-topic="stock market finance news">Business</button>
+    <button class="topicBtn" data-topic="artificial intelligence news">Technology</button>
+    <button class="topicBtn" data-topic="bitcoin crypto news">Crypto</button>
+    <button class="topicBtn" data-topic="sports news usa">Sports</button>
+    <button class="topicBtn" data-topic="weather alert news">Weather</button>
+  </nav>
 </header>
 
-<div class="ad-box top-ad">Top Banner Ad Space 728x90</div>
+<div class="live-strip" id="breakingTicker">LIVE • Loading latest updates...</div>
 
-<div class="search-area">
-<select id="category">
-<option value="usa breaking news">USA Breaking</option>
-<option value="world breaking news">World News</option>
-<option value="bitcoin crypto news">Crypto</option>
-<option value="stock market finance news">Finance</option>
-<option value="artificial intelligence news">AI News</option>
-<option value="new york news">NYC News</option>
-<option value="weather alert news">Weather</option>
-<option value="sports news usa">Sports</option>
-</select>
+<section class="search-box">
+  <select id="category">
+    <option value="usa breaking news">U.S.</option>
+    <option value="world breaking news">World</option>
+    <option value="stock market finance news">Business</option>
+    <option value="artificial intelligence news">Technology</option>
+    <option value="bitcoin crypto news">Crypto</option>
+  </select>
 
-<input type="text" id="searchBox" placeholder="Search Bitcoin, AI, Trump, NYC...">
-<button id="searchBtn">Search</button>
-</div>
+  <input id="searchBox" placeholder="Search news topic...">
+  <button id="searchBtn">Search</button>
+</section>
 
-<div class="trending-box">
-<h2>🔥 Trending Now</h2>
-<button class="topicBtn" data-topic="bitcoin crypto news">Bitcoin</button>
-<button class="topicBtn" data-topic="artificial intelligence news">AI</button>
-<button class="topicBtn" data-topic="stock market today">Stock Market</button>
-<button class="topicBtn" data-topic="new york news">NYC</button>
-<button class="topicBtn" data-topic="usa politics breaking news">USA Politics</button>
-<button class="topicBtn" data-topic="weather alerts usa">Weather</button>
-</div>
+<main class="newspaper-layout">
 
-<div class="stats-grid">
-<div class="card"><h3>📰 Headlines</h3><p id="headlineCount">0</p></div>
-<div class="card"><h3>📈 Finance Risk</h3><p id="financeRisk">Low</p></div>
-<div class="card"><h3>₿ Crypto Alert</h3><p id="cryptoAlert">Normal</p></div>
-<div class="card"><h3>🤖 AI Watch</h3><p id="aiWatch">Monitoring</p></div>
-</div>
+  <section class="lead-grid">
+    <article class="lead-card" id="leadLeft"></article>
+    <article class="lead-card big" id="leadMain"></article>
+    <article class="lead-card" id="leadRight"></article>
+  </section>
 
-<div class="layout">
+  <section class="below-grid" id="newsFeed">
+    <div class="loading">Loading live news...</div>
+  </section>
 
-<main class="main-content">
-<div class="panel main-panel">
-<h2>🔥 Live Intelligence Feed</h2>
-<div id="newsFeed">
-<div class="news-item">Loading live news...</div>
-</div>
-</div>
 </main>
-
-<aside class="right-sidebar">
-
-<div class="panel sticky-panel">
-<h2>⚠️ Global Risk Monitor</h2>
-<div id="riskPanel">
-<div class="risk-box green">Market Stable</div>
-</div>
-
-<div class="ad-box side-ad">Sidebar Ad Space 300x250</div>
-
-<div class="mini-box">
-<h3>📌 Watchlist</h3>
-<ul>
-<li>Bitcoin</li>
-<li>Stock Market</li>
-<li>AI Companies</li>
-<li>USA Politics</li>
-<li>NYC Alerts</li>
-</ul>
-</div>
-
-<div class="mini-box">
-<h3>🌎 Risk Map</h3>
-<div class="risk-map">
-<span>USA: Yellow</span>
-<span>Finance: Orange</span>
-<span>Crypto: Red</span>
-<span>AI: Blue</span>
-</div>
-</div>
-
-</div>
-
-</aside>
-
-</div>
-
-</div>
 
 <script src="./app.js"></script>
 </body>
