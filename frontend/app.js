@@ -9,32 +9,54 @@ const searchBtn = document.getElementById("searchBtn");
 const searchBox = document.getElementById("searchBox");
 const category = document.getElementById("category");
 
-const demoNews = [
-  {
-    title: "Global markets watch Federal Reserve signals",
-    category: "Finance",
-    risk: "Medium",
-    source: "Demo Source"
-  },
-  {
-    title: "Bitcoin traders react to fresh market volatility",
-    category: "Crypto",
-    risk: "High",
-    source: "Demo Source"
-  },
-  {
-    title: "AI companies expand tools for news and research",
-    category: "AI News",
-    risk: "Medium",
-    source: "Demo Source"
-  },
-  {
-    title: "Weather alerts monitored across major U.S. cities",
-    category: "Weather",
-    risk: "Low",
-    source: "Demo Source"
+function detectCategory(title){
+  const t = title.toLowerCase();
+
+  if(t.includes("bitcoin") || t.includes("crypto") || t.includes("ethereum")){
+    return "Crypto";
   }
-];
+
+  if(t.includes("stock") || t.includes("market") || t.includes("fed") || t.includes("inflation") || t.includes("economy")){
+    return "Finance";
+  }
+
+  if(t.includes("ai") || t.includes("technology") || t.includes("openai")){
+    return "AI News";
+  }
+
+  if(t.includes("weather") || t.includes("storm") || t.includes("rain")){
+    return "Weather";
+  }
+
+  return "Global News";
+}
+
+function detectRisk(title){
+  const t = title.toLowerCase();
+
+  if(
+    t.includes("war") ||
+    t.includes("crash") ||
+    t.includes("plunge") ||
+    t.includes("attack") ||
+    t.includes("warning") ||
+    t.includes("emergency")
+  ){
+    return "High";
+  }
+
+  if(
+    t.includes("market") ||
+    t.includes("fed") ||
+    t.includes("bitcoin") ||
+    t.includes("inflation") ||
+    t.includes("ai")
+  ){
+    return "Medium";
+  }
+
+  return "Low";
+}
 
 function calculateRisk(items){
   let score = 0;
@@ -53,6 +75,12 @@ function calculateRisk(items){
 function renderNews(items){
   newsFeed.innerHTML = "";
 
+  if(items.length === 0){
+    newsFeed.innerHTML = `<div class="news-item">No live news found.</div>`;
+    headlineCount.textContent = "0";
+    return;
+  }
+
   items.forEach(item=>{
     const div = document.createElement("div");
     div.className = "news-item";
@@ -61,7 +89,8 @@ function renderNews(items){
       <strong>${item.title}</strong><br>
       Category: ${item.category}<br>
       Risk Level: ${item.risk}<br>
-      Source: ${item.source}
+      Source: ${item.source}<br>
+      ${item.link ? `<a href="${item.link}" target="_blank">Open Source</a>` : ""}
     `;
 
     newsFeed.appendChild(div);
@@ -96,35 +125,41 @@ function renderRiskPanel(items){
     else div.className = "risk-box green";
 
     div.textContent = `${item.category}: ${item.risk}`;
-
     riskPanel.appendChild(div);
   });
 }
 
-function searchNews(){
-  const query = searchBox.value.toLowerCase();
-  const selectedCategory = category.value;
+async function searchNews(){
+  const query = searchBox.value.trim() || category.value || "world";
 
-  let filtered = demoNews.filter(item=>{
-    const matchText =
-      item.title.toLowerCase().includes(query) ||
-      item.category.toLowerCase().includes(query);
+  newsFeed.innerHTML = `<div class="news-item">Loading live news...</div>`;
 
-    const matchCategory =
-      selectedCategory === "Global News" ||
-      item.category === selectedCategory;
+  try{
+    const response = await fetch(`/api/news?q=${encodeURIComponent(query)}`);
+    const data = await response.json();
 
-    return matchText && matchCategory;
-  });
+    if(!data.results || data.results.length === 0){
+      renderNews([]);
+      return;
+    }
 
-  if(query === ""){
-    filtered = demoNews.filter(item=>{
-      return selectedCategory === "Global News" ||
-      item.category === selectedCategory;
+    const items = data.results.slice(0, 10).map(item=>{
+      const title = item.title || "Untitled news";
+
+      return {
+        title,
+        category: detectCategory(title),
+        risk: detectRisk(title),
+        source: item.source_id || item.source_name || "NewsData",
+        link: item.link || "#"
+      };
     });
-  }
 
-  renderNews(filtered);
+    renderNews(items);
+
+  }catch(error){
+    newsFeed.innerHTML = `<div class="news-item">Failed to load live news.</div>`;
+  }
 }
 
 searchBtn.addEventListener("click", searchNews);
@@ -135,4 +170,4 @@ searchBox.addEventListener("keydown", function(e){
   }
 });
 
-renderNews(demoNews);
+searchNews();
