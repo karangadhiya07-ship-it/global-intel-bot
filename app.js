@@ -223,8 +223,20 @@ renderNews([]);
 return;
 }
 
+const uniqueResults = [];
+const seenTitles = new Set();
+
+data.results.forEach(item => {
+  const cleanTitle = (item.title || "").toLowerCase().trim();
+
+  if (cleanTitle && !seenTitles.has(cleanTitle)) {
+    seenTitles.add(cleanTitle);
+    uniqueResults.push(item);
+  }
+});
+
 const items =
-data.results
+uniqueResults
 .slice(0,10)
 .map(item=>{
 
