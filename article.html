@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>News Article</title>
+<link rel="stylesheet" href="./style.css">
+</head>
+<body>
+
+<div class="newspaper-layout">
+  <a href="./index.html">← Back to Home</a>
+  <article class="news-card" id="articleBox">
+    Loading article...
+  </article>
+</div>
+
+<script>
+const params = new URLSearchParams(window.location.search);
+const id = params.get("id");
+
+const saved = JSON.parse(localStorage.getItem("articles") || "[]");
+const article = saved[id];
+
+if(article){
+  document.getElementById("articleBox").innerHTML = `
+    ${article.image ? `<img src="${article.image}" onerror="this.style.display='none'">` : ""}
+    <span class="section-label">${article.section}</span>
+    <h2>${article.title}</h2>
+    <p>${article.description || "Full details are being updated."}</p>
+    <p><b>Source:</b> ${article.source}</p>
+    <a href="${article.link}" target="_blank">Original Source</a>
+  `;
+}else{
+  document.getElementById("articleBox").innerHTML = "Article not found.";
+}
+</script>
+
+</body>
+</html>
