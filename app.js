@@ -67,7 +67,7 @@ function createArticleCard(item, big=false){
 
     <small>Source: ${item.source}</small><br>
 
-    <a href="${item.link}" target="_blank">Read more ›</a>
+    <a href="./article.html?id=${allNews.indexOf(item)}">Read more ›</a>
   `;
 }
 
