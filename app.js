@@ -170,8 +170,8 @@ function renderPage(){
   renderBelowNews();
   updateTicker();
   updateMostRead();
+  updateTrendAnalysis();
 }
-
 async function fetchNews(topic){
   if(isLoading) return;
 
