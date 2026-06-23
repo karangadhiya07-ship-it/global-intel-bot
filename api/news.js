@@ -1,26 +1,17 @@
 export default async function handler(req, res) {
-  const query = req.query.q || "global news";
+  const q = req.query.q || "world";
 
-  const data = [
-    {
-      title: `Latest updates for ${query}`,
-      category: "Global News",
-      risk: "Medium",
-      source: "News API Placeholder",
-      link: "#"
-    },
-    {
-      title: `Breaking intelligence report about ${query}`,
-      category: "Global News",
-      risk: "High",
-      source: "News API Placeholder",
-      link: "#"
-    }
-  ];
+  const url =
+    `https://newsdata.io/api/1/latest?apikey=${process.env.NEWSDATA_API_KEY}&q=${encodeURIComponent(q)}&language=en`;
 
-  res.status(200).json({
-    success: true,
-    query,
-    items: data
-  });
+  try {
+    const response = await fetch(url);
+    const data = await response.json();
+
+    res.status(200).json(data);
+  } catch (err) {
+    res.status(500).json({
+      error: "Failed to fetch news"
+    });
+  }
 }
