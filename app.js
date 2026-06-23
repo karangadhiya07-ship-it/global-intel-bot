@@ -165,15 +165,6 @@ function updateMostRead(){
     <p><b>Weather Mentions:</b> ${weather}</p>
   `;
 }
-  
-    <p><b>Trending Score:</b> ${trendingScore}/100</p>
-    <p><b>Top Category:</b> ${topCategory}</p>
-    <p><b>Total Headlines:</b> ${allNews.length}</p>
-    <p><b>Crypto Mentions:</b> ${crypto}</p>
-    <p><b>AI/Tech Mentions:</b> ${ai}</p>
-    <p><b>Finance Mentions:</b> ${finance}</p>
-    <p><b>Weather Mentions:</b> ${weather}</p>
-  `;
 }
   
   mostReadList.innerHTML = allNews
