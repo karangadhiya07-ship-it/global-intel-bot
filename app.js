@@ -100,7 +100,7 @@ function renderBelowNews(){
 }
   newsFeed.innerHTML = "";
 
-  allNews.slice(3).forEach((item, index)=>{
+allNews.slice(3).forEach((item, index)=>{
  
     const article = document.createElement("article");
     article.className = "news-card";
