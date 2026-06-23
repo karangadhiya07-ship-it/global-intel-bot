@@ -47,6 +47,30 @@ if(article){
 
   document.title = article.title + " | Global Intel Times";
 
+  function generateAISummary(article){
+  const title = article.title || "";
+  const desc = article.description || "";
+
+  return `
+    <h2>AI Summary</h2>
+    <p>${desc || "This story is developing and more updates may follow soon."}</p>
+
+    <h2>Key Points</h2>
+    <ul>
+      <li>This update is connected to: <b>${article.section || "News"}</b>.</li>
+      <li>The main focus is: <b>${title}</b>.</li>
+      <li>Readers should watch for more updates from official and trusted sources.</li>
+    </ul>
+
+    <h2>Simple Explanation</h2>
+    <p>
+      In simple words, this news matters because it may affect people, markets,
+      public discussion, business, technology, sports, travel, or daily life depending
+      on the topic.
+    </p>
+  `;
+}
+  
   articleBox.innerHTML = `
     ${article.image ? `<img src="${article.image}" onerror="this.style.display='none'">` : ""}
 
@@ -59,6 +83,8 @@ if(article){
     </p>
 
     <hr>
+
+${generateAISummary(article)}
 
     <h2>What Happened</h2>
     <p>
