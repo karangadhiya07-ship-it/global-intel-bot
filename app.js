@@ -90,20 +90,27 @@ function createArticleCard(item){
 
 function createSmallVideoCard(index){
   const videos = [
-    "60-Second Global Update",
-    "Market Watch Brief",
-    "AI & Tech Quick Update",
-    "Crypto Pulse",
-    "World News Minute"
+    {
+      title:"60-Second Global Update",
+      src:"https://www.w3schools.com/html/mov_bbb.mp4"
+    },
+    {
+      title:"Market Watch Brief",
+      src:"https://www.w3schools.com/html/movie.mp4"
+    }
   ];
+
+  const video = videos[index % videos.length];
 
   return `
     <article class="news-card video-news-card">
-      <div class="video-thumb"><span>▶</span></div>
+      <video class="video-player" controls muted>
+        <source src="${video.src}" type="video/mp4">
+      </video>
+
       <span class="section-label">VIDEO</span>
-      <h2>${videos[index % videos.length]}</h2>
-      <p>Quick news video-style update with the top highlights.</p>
-      <a href="#">Watch brief ›</a>
+      <h2>${video.title}</h2>
+      <p>Quick video-style news update.</p>
     </article>
   `;
 }
