@@ -431,3 +431,23 @@ body{
   color:#dc2626;
   font-weight:700;
 }
+.top-market-box{
+  display:flex;
+  flex-direction:column;
+  align-items:flex-end;
+  gap:8px;
+}
+
+.top-trend-box{
+  font-family:Arial, sans-serif;
+  font-size:20px;
+  font-weight:700;
+}
+
+.top-trend-box.up{
+  color:#16a34a;
+}
+
+.top-trend-box.down{
+  color:#dc2626;
+}
