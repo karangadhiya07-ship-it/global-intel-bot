@@ -356,3 +356,78 @@ body{
     font-size:18px;
   }
 }
+/* ===== TOP MARKET TREND ===== */
+
+.top-market-box{
+  display:flex;
+  flex-direction:column;
+  align-items:flex-end;
+  gap:8px;
+}
+
+.top-trend-box{
+  font-family:Arial, sans-serif;
+  font-size:20px;
+  font-weight:700;
+  padding:4px 0;
+}
+
+.top-trend-box.up{
+  color:#16a34a;
+}
+
+.top-trend-box.down{
+  color:#dc2626;
+}
+
+/* ===== LIVE TRENDING ANALYSIS ===== */
+
+#trendAnalysis{
+  background:#fafafa;
+  border:1px solid #ddd;
+  padding:15px;
+  margin-top:15px;
+  font-family:Arial, sans-serif;
+}
+
+#trendAnalysis p{
+  margin:8px 0;
+  font-size:15px;
+}
+
+#trendAnalysis .score{
+  font-size:28px;
+  font-weight:700;
+  color:#2563eb;
+}
+
+/* ===== MARKET WIDGET ===== */
+
+.market-widget{
+  border:1px solid #ddd;
+  padding:15px;
+  margin-bottom:20px;
+  background:#fff;
+}
+
+.market-widget h3{
+  font-size:18px;
+  margin-bottom:10px;
+}
+
+.market-row{
+  display:flex;
+  justify-content:space-between;
+  padding:8px 0;
+  border-bottom:1px solid #eee;
+}
+
+.market-up{
+  color:#16a34a;
+  font-weight:700;
+}
+
+.market-down{
+  color:#dc2626;
+  font-weight:700;
+}
