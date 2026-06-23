@@ -452,27 +452,32 @@ body{
   color:#dc2626;
 }
 .video-news-card{
-  background:#fff;
+  background:#fdfdf8;
 }
 
 .video-thumb{
-  height:170px;
-  background:#111;
+  height:130px;
+  background:linear-gradient(135deg,#111,#333);
   display:flex;
   align-items:center;
   justify-content:center;
   margin-bottom:12px;
+  border-radius:4px;
 }
 
 .video-thumb span{
-  width:54px;
-  height:54px;
+  width:46px;
+  height:46px;
   border-radius:50%;
   background:white;
   color:#111;
   display:flex;
   align-items:center;
   justify-content:center;
-  font-size:24px;
+  font-size:22px;
   font-weight:bold;
+}
+
+.video-news-card h2{
+  font-size:22px;
 }
