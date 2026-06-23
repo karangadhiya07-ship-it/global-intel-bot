@@ -95,6 +95,9 @@ function renderLeads(){
 }
 
 function renderBelowNews(){
+  if(index > 0 && index % 6 === 0){
+  newsFeed.innerHTML += createSmallVideoCard(index);
+}
   newsFeed.innerHTML = "";
 
   allNews.slice(3).forEach((item, index)=>{
