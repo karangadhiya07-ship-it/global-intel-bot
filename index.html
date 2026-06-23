@@ -3,15 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Global Intel Times</title>
+<title>Global Intel Times V8</title>
 <link rel="stylesheet" href="./style.css">
 </head>
 <body>
 
 <header class="top-header">
+
   <div class="top-row">
     <div>
-      <span id="todayDate">Tuesday, June 23, 2026</span><br>
+      <span id="todayDate">Loading date...</span><br>
       <small>Global Intel Daily</small>
     </div>
 
@@ -28,10 +29,14 @@
     <button class="topicBtn" data-topic="bitcoin crypto news">Crypto</button>
     <button class="topicBtn" data-topic="sports news usa">Sports</button>
     <button class="topicBtn" data-topic="weather alert news">Weather</button>
+    <button class="topicBtn" data-topic="entertainment news usa">Culture</button>
   </nav>
+
 </header>
 
-<div class="live-strip" id="breakingTicker">LIVE • Loading latest updates...</div>
+<div class="live-strip" id="breakingTicker">
+LIVE • Loading latest updates...
+</div>
 
 <section class="search-box">
   <select id="category">
@@ -40,23 +45,61 @@
     <option value="stock market finance news">Business</option>
     <option value="artificial intelligence news">Technology</option>
     <option value="bitcoin crypto news">Crypto</option>
+    <option value="sports news usa">Sports</option>
+    <option value="weather alert news">Weather</option>
   </select>
 
   <input id="searchBox" placeholder="Search news topic...">
   <button id="searchBtn">Search</button>
 </section>
 
-<main class="newspaper-layout">
+<main class="homepage-layout">
 
-  <section class="lead-grid">
-    <article class="lead-card" id="leadLeft"></article>
-    <article class="lead-card big" id="leadMain"></article>
-    <article class="lead-card" id="leadRight"></article>
+  <section class="main-news-area">
+
+    <section class="lead-grid">
+      <article class="lead-card" id="leadLeft"></article>
+      <article class="lead-card big" id="leadMain"></article>
+      <article class="lead-card" id="leadRight"></article>
+    </section>
+
+    <section class="section-title">
+      <h2>Latest Stories</h2>
+    </section>
+
+    <section class="below-grid" id="newsFeed">
+      <div class="loading">Loading live news...</div>
+    </section>
+
   </section>
 
-  <section class="below-grid" id="newsFeed">
-    <div class="loading">Loading live news...</div>
-  </section>
+  <aside class="homepage-sidebar">
+
+    <div class="sidebar-box">
+      <h2>🔥 Most Read</h2>
+      <ol id="mostReadList">
+        <li>Loading...</li>
+      </ol>
+    </div>
+
+    <div class="sidebar-box">
+      <h2>📌 Trending Topics</h2>
+      <button class="topicBtn side-topic" data-topic="bitcoin crypto news">Bitcoin</button>
+      <button class="topicBtn side-topic" data-topic="artificial intelligence news">AI</button>
+      <button class="topicBtn side-topic" data-topic="usa politics breaking news">U.S. Politics</button>
+      <button class="topicBtn side-topic" data-topic="stock market today">Stock Market</button>
+      <button class="topicBtn side-topic" data-topic="new york news">New York</button>
+    </div>
+
+    <div class="sidebar-box">
+      <h2>⚡ Live Watch</h2>
+      <p>Markets: Monitoring</p>
+      <p>Crypto: Active</p>
+      <p>AI: Active</p>
+      <p>Weather: Tracking</p>
+    </div>
+
+  </aside>
 
 </main>
 
