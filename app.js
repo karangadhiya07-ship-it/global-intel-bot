@@ -14,6 +14,7 @@ let allNews = [];
 let seenTitles = new Set();
 let isLoading = false;
 let topicIndex = 0;
+let marketIndex = 0;
 
 const topicPool = [
   "usa breaking news",
@@ -28,11 +29,28 @@ const topicPool = [
   "new york news"
 ];
 
+const marketItems = [
+  { name:"Apple", symbol:"AAPL", change:"+1.24%", trend:"up" },
+  { name:"Microsoft", symbol:"MSFT", change:"+0.82%", trend:"up" },
+  { name:"Nvidia", symbol:"NVDA", change:"+2.31%", trend:"up" },
+  { name:"Amazon", symbol:"AMZN", change:"-0.44%", trend:"down" },
+  { name:"Meta", symbol:"META", change:"+1.09%", trend:"up" },
+  { name:"Tesla", symbol:"TSLA", change:"-1.76%", trend:"down" },
+  { name:"Google", symbol:"GOOGL", change:"+0.55%", trend:"up" },
+  { name:"Netflix", symbol:"NFLX", change:"-0.69%", trend:"down" },
+  { name:"JPMorgan", symbol:"JPM", change:"+0.28%", trend:"up" },
+  { name:"Walmart", symbol:"WMT", change:"+0.39%", trend:"up" },
+  { name:"Gold", symbol:"GOLD", change:"+0.61%", trend:"up" },
+  { name:"Silver", symbol:"SILVER", change:"-0.22%", trend:"down" },
+  { name:"Crude Oil", symbol:"OIL", change:"+1.18%", trend:"up" },
+  { name:"Bitcoin", symbol:"BTC", change:"+2.14%", trend:"up" }
+];
+
 todayDate.textContent = new Date().toLocaleDateString("en-US", {
-  weekday: "long",
-  year: "numeric",
-  month: "long",
-  day: "numeric"
+  weekday:"long",
+  year:"numeric",
+  month:"long",
+  day:"numeric"
 });
 
 function detectSection(title){
@@ -48,6 +66,7 @@ function detectSection(title){
 
 function cleanText(text){
   if(!text || text === "undefined") return "This story is developing and more updates may follow soon.";
+
   return String(text)
     .replace("NEW", "")
     .replace("You can now listen to Fox News articles!", "")
@@ -58,6 +77,7 @@ function cleanText(text){
 
 function createArticleCard(item){
   const id = allNews.indexOf(item);
+
   return `
     ${item.image ? `<img src="${item.image}" onerror="this.style.display='none'" alt="news image">` : ""}
     <span class="section-label">${item.section}</span>
@@ -67,27 +87,27 @@ function createArticleCard(item){
     <a href="./article.html?id=${id}">Read more ›</a>
   `;
 }
-function createReelCard(index){
-  const reels = [
-    "🔥 60-Second Global Update",
-    "📹 Market Watch: What changed today",
-    "⚡ AI & Tech quick briefing",
-    "🌎 World News in one minute",
-    "₿ Crypto pulse: latest movement"
+
+function createSmallVideoCard(index){
+  const videos = [
+    "60-Second Global Update",
+    "Market Watch Brief",
+    "AI & Tech Quick Update",
+    "Crypto Pulse",
+    "World News Minute"
   ];
 
   return `
-    <article class="reel-card">
-      <div class="reel-icon">▶</div>
-      <div>
-        <span class="section-label">VIDEO</span>
-        <h2>${reels[index % reels.length]}</h2>
-        <p>Quick visual-style news update for readers who want fast highlights.</p>
-        <a href="#">Watch brief ›</a>
-      </div>
+    <article class="news-card video-news-card">
+      <div class="video-thumb"><span>▶</span></div>
+      <span class="section-label">VIDEO</span>
+      <h2>${videos[index % videos.length]}</h2>
+      <p>Quick news video-style update with the top highlights.</p>
+      <a href="#">Watch brief ›</a>
     </article>
   `;
 }
+
 function renderLeads(){
   leadLeft.innerHTML = allNews[0] ? createArticleCard(allNews[0]) : "";
   leadMain.innerHTML = allNews[1] ? createArticleCard(allNews[1]) : "";
@@ -95,13 +115,13 @@ function renderLeads(){
 }
 
 function renderBelowNews(){
-if(index > 0 && index % 6 === 0){
-  newsFeed.innerHTML += createSmallVideoCard(index);
-}
   newsFeed.innerHTML = "";
 
-allNews.slice(3).forEach((item, index)=>{
- 
+  allNews.slice(3).forEach((item, index)=>{
+    if(index > 0 && index % 6 === 0){
+      newsFeed.innerHTML += createSmallVideoCard(index);
+    }
+
     const article = document.createElement("article");
     article.className = "news-card";
     article.innerHTML = createArticleCard(item);
@@ -110,6 +130,7 @@ allNews.slice(3).forEach((item, index)=>{
 
   localStorage.setItem("articles", JSON.stringify(allNews));
 }
+
 function updateTicker(){
   if(!allNews.length){
     breakingTicker.textContent = "LIVE • Loading latest updates...";
@@ -126,11 +147,7 @@ function updateMostRead(){
   mostReadList.innerHTML = allNews
     .slice(0,8)
     .map((item, i)=>`
-      <li>
-        <a href="./article.html?id=${i}">
-          ${item.title}
-        </a>
-      </li>
+      <li><a href="./article.html?id=${i}">${item.title}</a></li>
     `)
     .join("");
 }
@@ -145,19 +162,9 @@ function updateTrendAnalysis(){
   const weather = allNews.filter(x => x.section === "Weather").length;
 
   const total = allNews.length || 1;
+  const trendingScore = Math.min(100, crypto * 12 + ai * 10 + finance * 9 + weather * 6 + total * 2);
 
-  const trendingScore = Math.min(
-    100,
-    crypto * 12 + ai * 10 + finance * 9 + weather * 6 + total * 2
-  );
-
-  const counts = {
-    Crypto: crypto,
-    Technology: ai,
-    Business: finance,
-    Weather: weather
-  };
-
+  const counts = { Crypto: crypto, Technology: ai, Business: finance, Weather: weather };
   const topCategory = Object.keys(counts).sort((a,b)=>counts[b]-counts[a])[0];
 
   box.innerHTML = `
@@ -171,27 +178,23 @@ function updateTrendAnalysis(){
   `;
 }
 
-function updateTopTrendBox(){
-
+function updateTopMarket(){
   const box = document.getElementById("topTrendBox");
   if(!box) return;
 
-  const crypto = allNews.filter(x => x.section === "Crypto").length;
-  const ai = allNews.filter(x => x.section === "Technology").length;
-  const finance = allNews.filter(x => x.section === "Business").length;
+  const search = searchBox.value.trim().toLowerCase();
 
-  if(crypto > ai && crypto > finance){
-    box.className = "top-trend-box up";
-    box.innerHTML = "BTC +2.14% ↑";
-  }
-  else if(ai > crypto && ai > finance){
-    box.className = "top-trend-box up";
-    box.innerHTML = "AI +8.20% ↑";
-  }
-  else{
-    box.className = "top-trend-box down";
-    box.innerHTML = "Nasdaq -1.76% ↓";
-  }
+  const found = marketItems.find(item =>
+    item.name.toLowerCase().includes(search) ||
+    item.symbol.toLowerCase().includes(search)
+  );
+
+  const item = search && found ? found : marketItems[marketIndex % marketItems.length];
+
+  box.className = "top-trend-box " + item.trend;
+  box.innerHTML = `${item.symbol} ${item.change} ${item.trend === "up" ? "↑" : "↓"}`;
+
+  if(!search) marketIndex++;
 }
 
 function renderPage(){
@@ -201,12 +204,11 @@ function renderPage(){
   updateTicker();
   updateMostRead();
   updateTrendAnalysis();
-  updateTopTrendBox();
+  updateTopMarket();
 }
 
 async function fetchNews(topic){
   if(isLoading) return;
-
   isLoading = true;
 
   const loading = document.createElement("div");
@@ -279,8 +281,7 @@ async function searchNews(){
 }
 
 window.addEventListener("scroll", ()=>{
-  const nearBottom =
-    window.innerHeight + window.scrollY >= document.body.offsetHeight - 700;
+  const nearBottom = window.innerHeight + window.scrollY >= document.body.offsetHeight - 700;
 
   if(nearBottom){
     const nextTopic = topicPool[topicIndex % topicPool.length];
@@ -294,6 +295,8 @@ searchBox.addEventListener("keydown", e=>{
   if(e.key === "Enter") searchNews();
 });
 
+searchBox.addEventListener("input", updateTopMarket);
+
 document.querySelectorAll(".topicBtn").forEach(btn=>{
   btn.addEventListener("click", ()=>{
     searchBox.value = btn.dataset.topic;
@@ -301,51 +304,7 @@ document.querySelectorAll(".topicBtn").forEach(btn=>{
   });
 });
 
-searchNews();
-const marketItems = [
-  { name:"Apple", symbol:"AAPL", change:"+1.24%", trend:"up" },
-  { name:"Microsoft", symbol:"MSFT", change:"+0.82%", trend:"up" },
-  { name:"Nvidia", symbol:"NVDA", change:"+2.31%", trend:"up" },
-  { name:"Amazon", symbol:"AMZN", change:"-0.44%", trend:"down" },
-  { name:"Meta", symbol:"META", change:"+1.09%", trend:"up" },
-  { name:"Tesla", symbol:"TSLA", change:"-1.76%", trend:"down" },
-  { name:"Google", symbol:"GOOGL", change:"+0.55%", trend:"up" },
-  { name:"Netflix", symbol:"NFLX", change:"-0.69%", trend:"down" },
-  { name:"JPMorgan", symbol:"JPM", change:"+0.28%", trend:"up" },
-  { name:"Walmart", symbol:"WMT", change:"+0.39%", trend:"up" },
-  { name:"Gold", symbol:"GOLD", change:"+0.61%", trend:"up" },
-  { name:"Silver", symbol:"SILVER", change:"-0.22%", trend:"down" },
-  { name:"Crude Oil", symbol:"OIL", change:"+1.18%", trend:"up" },
-  { name:"Bitcoin", symbol:"BTC", change:"+2.14%", trend:"up" }
-];
-
-let marketIndex = 0;
-let lockedMarket = null;
-
-function updateTopMarket(){
-  const box = document.getElementById("topTrendBox");
-  if(!box) return;
-
-  const search = searchBox.value.trim().toLowerCase();
-
-  const found = marketItems.find(item =>
-    item.name.toLowerCase().includes(search) ||
-    item.symbol.toLowerCase().includes(search)
-  );
-
-  const item = search && found
-    ? found
-    : marketItems[marketIndex % marketItems.length];
-
-  box.className = "top-trend-box " + item.trend;
-  box.innerHTML = `${item.symbol} ${item.change} ${item.trend === "up" ? "↑" : "↓"}`;
-
-  if(!search){
-    marketIndex++;
-  }
-}
-
 setInterval(updateTopMarket, 5000);
-updateTopMarket();
 
-searchBox.addEventListener("input", updateTopMarket);
+updateTopMarket();
+searchNews();
