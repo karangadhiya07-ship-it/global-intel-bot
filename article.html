@@ -1,38 +1,114 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>News Article</title>
+<title>Article | Global Intel Times</title>
 <link rel="stylesheet" href="./style.css">
 </head>
 <body>
 
-<div class="newspaper-layout">
-  <a href="./index.html">← Back to Home</a>
-  <article class="news-card" id="articleBox">
-    Loading article...
-  </article>
-</div>
+<header class="top-header">
+  <div class="top-row">
+    <div>
+      <a href="./index.html">← Back to Home</a>
+    </div>
+
+    <h1>Global Intel Times</h1>
+
+    <div></div>
+  </div>
+</header>
+
+<main class="article-page">
+
+<article id="articleBox" class="article-detail">
+Loading article...
+</article>
+
+<section class="related-section">
+<h2>Related Stories</h2>
+<div id="relatedNews" class="below-grid"></div>
+</section>
+
+</main>
 
 <script>
 const params = new URLSearchParams(window.location.search);
-const id = params.get("id");
+const id = Number(params.get("id"));
 
 const saved = JSON.parse(localStorage.getItem("articles") || "[]");
 const article = saved[id];
 
+const articleBox = document.getElementById("articleBox");
+const relatedNews = document.getElementById("relatedNews");
+
 if(article){
-  document.getElementById("articleBox").innerHTML = `
+
+  document.title = article.title + " | Global Intel Times";
+
+  articleBox.innerHTML = `
     ${article.image ? `<img src="${article.image}" onerror="this.style.display='none'">` : ""}
-    <span class="section-label">${article.section}</span>
-    <h2>${article.title}</h2>
-    <p>${article.description || "Full details are being updated."}</p>
-    <p><b>Source:</b> ${article.source}</p>
-    <a href="${article.link}" target="_blank">Original Source</a>
+
+    <span class="section-label">${article.section || "News"}</span>
+
+    <h1>${article.title}</h1>
+
+    <p class="article-summary">
+      ${article.description || "This developing story is being monitored by Global Intel Times."}
+    </p>
+
+    <hr>
+
+    <h2>What Happened</h2>
+    <p>
+      ${article.description || "Officials and news sources are reporting updates on this developing story. More details may become available as the situation develops."}
+    </p>
+
+    <h2>Why It Matters</h2>
+    <p>
+      This story may affect readers depending on the topic, location, economy, public safety, technology, markets, or daily life. Global Intel Times tracks these updates to help readers understand the key impact.
+    </p>
+
+    <h2>Who Is Affected</h2>
+    <p>
+      Depending on the event, this may affect local residents, investors, businesses, travelers, consumers, workers, students, or online users.
+    </p>
+
+    <h2>What Happens Next</h2>
+    <p>
+      More updates are expected as official sources and trusted news outlets release additional information.
+    </p>
+
+    <p class="source-credit">
+      Source: ${article.source || "News Source"}
+    </p>
+
+    <a class="source-button" href="${article.link}" target="_blank">
+      Open Original Source
+    </a>
   `;
+
+  const related = saved
+    .filter((item, index) => index !== id)
+    .slice(0, 6);
+
+  relatedNews.innerHTML = related.map((item, index) => `
+    <article class="news-card">
+      ${item.image ? `<img src="${item.image}" onerror="this.style.display='none'">` : ""}
+      <span class="section-label">${item.section || "News"}</span>
+      <h2>${item.title}</h2>
+      <p>${item.description || ""}</p>
+      <a href="./article.html?id=${saved.indexOf(item)}">Read more ›</a>
+    </article>
+  `).join("");
+
 }else{
-  document.getElementById("articleBox").innerHTML = "Article not found.";
+  articleBox.innerHTML = `
+    <h1>Article not found</h1>
+    <p>Please go back to the homepage and open the article again.</p>
+    <a href="./index.html">← Back to Home</a>
+  `;
 }
 </script>
 
