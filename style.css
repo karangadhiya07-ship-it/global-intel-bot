@@ -481,3 +481,10 @@ body{
 .video-news-card h2{
   font-size:22px;
 }
+.video-player{
+  width:100%;
+  height:180px;
+  object-fit:cover;
+  background:#111;
+  margin-bottom:12px;
+}
