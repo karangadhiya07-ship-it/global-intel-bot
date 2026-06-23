@@ -1,3 +1,4 @@
+console.log("APP JS LOADED");
 async function searchNews() {
   const query = document.getElementById("searchInput").value;
 
