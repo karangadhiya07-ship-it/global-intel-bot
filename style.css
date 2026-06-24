@@ -852,3 +852,15 @@ html{
 .news-card{
   min-height:540px;
 }
+.no-image-card{
+  padding-top:28px;
+}
+
+.no-image-card h2{
+  font-size:30px;
+}
+
+.no-image-card p{
+  font-size:19px;
+  line-height:1.55;
+}
