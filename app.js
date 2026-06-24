@@ -565,3 +565,11 @@ if(document.getElementById("articleView")){
 }else{
   searchNews();
 }
+const searchToggle = document.getElementById("searchToggle");
+const searchPanel = document.getElementById("searchPanel");
+
+if(searchToggle && searchPanel){
+  searchToggle.addEventListener("click", ()=>{
+    searchPanel.classList.toggle("active");
+  });
+}
