@@ -216,7 +216,7 @@ async function fetchNews(topic){
   newsFeed.innerHTML = `<div class="loading">Loading live news...</div>`;
 
   try{
-    const response = await fetch(`${window.location.origin}/api/news?q=${encodeURIComponent(topic)}`);
+    const response = await fetch(`${window.location.origin}/.netlify/functions/news?q=${encodeURIComponent(topic)}`);
     const data = await response.json();
     const results = Array.isArray(data.results) ? data.results : [];
 
