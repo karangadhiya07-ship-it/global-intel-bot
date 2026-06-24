@@ -92,7 +92,7 @@ function createArticleCard(item){
     item.image &&
     item.image.startsWith("http")
       ? item.image
-      : "https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=1200";
+      : "https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=1200&q=80";
 
   const badImages = [
     "benzinga",
