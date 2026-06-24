@@ -501,3 +501,28 @@ body{
 .clickable-card:hover h2{
   text-decoration:underline;
 }
+.site-footer{
+  margin-top:50px;
+  padding:30px 20px;
+  text-align:center;
+  border-top:2px solid #ddd;
+  background:#fafafa;
+}
+
+.footer-links{
+  display:flex;
+  justify-content:center;
+  gap:25px;
+  margin-bottom:15px;
+  flex-wrap:wrap;
+}
+
+.footer-links a{
+  text-decoration:none;
+  color:#111;
+  font-weight:600;
+}
+
+.footer-links a:hover{
+  color:#2563eb;
+}
