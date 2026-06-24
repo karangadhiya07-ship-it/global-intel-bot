@@ -330,9 +330,15 @@ console.log("TOTAL:", data.results?.length);
 
     results.forEach(item=>{
       const title = (item.title || "").trim();
+      const img = item.image_url || item.image || "";
       const cleanTitle = title.toLowerCase();
 
-      if(title && !seenTitles.has(cleanTitle)){
+      if(
+  title &&
+  !seenTitles.has(cleanTitle) &&
+  img &&
+  img.startsWith("http")
+){
         seenTitles.add(cleanTitle);
 
         fresh.push({
@@ -384,15 +390,7 @@ loadMoreTrigger.id = "loadMoreTrigger";
 loadMoreTrigger.style.height = "1px";
 document.body.appendChild(loadMoreTrigger);
 
-const observer = new IntersectionObserver((entries)=>{
-  const entry = entries[0];
-
-  if(entry.isIntersecting && !isLoading && autoLoadCount < MAX_AUTO_LOADS){
-    autoLoadCount++;
-    const nextTopic = topicPool[topicIndex % topicPool.length];
-    fetchNews(nextTopic);
-  }
-},{
+{
   root:null,
   rootMargin:"600px",
   threshold:0
@@ -428,12 +426,7 @@ function acceptCookies(){
   document.getElementById("cookieBanner").style.display="none";
 }
 
-window.addEventListener("load",()=>{
-  if(localStorage.getItem("cookiesAccepted")==="yes"){
-    const banner=document.getElementById("cookieBanner");
-    if(banner) banner.style.display="none";
-  }
-});
+
 setTimeout(()=>{
   const popup=document.getElementById("breakingPopup");
 
