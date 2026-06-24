@@ -333,11 +333,9 @@ console.log("TOTAL:", data.results?.length);
       const img = item.image_url || item.image || "";
       const cleanTitle = title.toLowerCase();
 
-      if(
+     if(
   title &&
-  !seenTitles.has(cleanTitle) &&
-  img &&
-  img.startsWith("http")
+  !seenTitles.has(cleanTitle)
 ){
         seenTitles.add(cleanTitle);
 
