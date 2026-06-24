@@ -831,3 +831,10 @@ body{
     line-height:1.35;
   }
 }
+html{
+  scroll-behavior:smooth;
+}
+
+img{
+  loading:lazy;
+}
