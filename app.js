@@ -341,14 +341,14 @@ console.log("TOTAL:", data.results?.length);
 ){
         seenTitles.add(cleanTitle);
 
-        fresh.push({
-          title,
-          description: item.description || item.content || item.summary || "",
-          section: detectSection(title),
-          source: item.source_id || item.source_name || "GNews",
-          link: item.link || "#",
-          image: item.image_url || item.image || ""
-        });
+      fresh.push({
+  title,
+  description: item.description || item.content || item.summary || "",
+  section: detectSection(title),
+  source: item.source_id || "News",
+  link: item.link || "#",
+  image: img
+});
       }
     });
 
