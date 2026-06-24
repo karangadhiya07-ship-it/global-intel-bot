@@ -375,3 +375,10 @@ window.addEventListener("load",()=>{
     if(banner) banner.style.display="none";
   }
 });
+setTimeout(()=>{
+  const popup=document.getElementById("breakingPopup");
+
+  if(popup){
+    popup.style.display="block";
+  }
+},5000);
