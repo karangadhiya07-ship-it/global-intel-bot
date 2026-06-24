@@ -13,6 +13,17 @@ export default async function handler(req, res) {
     source_id: article.source_id || article.source?.name || article.source || "News"
   });
 
+  function isGoodArticle(item) {
+    const badText = "ONLY AVAILABLE IN PAID PLANS";
+    return (
+      item.title &&
+      item.description &&
+      !item.title.includes(badText) &&
+      !item.description.includes(badText) &&
+      !(item.content || "").includes(badText)
+    );
+  }
+
   async function tryGNews() {
     if (!process.env.GNEWS_API_KEY) return [];
 
@@ -24,7 +35,6 @@ export default async function handler(req, res) {
     const data = await r.json();
 
     if (!r.ok || data.errors) return [];
-
     return (data.articles || []).map(normalize);
   }
 
@@ -39,22 +49,20 @@ export default async function handler(req, res) {
     const data = await r.json();
 
     if (!r.ok || data.status === "error") return [];
-
     return (data.results || []).map(normalize);
   }
 
   async function tryTheNewsAPI() {
-    if (!process.env.THENEWSAPI_KEY) return [];
+    if (!process.env.THENEWS_API_KEY) return [];
 
     const url =
-      `https://api.thenewsapi.com/v1/news/all?api_token=${process.env.THENEWSAPI_KEY}` +
+      `https://api.thenewsapi.com/v1/news/all?api_token=${process.env.THENEWS_API_KEY}` +
       `&search=${encodeURIComponent(q)}&language=en&limit=10`;
 
     const r = await fetch(url);
     const data = await r.json();
 
     if (!r.ok || data.error) return [];
-
     return (data.data || []).map(normalize);
   }
 
@@ -69,7 +77,6 @@ export default async function handler(req, res) {
     const data = await r.json();
 
     if (!r.ok || data.error) return [];
-
     return (data.data || []).map(normalize);
   }
 
@@ -130,19 +137,22 @@ export default async function handler(req, res) {
     ["CurrentsAPI", tryCurrents]
   ];
 
+  const seen = new Set();
+
   for (const [provider, fn] of providers) {
     try {
       const results = await fn();
 
-   const cleanResults = results
-  .filter(item =>
-    item.title &&
-    item.description &&
-    !item.description.includes("ONLY AVAILABLE IN PAID PLANS") &&
-    !item.content?.includes("ONLY AVAILABLE IN PAID PLANS")
-  )
-  .slice(0, 10);
-      
+      const cleanResults = results
+        .filter(isGoodArticle)
+        .filter(item => {
+          const key = item.title.toLowerCase();
+          if (seen.has(key)) return false;
+          seen.add(key);
+          return true;
+        })
+        .slice(0, 10);
+
       if (cleanResults.length > 0) {
         return res.status(200).json({
           provider,
