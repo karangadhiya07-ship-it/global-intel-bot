@@ -17,18 +17,17 @@ let topicIndex = 0;
 let marketIndex = 0;
 
 const topicPool = [
-  "usa breaking news",
-  "world breaking news",
-  "stock market finance news",
-  "artificial intelligence news",
-  "bitcoin crypto news",
-  "sports news usa",
-  "weather alert news",
-  "entertainment news usa",
-  "technology news usa",
-  "new york news"
+  "bitcoin",
+  "artificial intelligence",
+  "stock market",
+  "tesla",
+  "apple",
+  "nvidia",
+  "microsoft",
+  "gold price",
+  "silver price",
+  "crypto"
 ];
-
 const marketItems = [
   { name:"Apple", symbol:"AAPL", change:"+1.24%", trend:"up" },
   { name:"Microsoft", symbol:"MSFT", change:"+0.82%", trend:"up" },
@@ -329,7 +328,7 @@ async function searchNews(){
   if(newsFeed) newsFeed.innerHTML = `<div class="loading">Loading live news...</div>`;
   if(mostReadList) mostReadList.innerHTML = `<li>Loading...</li>`;
 
-  await fetchNews(searchBox?.value.trim() || category?.value || "usa breaking news");
+await fetchNews(searchBox?.value.trim() || "bitcoin");
 }
 
 window.addEventListener("scroll", ()=>{
