@@ -175,7 +175,7 @@ function renderBelowNews(){
 
   newsFeed.innerHTML = "";
 
-  allNews.slice(3).forEach((item, index)=>{
+ allNews.forEach((item, index)=>{
     if(index > 0 && index % 6 === 0){
       newsFeed.insertAdjacentHTML("beforeend", createSmallVideoCard(index));
     }
