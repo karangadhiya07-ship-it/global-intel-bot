@@ -15,95 +15,147 @@ let marketIndex = 0;
 
 const MAX_HOME_ARTICLES = 30;
 
+const FALLBACK_ARTICLES = [
+  {
+    title: "White House Faces New Economic Pressure as Markets Watch Washington",
+    description: "US policymakers continue discussions around inflation, jobs, interest rates and economic growth.",
+    section: "U.S.",
+    source: "Global Intel Times",
+    image: "https://images.unsplash.com/photo-1529107386315-e1a2ed48a620?w=1200",
+    publishedAt: new Date().toISOString()
+  },
+  {
+    title: "Nvidia, Microsoft and Apple Keep AI Investors Focused on Big Tech",
+    description: "Artificial intelligence remains one of the strongest themes across Wall Street and Silicon Valley.",
+    section: "Technology",
+    source: "Global Intel Times",
+    image: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=1200",
+    publishedAt: new Date().toISOString()
+  },
+  {
+    title: "US Stock Market Opens Higher as Traders Track Economic Data",
+    description: "Investors are watching earnings, Treasury yields, inflation data and Federal Reserve signals.",
+    section: "Business",
+    source: "Global Intel Times",
+    image: "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=1200",
+    publishedAt: new Date().toISOString()
+  },
+  {
+    title: "Bitcoin Traders Watch Key Levels as Crypto Volatility Continues",
+    description: "Crypto markets remain active as investors monitor liquidity, institutional demand and global risk sentiment.",
+    section: "Crypto",
+    source: "Global Intel Times",
+    image: "https://images.unsplash.com/photo-1518546305927-5a555bb7020d?w=1200",
+    publishedAt: new Date().toISOString()
+  },
+  {
+    title: "Congress Faces New Debate Over Spending, Taxes and the Economy",
+    description: "Lawmakers are under pressure as voters focus on prices, jobs, housing and national priorities.",
+    section: "Politics",
+    source: "Global Intel Times",
+    image: "https://images.unsplash.com/photo-1541872705-1f73c6400ec9?w=1200",
+    publishedAt: new Date().toISOString()
+  },
+  {
+    title: "Storm Systems Bring Weather Concerns Across Parts of the United States",
+    description: "Forecast models show changing weather patterns that could affect travel, energy demand and local communities.",
+    section: "Weather",
+    source: "Global Intel Times",
+    image: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=1200",
+    publishedAt: new Date().toISOString()
+  }
+];
+
 const blockedKeywords = [
-  "prediction","betting","odds","casino","promo code","coupon",
-  "gaming controller","easysmx","sponsored","affiliate","deal",
-  "buy now","tips and bets"
+  "prediction", "betting", "odds", "casino", "promo code", "coupon",
+  "gaming controller", "easysmx", "sponsored", "affiliate", "deal",
+  "buy now", "tips and bets", "celebrity gossip", "movie star"
 ];
 
 const marketItems = [
-  { symbol:"AAPL", change:"+1.24%", trend:"up" },
-  { symbol:"MSFT", change:"+0.82%", trend:"up" },
-  { symbol:"NVDA", change:"+2.31%", trend:"up" },
-  { symbol:"AMZN", change:"-0.44%", trend:"down" },
-  { symbol:"META", change:"+1.09%", trend:"up" },
-  { symbol:"TSLA", change:"-1.76%", trend:"down" },
-  { symbol:"GOOGL", change:"+0.55%", trend:"up" },
-  { symbol:"BTC", change:"+2.14%", trend:"up" }
+  { symbol: "AAPL", change: "+1.24%", trend: "up" },
+  { symbol: "MSFT", change: "+0.82%", trend: "up" },
+  { symbol: "NVDA", change: "+2.31%", trend: "up" },
+  { symbol: "AMZN", change: "-0.44%", trend: "down" },
+  { symbol: "META", change: "+1.09%", trend: "up" },
+  { symbol: "GOOGL", change: "+0.55%", trend: "up" },
+  { symbol: "TSLA", change: "-1.76%", trend: "down" },
+  { symbol: "BTC", change: "+2.14%", trend: "up" },
+  { symbol: "GOLD", change: "+0.41%", trend: "up" },
+  { symbol: "SILVER", change: "-0.22%", trend: "down" }
 ];
 
-if(todayDate){
+if (todayDate) {
   todayDate.textContent = new Date().toLocaleDateString("en-US", {
-    weekday:"long",
-    year:"numeric",
-    month:"long",
-    day:"numeric"
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric"
   });
 }
 
-function cleanText(text = ""){
+function cleanText(text = "") {
   return String(text || "This story is developing and more updates may follow soon.")
-    .replace(/<[^>]*>/g,"")
-    .replace(/\[\.\.\.\]/g,"")
-    .replace(/The post .* appeared first on .*?\./gi,"")
-    .replace(/\s+/g," ")
+    .replace(/<[^>]*>/g, "")
+    .replace(/\[\.\.\.\]/g, "")
+    .replace(/The post .* appeared first on .*?\./gi, "")
+    .replace(/\s+/g, " ")
     .trim();
 }
 
-function shortText(text, limit = 170){
+function shortText(text, limit = 170) {
   const t = cleanText(text);
   return t.length > limit ? t.slice(0, limit) + "..." : t;
 }
 
-function detectSection(title){
+function detectSection(title) {
   const t = String(title || "").toLowerCase();
 
-  if(t.includes("bitcoin") || t.includes("crypto") || t.includes("ethereum")) return "Crypto";
-  if(t.includes("stock") || t.includes("market") || t.includes("economy") || t.includes("fed") || t.includes("nasdaq")) return "Business";
-  if(t.includes("ai") || t.includes("openai") || t.includes("technology") || t.includes("nvidia")) return "Technology";
-  if(t.includes("weather") || t.includes("storm") || t.includes("rain")) return "Weather";
-  if(t.includes("sport") || t.includes("nfl") || t.includes("nba") || t.includes("fifa")) return "Sports";
-  if(t.includes("new york") || t.includes("nyc")) return "New York";
-  if(t.includes("trump") || t.includes("biden") || t.includes("election") || t.includes("white house")) return "U.S.";
+  if (t.includes("bitcoin") || t.includes("crypto") || t.includes("ethereum")) return "Crypto";
+  if (t.includes("stock") || t.includes("market") || t.includes("economy") || t.includes("fed") || t.includes("nasdaq") || t.includes("inflation")) return "Business";
+  if (t.includes("ai") || t.includes("openai") || t.includes("technology") || t.includes("nvidia") || t.includes("microsoft") || t.includes("apple")) return "Technology";
+  if (t.includes("weather") || t.includes("storm") || t.includes("rain")) return "Weather";
+  if (t.includes("trump") || t.includes("biden") || t.includes("election") || t.includes("white house") || t.includes("congress")) return "Politics";
+  if (t.includes("new york") || t.includes("nyc")) return "U.S.";
 
   return "News";
 }
 
-function isBadArticle(title, description){
+function isBadArticle(title, description) {
   const text = `${title} ${description}`.toLowerCase();
   return blockedKeywords.some(word => text.includes(word));
 }
 
-function getValidImage(item){
+function getValidImage(item) {
   const img = item.image || "";
 
-  if(
+  if (
     img.startsWith("http") &&
     !img.toLowerCase().includes("logo") &&
     !img.toLowerCase().includes("placeholder") &&
     !img.toLowerCase().includes("default") &&
     !img.toLowerCase().includes("benzinga")
-  ){
+  ) {
     return img;
   }
 
   return "";
 }
 
-function articleUrl(id){
+function articleUrl(id) {
   return `./article.html?id=${id}`;
 }
 
-function trackArticleClick(title){
+function trackArticleClick(title) {
   const clicks = JSON.parse(localStorage.getItem("articleClicks") || "{}");
   clicks[title] = (clicks[title] || 0) + 1;
   localStorage.setItem("articleClicks", JSON.stringify(clicks));
 }
 
-function createArticleCard(item){
+function createArticleCard(item) {
   const id = allNews.indexOf(item);
   const img = getValidImage(item);
-  const safeTitle = item.title.replace(/'/g,"");
+  const safeTitle = item.title.replace(/'/g, "");
 
   return `
     <article class="news-card clickable-card ${!img ? "no-image-card" : ""}">
@@ -111,7 +163,7 @@ function createArticleCard(item){
         ${img ? `<img loading="lazy" decoding="async" src="${img}" onerror="this.remove()" alt="${item.title}">` : ""}
         <span class="section-label">${item.section || "NEWS"}</span>
         <h2>${item.title}</h2>
-        <p>${shortText(item.description || "",185)}</p>
+        <p>${shortText(item.description || "", 185)}</p>
         <small>Source: ${item.source || "Global Intel Times"}</small>
         <div class="read-more-btn">Read Full Story →</div>
       </a>
@@ -119,14 +171,14 @@ function createArticleCard(item){
   `;
 }
 
-function renderLeads(){
-  if(leadMain) leadMain.innerHTML = allNews[0] ? createArticleCard(allNews[0]) : "";
-  if(leadLeft) leadLeft.innerHTML = allNews[1] ? createArticleCard(allNews[1]) : "";
-  if(leadRight) leadRight.innerHTML = allNews[2] ? createArticleCard(allNews[2]) : "";
+function renderLeads() {
+  if (leadMain) leadMain.innerHTML = allNews[0] ? createArticleCard(allNews[0]) : "";
+  if (leadLeft) leadLeft.innerHTML = allNews[1] ? createArticleCard(allNews[1]) : "";
+  if (leadRight) leadRight.innerHTML = allNews[2] ? createArticleCard(allNews[2]) : "";
 }
 
-function renderBelowNews(){
-  if(!newsFeed) return;
+function renderBelowNews() {
+  if (!newsFeed) return;
 
   newsFeed.innerHTML = allNews
     .slice(3, MAX_HOME_ARTICLES)
@@ -136,45 +188,45 @@ function renderBelowNews(){
   localStorage.setItem("articles", JSON.stringify(allNews));
 }
 
-function updateTicker(){
-  if(!breakingTicker) return;
+function updateTicker() {
+  if (!breakingTicker) return;
 
   breakingTicker.textContent = allNews.length
-    ? "LIVE • " + allNews.slice(0,3).map(x => x.title).join(" • ")
+    ? "LIVE • " + allNews.slice(0, 3).map(x => x.title).join(" • ")
     : "LIVE • Loading latest updates...";
 }
 
-function updateMostRead(){
-  if(!mostReadList) return;
+function updateMostRead() {
+  if (!mostReadList) return;
 
   mostReadList.innerHTML = allNews
-    .slice(0,8)
-    .map((item,i) => `<li><a href="${articleUrl(i)}">${item.title}</a></li>`)
+    .slice(0, 8)
+    .map((item, i) => `<li><a href="${articleUrl(i)}">${item.title}</a></li>`)
     .join("");
 }
 
-function updateTrendAnalysis(){
+function updateTrendAnalysis() {
   const box = document.getElementById("trendAnalysis");
-  if(!box) return;
+  if (!box) return;
 
   const counts = {
     Crypto: allNews.filter(x => x.section === "Crypto").length,
     Technology: allNews.filter(x => x.section === "Technology").length,
     Business: allNews.filter(x => x.section === "Business").length,
     Weather: allNews.filter(x => x.section === "Weather").length,
-    Sports: allNews.filter(x => x.section === "Sports").length,
+    Politics: allNews.filter(x => x.section === "Politics").length,
     News: allNews.filter(x => x.section === "News").length
   };
 
-  const topCategory = Object.keys(counts).sort((a,b) => counts[b] - counts[a])[0];
+  const topCategory = Object.keys(counts).sort((a, b) => counts[b] - counts[a])[0];
 
   const score = Math.min(
     100,
     counts.Crypto * 10 +
     counts.Technology * 10 +
     counts.Business * 9 +
+    counts.Politics * 8 +
     counts.Weather * 6 +
-    counts.Sports * 4 +
     allNews.length * 2
   );
 
@@ -189,19 +241,19 @@ function updateTrendAnalysis(){
   `;
 }
 
-function latestUpdatesWidget(){
+function latestUpdatesWidget() {
   const box = document.getElementById("latestUpdatesBox");
-  if(!box) return;
+  if (!box) return;
 
   box.innerHTML = allNews
-    .slice(0,5)
-    .map((item,i) => `<a class="latest-update-link" href="${articleUrl(i)}">${item.title}</a>`)
+    .slice(0, 5)
+    .map((item, i) => `<a class="latest-update-link" href="${articleUrl(i)}">${item.title}</a>`)
     .join("");
 }
 
-function updateTopMarket(){
+function updateTopMarket() {
   const box = document.getElementById("topTrendBox");
-  if(!box) return;
+  if (!box) return;
 
   const item = marketItems[marketIndex % marketItems.length];
 
@@ -209,16 +261,16 @@ function updateTopMarket(){
   box.innerHTML = `${item.symbol} ${item.change} ${item.trend === "up" ? "↑" : "↓"}`;
   box.style.cursor = "pointer";
 
-  box.onclick = function(){
+  box.onclick = function () {
     window.location.href = `./market.html?symbol=${item.symbol}`;
   };
 
   marketIndex++;
 }
 
-function updateHomeSchema(){
+function updateHomeSchema() {
   const oldSchema = document.getElementById("homeItemListSchema");
-  if(oldSchema) oldSchema.remove();
+  if (oldSchema) oldSchema.remove();
 
   const schema = document.createElement("script");
   schema.type = "application/ld+json";
@@ -227,20 +279,20 @@ function updateHomeSchema(){
   schema.textContent = JSON.stringify({
     "@context": "https://schema.org",
     "@type": "ItemList",
-    "name": "Latest News on Global Intel Times",
-    "numberOfItems": allNews.length,
-    "itemListElement": allNews.slice(0, 30).map((item, index) => ({
+    name: "Latest News on Global Intel Times",
+    numberOfItems: allNews.length,
+    itemListElement: allNews.slice(0, 30).map((item, index) => ({
       "@type": "ListItem",
-      "position": index + 1,
-      "url": `${window.location.origin}/article.html?id=${index}`,
-      "name": item.title
+      position: index + 1,
+      url: `${window.location.origin}/article.html?id=${index}`,
+      name: item.title
     }))
   });
 
   document.head.appendChild(schema);
 }
 
-function renderPage(){
+function renderPage() {
   allNews = allNews.slice(0, MAX_HOME_ARTICLES);
   localStorage.setItem("articles", JSON.stringify(allNews));
 
@@ -254,14 +306,39 @@ function renderPage(){
   updateHomeSchema();
 }
 
-async function fetchNews(topic){
-  if(isLoading || !newsFeed) return;
+function useFallbackNews() {
+  allNews = FALLBACK_ARTICLES.slice(0, MAX_HOME_ARTICLES);
+  localStorage.setItem("articles", JSON.stringify(allNews));
+  localStorage.setItem("cachedNews", JSON.stringify(allNews));
+  renderPage();
+}
+
+async function fetchNews(topic) {
+  if (isLoading || !newsFeed) return;
 
   isLoading = true;
-  newsFeed.innerHTML = `<div class="loading">Loading live news...</div>`;
 
-  try{
-    const response = await fetch(`${API_ENDPOINT}?q=${encodeURIComponent(topic)}`);
+  const cached = localStorage.getItem("cachedNews");
+  if (cached) {
+    try {
+      allNews = JSON.parse(cached);
+      if (allNews.length) renderPage();
+    } catch (e) {}
+  } else {
+    newsFeed.innerHTML = `<div class="loading">Loading live news...</div>`;
+  }
+
+  try {
+    const controller = new AbortController();
+
+    setTimeout(() => {
+      controller.abort();
+    }, 3000);
+
+    const response = await fetch(`${API_ENDPOINT}?q=${encodeURIComponent(topic)}`, {
+      signal: controller.signal
+    });
+
     const data = await response.json();
     const results = Array.isArray(data.results) ? data.results : [];
     const fresh = [];
@@ -271,9 +348,9 @@ async function fetchNews(topic){
       const description = cleanText(item.description || item.content || item.summary || "");
       const key = title.toLowerCase();
 
-      if(!title) return;
-      if(seenTitles.has(key)) return;
-      if(isBadArticle(title, description)) return;
+      if (!title) return;
+      if (seenTitles.has(key)) return;
+      if (isBadArticle(title, description)) return;
 
       seenTitles.add(key);
 
@@ -290,70 +367,76 @@ async function fetchNews(topic){
 
     allNews = fresh.slice(0, MAX_HOME_ARTICLES);
 
-    if(allNews.length){
+    if (allNews.length) {
+      localStorage.setItem("cachedNews", JSON.stringify(allNews));
       renderPage();
-    }else{
-      newsFeed.innerHTML = `<div class="loading">No fresh news found.</div>`;
+    } else {
+      useFallbackNews();
     }
 
-  }catch(error){
-    console.error(error);
-    newsFeed.innerHTML = `<div class="loading">Failed to load stories.</div>`;
+  } catch (error) {
+    console.warn("Live news failed. Showing fallback news.", error);
+
+    if (!allNews.length) {
+      useFallbackNews();
+    } else {
+      renderPage();
+    }
   }
 
   isLoading = false;
 }
 
-async function searchNews(topic = "usa breaking news"){
+async function searchNews(topic = "usa breaking news") {
   allNews = [];
   seenTitles = new Set();
 
-  if(leadLeft) leadLeft.innerHTML = "";
-  if(leadMain) leadMain.innerHTML = "";
-  if(leadRight) leadRight.innerHTML = "";
-  if(mostReadList) mostReadList.innerHTML = `<li>Loading...</li>`;
+  if (leadLeft) leadLeft.innerHTML = "";
+  if (leadMain) leadMain.innerHTML = "";
+  if (leadRight) leadRight.innerHTML = "";
+  if (mostReadList) mostReadList.innerHTML = `<li>Loading...</li>`;
 
   await fetchNews(topic);
 }
 
-function setupCategoryButtons(){
+function setupCategoryButtons() {
   document.querySelectorAll(".topicBtn").forEach(btn => {
-    btn.onclick = function(){
+    btn.onclick = function () {
       searchNews(btn.dataset.topic || "usa breaking news");
     };
   });
 }
 
-function setupCookieBanner(){
+function setupCookieBanner() {
   const banner = document.getElementById("cookieBanner");
-  if(!banner) return;
+  if (!banner) return;
 
   banner.style.display = localStorage.getItem("cookiesAccepted") === "yes" ? "none" : "flex";
 }
 
-function acceptCookies(){
-  localStorage.setItem("cookiesAccepted","yes");
+function acceptCookies() {
+  localStorage.setItem("cookiesAccepted", "yes");
 
   const banner = document.getElementById("cookieBanner");
-  if(banner) banner.style.display = "none";
+  if (banner) banner.style.display = "none";
 }
 
-function setupNewsletter(){
+function setupNewsletter() {
   const input = document.querySelector(".newsletter-input");
   const btn = document.querySelector(".newsletter-btn");
-  if(!input || !btn) return;
+  if (!input || !btn) return;
 
-  btn.onclick = function(){
+  btn.onclick = function () {
     const email = input.value.trim();
 
-    if(!email || !email.includes("@")){
+    if (!email || !email.includes("@")) {
       alert("Please enter a valid email.");
       return;
     }
 
     const saved = JSON.parse(localStorage.getItem("newsletterEmails") || "[]");
 
-    if(!saved.includes(email)){
+    if (!saved.includes(email)) {
       saved.push(email);
       localStorage.setItem("newsletterEmails", JSON.stringify(saved));
     }
@@ -363,7 +446,7 @@ function setupNewsletter(){
   };
 }
 
-function updateVisitorCount(){
+function updateVisitorCount() {
   const today = new Date().toDateString();
   const key = "visitorCount_" + today;
 
@@ -371,26 +454,32 @@ function updateVisitorCount(){
   localStorage.setItem(key, count);
 
   const box = document.getElementById("visitorCounter");
-  if(box) box.textContent = count + " visits today";
+  if (box) box.textContent = count + " visits today";
 }
 
-function updateArticleSEO(article){
+function updateArticleSEO(article) {
   document.title = `${article.title} | Global Intel Times`;
 }
 
-function readingTime(text){
+function readingTime(text) {
   return `${Math.max(1, Math.ceil(cleanText(text).split(" ").length / 220))} min read`;
 }
 
-function renderArticlePage(){
+function renderArticlePage() {
   const articleBox = document.getElementById("articleView");
-  if(!articleBox) return;
+  if (!articleBox) return;
 
-  const articles = JSON.parse(localStorage.getItem("articles") || "[]");
+  let articles = JSON.parse(localStorage.getItem("articles") || "[]");
+
+  if (!articles.length) {
+    articles = FALLBACK_ARTICLES;
+    localStorage.setItem("articles", JSON.stringify(articles));
+  }
+
   const id = Number(new URLSearchParams(window.location.search).get("id") || 0);
   const article = articles[id];
 
-  if(!article){
+  if (!article) {
     articleBox.innerHTML = `<h1>Article not found</h1><p>Please go back to homepage.</p>`;
     return;
   }
@@ -418,9 +507,9 @@ setupCategoryButtons();
 setInterval(updateTopMarket, 5000);
 updateTopMarket();
 
-if(document.getElementById("articleView")){
+if (document.getElementById("articleView")) {
   renderArticlePage();
-}else{
+} else {
   searchNews("usa breaking news");
 
   setInterval(() => {
