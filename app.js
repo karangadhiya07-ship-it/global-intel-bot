@@ -543,7 +543,6 @@ function setupProFeatures(){
   setupNewsletter();
   setupKeyboardSearch();
   updateVisitorCount();
-  setupSearchPopup();
   setupCategoryButtons();
 }
 
