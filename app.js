@@ -569,22 +569,7 @@ var searchToggleBtn = document.getElementById("searchToggle");
 var searchPanelBox = document.getElementById("searchPanel");
 
 if (searchToggleBtn && searchPanelBox) {
-  searchToggleBtn.addEventListener("click", function () {
+  searchToggleBtn.onclick = function () {
     searchPanelBox.classList.toggle("active");
-  });
+  };
 }
-
-document.addEventListener("click", function (e) {
-  const goBtn = e.target.closest("#searchBtn");
-
-  if (goBtn) {
-    e.preventDefault();
-
-    const term = searchBox ? searchBox.value.trim() : "";
-
-    if (term) {
-      searchNews();
-      searchPanelBox.classList.remove("active");
-    }
-  }
-});
