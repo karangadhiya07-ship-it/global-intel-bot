@@ -565,20 +565,12 @@ if(document.getElementById("articleView")){
 }else{
   searchNews();
 }
-const searchToggle = document.getElementById("searchToggle");
-const searchPanel = document.getElementById("searchPanel");
+var searchToggleBtn = document.getElementById("searchToggle");
+var searchPanelBox = document.getElementById("searchPanel");
 
-if(searchToggle && searchPanel){
-  searchToggle.addEventListener("click", ()=>{
-    searchPanel.classList.toggle("active");
-  });
-}
-const searchToggle = document.getElementById("searchToggle");
-const searchPanel = document.getElementById("searchPanel");
-
-if (searchToggle && searchPanel) {
-  searchToggle.addEventListener("click", () => {
-    searchPanel.classList.toggle("active");
+if (searchToggleBtn && searchPanelBox) {
+  searchToggleBtn.addEventListener("click", function () {
+    searchPanelBox.classList.toggle("active");
   });
 }
 
@@ -588,12 +580,11 @@ document.addEventListener("click", function (e) {
   if (goBtn) {
     e.preventDefault();
 
-    const input = document.getElementById("searchBox");
-    const term = input ? input.value.trim() : "";
+    const term = searchBox ? searchBox.value.trim() : "";
 
     if (term) {
       searchNews();
-      searchPanel.classList.remove("active");
+      searchPanelBox.classList.remove("active");
     }
   }
 });
