@@ -179,8 +179,10 @@ function updateTopMarket(){
   if(!box) return;
 
   const item = marketItems[marketIndex % marketItems.length];
+
   box.className = "top-trend-box " + item.trend;
-  box.innerHTML = `${item.symbol} ${item.change} ${item.trend === "up" ? "↑" : "↓"}`;
+  box.innerHTML = `<a href="./market.html?symbol=${item.symbol}">${item.symbol} ${item.change} ${item.trend === "up" ? "↑" : "↓"}</a>`;
+
   marketIndex++;
 }
 
