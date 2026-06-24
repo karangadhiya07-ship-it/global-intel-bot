@@ -90,19 +90,19 @@ function createArticleCard(item){
   const id = allNews.indexOf(item);
 
   return `
-    ${item.image ? `
-      <img src="${item.image}" onerror="this.style.display='none'" alt="news image">
-    ` : ""}
+    <div class="clickable-card" onclick="window.location.href='./article.html?id=${id}'">
+      ${item.image ? `
+        <img src="${item.image}" onerror="this.style.display='none'" alt="news image">
+      ` : ""}
 
-    <span class="section-label">${item.section}</span>
+      <span class="section-label">${item.section}</span>
 
-    <h2>${item.title}</h2>
+      <h2>${item.title}</h2>
 
-    <p>${shortText(item.description, 190)}</p>
+      <p>${shortText(item.description, 190)}</p>
 
-    <small>Source: ${item.source}</small><br>
-
-    <a href="./article.html?id=${id}">Read more ›</a>
+      <small>Source: ${item.source}</small>
+    </div>
   `;
 }
 
