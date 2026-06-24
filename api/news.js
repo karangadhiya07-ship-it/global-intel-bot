@@ -134,10 +134,15 @@ export default async function handler(req, res) {
     try {
       const results = await fn();
 
-      const cleanResults = results
-        .filter(item => item.title && item.description)
-        .slice(0, 10);
-
+   const cleanResults = results
+  .filter(item =>
+    item.title &&
+    item.description &&
+    !item.description.includes("ONLY AVAILABLE IN PAID PLANS") &&
+    !item.content?.includes("ONLY AVAILABLE IN PAID PLANS")
+  )
+  .slice(0, 10);
+      
       if (cleanResults.length > 0) {
         return res.status(200).json({
           provider,
