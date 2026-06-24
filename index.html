@@ -1,29 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-  <!-- Google Analytics Placeholder -->
-<!-- Replace G-XXXXXXXXXX with your real Google Analytics Measurement ID -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag("js", new Date());
-  gtag("config", "G-XXXXXXXXXX");
-</script>
-
-<!-- Microsoft Clarity Placeholder -->
-<!-- Replace CLARITY_ID with your real Microsoft Clarity Project ID -->
-<script>
-  (function(c,l,a,r,i,t,y){
-    c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
-    t=l.createElement(r);
-    t.async=1;
-    t.src="https://www.clarity.ms/tag/" + i;
-    y=l.getElementsByTagName(r)[0];
-    y.parentNode.insertBefore(t,y);
-  })(window, document, "clarity", "script", "CLARITY_ID");
-</script>
 <head>
-  <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
@@ -45,7 +22,7 @@
   <meta name="twitter:image" content="https://global-intel-bot.vercel.app/preview.png" />
 
   <link rel="canonical" href="https://global-intel-bot.vercel.app/" />
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="./style.css" />
 
   <script type="application/ld+json">
   {
@@ -58,77 +35,10 @@
   }
   </script>
 </head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Global Intel Times V8</title>
-<link rel="stylesheet" href="./style.css">
-</head>
-  <footer class="site-footer">
 
-  <div class="footer-links">
-    <a href="/about.html">About Us</a>
-    <a href="/contact.html">Contact Us</a>
-    <a href="/privacy.html">Privacy Policy</a>
-  </div>
-
-  <div class="footer-links">
-    <a href="/sitemap.xml">Sitemap</a>
-    <a href="/robots.txt">Robots</a>
-  </div>
-
-  <p>
-    © 2026 Global Intel Times. All Rights Reserved.
-  </p>
-
-</footer>
-  <div id="cookieBanner" class="cookie-banner">
-  <p>
-    We use cookies to improve your experience.
-  </p>
-  <button onclick="acceptCookies()">Accept</button>
-</div>
-  <div class="sidebar-box">
-  
-  <input
-    type="email"
-    placeholder="Your Email"
-    class="newsletter-input"
-  >
-
-  <button class="newsletter-btn">
-    Subscribe
-  </button>
-</div>
-  <div class="sidebar-box">
-
-  <div class="market-row">
-    <span>Bitcoin</span>
-    <span class="market-up">+2.4%</span>
-  </div>
-
-  <div class="market-row">
-    <span>Gold</span>
-    <span class="market-up">+0.8%</span>
-  </div>
-
-  <div class="market-row">
-    <span>Silver</span>
-    <span class="market-down">-0.3%</span>
-  </div>
-</div>
-  
-  <div id="breakingPopup" class="breaking-popup">
-  🚨 Breaking News Alert
-</div>
-  
 <body>
-<!-- Analytics Placeholder -->
-<!-- Google Analytics / Microsoft Clarity code અહીં future માં મુકવો -->
 
-<!-- AdSense Placeholder -->
-<!-- Google AdSense approval પછી અહીં script મુકવી -->
 <header class="top-header">
-
   <div class="top-row">
     <div>
       <span id="todayDate">Loading date...</span><br>
@@ -137,41 +47,37 @@
 
     <h1>Global Intel Times</h1>
 
-<div class="top-market-box">
-  <button class="subscribe-btn">SUBSCRIBE FOR ₹25/WEEK</button>
-  <div id="topTrendBox" class="top-trend-box">
-    Loading market...
-  </div>
-</div>
-    
+    <div class="top-market-box">
+      <button class="subscribe-btn">SUBSCRIBE FOR ₹25/WEEK</button>
+      <div id="topTrendBox" class="top-trend-box">Loading market...</div>
+    </div>
   </div>
 
   <nav class="nav-bar">
-    <button class="topicBtn" data-topic="usa breaking news">U.S.</button>
-    <button class="topicBtn" data-topic="world breaking news">World</button>
-    <button class="topicBtn" data-topic="stock market finance news">Business</button>
-    <button class="topicBtn" data-topic="artificial intelligence news">Technology</button>
-    <button class="topicBtn" data-topic="bitcoin crypto news">Crypto</button>
-    <button class="topicBtn" data-topic="sports news usa">Sports</button>
-    <button class="topicBtn" data-topic="weather alert news">Weather</button>
-    <button class="topicBtn" data-topic="entertainment news usa">Culture</button>
+    <button class="topicBtn" data-topic="new york news">U.S.</button>
+    <button class="topicBtn" data-topic="world news">World</button>
+    <button class="topicBtn" data-topic="stock market">Business</button>
+    <button class="topicBtn" data-topic="artificial intelligence">Technology</button>
+    <button class="topicBtn" data-topic="bitcoin">Crypto</button>
+    <button class="topicBtn" data-topic="sports news">Sports</button>
+    <button class="topicBtn" data-topic="weather news">Weather</button>
+    <button class="topicBtn" data-topic="entertainment news">Culture</button>
   </nav>
-
 </header>
 
 <div class="live-strip" id="breakingTicker">
-LIVE • Loading latest updates...
+  LIVE • Loading latest updates...
 </div>
 
 <section class="search-box">
   <select id="category">
-    <option value="usa breaking news">U.S.</option>
-    <option value="world breaking news">World</option>
-    <option value="stock market finance news">Business</option>
-    <option value="artificial intelligence news">Technology</option>
-    <option value="bitcoin crypto news">Crypto</option>
-    <option value="sports news usa">Sports</option>
-    <option value="weather alert news">Weather</option>
+    <option value="new york news">U.S.</option>
+    <option value="world news">World</option>
+    <option value="stock market">Business</option>
+    <option value="artificial intelligence">Technology</option>
+    <option value="bitcoin">Crypto</option>
+    <option value="sports news">Sports</option>
+    <option value="weather news">Weather</option>
   </select>
 
   <input id="searchBox" placeholder="Search news topic...">
@@ -201,12 +107,10 @@ LIVE • Loading latest updates...
   <aside class="homepage-sidebar">
 
     <div class="sidebar-box">
-  <h2>📊 Live Trending Analysis</h2>
-  <div id="trendAnalysis">
-    Loading analysis...
-  </div>
-</div>
-    
+      <h2>📊 Live Trending Analysis</h2>
+      <div id="trendAnalysis">Loading analysis...</div>
+    </div>
+
     <div class="sidebar-box">
       <h2>🔥 Most Read</h2>
       <ol id="mostReadList">
@@ -216,10 +120,10 @@ LIVE • Loading latest updates...
 
     <div class="sidebar-box">
       <h2>📌 Trending Topics</h2>
-      <button class="topicBtn side-topic" data-topic="bitcoin crypto news">Bitcoin</button>
-      <button class="topicBtn side-topic" data-topic="artificial intelligence news">AI</button>
-      <button class="topicBtn side-topic" data-topic="usa politics breaking news">U.S. Politics</button>
-      <button class="topicBtn side-topic" data-topic="stock market today">Stock Market</button>
+      <button class="topicBtn side-topic" data-topic="bitcoin">Bitcoin</button>
+      <button class="topicBtn side-topic" data-topic="artificial intelligence">AI</button>
+      <button class="topicBtn side-topic" data-topic="usa politics">U.S. Politics</button>
+      <button class="topicBtn side-topic" data-topic="stock market">Stock Market</button>
       <button class="topicBtn side-topic" data-topic="new york news">New York</button>
     </div>
 
@@ -232,21 +136,59 @@ LIVE • Loading latest updates...
     </div>
 
     <div class="sidebar-box">
-  <h2>📧 Newsletter</h2>
-  ...
-</div>
+      <h2>📧 Newsletter</h2>
+      <input type="email" placeholder="Your Email" class="newsletter-input">
+      <button class="newsletter-btn">Subscribe</button>
+    </div>
 
-<div class="sidebar-box">
-  <h2>📈 Market Watch</h2>
-  ...
-</div>
+    <div class="sidebar-box">
+      <h2>📈 Market Watch</h2>
 
-</aside>
+      <div class="market-row">
+        <span>Bitcoin</span>
+        <span class="market-up">+2.4%</span>
+      </div>
+
+      <div class="market-row">
+        <span>Gold</span>
+        <span class="market-up">+0.8%</span>
+      </div>
+
+      <div class="market-row">
+        <span>Silver</span>
+        <span class="market-down">-0.3%</span>
+      </div>
+    </div>
 
   </aside>
 
 </main>
 
+<footer class="site-footer">
+  <div class="footer-links">
+    <a href="/about.html">About Us</a>
+    <a href="/contact.html">Contact Us</a>
+    <a href="/privacy.html">Privacy Policy</a>
+  </div>
+
+  <div class="footer-links">
+    <a href="/sitemap.xml">Sitemap</a>
+    <a href="/robots.txt">Robots</a>
+  </div>
+
+  <p>© 2026 Global Intel Times. All Rights Reserved.</p>
+</footer>
+
+<div id="cookieBanner" class="cookie-banner">
+  <p>We use cookies to improve your experience.</p>
+  <button onclick="acceptCookies()">Accept</button>
+</div>
+
+<div id="breakingPopup" class="breaking-popup">
+  🚨 Breaking News Alert
+</div>
+
 <script src="./app.js"></script>
+
 </body>
 </html>
