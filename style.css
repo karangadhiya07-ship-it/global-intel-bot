@@ -526,3 +526,37 @@ body{
 .footer-links a:hover{
   color:#2563eb;
 }
+/* FOOTER */
+
+.site-footer{
+  margin-top:60px;
+  padding:40px 20px;
+  text-align:center;
+  border-top:2px solid #ddd;
+  background:#fafafa;
+}
+
+.footer-links{
+  display:flex;
+  justify-content:center;
+  gap:25px;
+  flex-wrap:wrap;
+  margin-bottom:15px;
+}
+
+.footer-links a{
+  color:#111;
+  text-decoration:none;
+  font-weight:600;
+  font-family:Arial,sans-serif;
+}
+
+.footer-links a:hover{
+  color:#2563eb;
+}
+
+.site-footer p{
+  color:#666;
+  font-size:14px;
+  margin-top:10px;
+}
