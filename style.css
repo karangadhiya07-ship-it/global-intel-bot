@@ -595,3 +595,13 @@ body{
   padding:20px;
   margin-top:30px;
 }
+.breaking-popup{
+  position:fixed;
+  right:20px;
+  bottom:20px;
+  background:red;
+  color:white;
+  padding:15px;
+  z-index:9999;
+  border-radius:8px;
+}
