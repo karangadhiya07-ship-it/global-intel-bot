@@ -6,7 +6,7 @@
 
   <title>Article | Global Intel Times</title>
 
-  <meta name="description" content="Read the latest news, analysis and updates from Global Intel Times." />
+  <meta name="description" content="Read latest news, AI summaries, analysis and related stories from Global Intel Times." />
   <meta name="author" content="Global Intel Times Editorial Team" />
 
   <meta property="og:title" content="Global Intel Times Article" />
@@ -14,6 +14,8 @@
   <meta property="og:type" content="article" />
   <meta property="og:url" content="https://global-intel-bot.vercel.app/article.html" />
   <meta property="og:image" content="https://global-intel-bot.vercel.app/preview.png" />
+
+  <meta name="twitter:card" content="summary_large_image" />
 
   <link rel="canonical" href="https://global-intel-bot.vercel.app/article.html" />
   <link rel="stylesheet" href="./style.css" />
@@ -27,37 +29,65 @@
   <button id="darkModeBtn" class="dark-btn">Dark Mode</button>
 </header>
 
-<main class="article-page">
+<main class="article-shell">
 
   <article class="article-detail" id="articleDetail">
     <div class="loading">Loading article...</div>
   </article>
 
-  <section class="author-box">
-    <h3>Global Intel Times Editorial Team</h3>
-    <p>
-      Independent coverage of global news, markets, technology, cryptocurrency,
-      AI, sports and world affairs.
-    </p>
-  </section>
+  <aside class="article-side">
 
-  <section class="share-box">
-    <h3>Share this article</h3>
-
-    <div class="share-buttons">
-      <a id="shareWhatsApp" target="_blank">WhatsApp</a>
-      <a id="shareTwitter" target="_blank">X</a>
-      <a id="shareFacebook" target="_blank">Facebook</a>
-      <button onclick="copyArticleLink()">Copy Link</button>
+    <div class="sidebar-box">
+      <h2>🔥 Trending Now</h2>
+      <ol id="articleTrending">
+        <li>Loading...</li>
+      </ol>
     </div>
-  </section>
 
-  <section class="related-section">
-    <h2>Related Stories</h2>
-    <div class="below-grid" id="relatedArticles"></div>
-  </section>
+    <div class="sidebar-box">
+      <h2>📌 Topics</h2>
+      <a href="/index.html">Bitcoin</a>
+      <a href="/index.html">Artificial Intelligence</a>
+      <a href="/index.html">Stock Market</a>
+      <a href="/index.html">Technology</a>
+      <a href="/index.html">World News</a>
+    </div>
+
+    <div class="sidebar-box">
+      <h2>📧 Newsletter</h2>
+      <input type="email" placeholder="Your Email" class="newsletter-input">
+      <button class="newsletter-btn">Subscribe</button>
+    </div>
+
+  </aside>
 
 </main>
+
+<section class="author-box">
+  <h3>Global Intel Times Editorial Team</h3>
+  <p>
+    Independent coverage of global news, markets, technology, cryptocurrency,
+    AI, sports and world affairs.
+  </p>
+</section>
+
+<section class="share-box">
+  <h3>Share this article</h3>
+
+  <div class="share-buttons">
+    <a id="shareWhatsApp" target="_blank">WhatsApp</a>
+    <a id="shareTwitter" target="_blank">X</a>
+    <a id="shareFacebook" target="_blank">Facebook</a>
+    <button onclick="copyArticleLink()">Copy Link</button>
+  </div>
+</section>
+
+<section class="related-section">
+  <h2>Related Stories</h2>
+  <div class="below-grid" id="relatedArticles"></div>
+</section>
+
+<button id="backToTop" class="back-to-top">↑</button>
 
 <footer class="site-footer">
   <div class="footer-links">
@@ -77,6 +107,7 @@
 <script>
   const articleDetail = document.getElementById("articleDetail");
   const relatedArticles = document.getElementById("relatedArticles");
+  const articleTrending = document.getElementById("articleTrending");
 
   const params = new URLSearchParams(window.location.search);
   const articleId = Number(params.get("id")) || 0;
@@ -94,6 +125,7 @@
       .replace("You can now listen to Fox News articles!", "")
       .replace(/\[\.\.\.\]/g, "")
       .replace(/The post .* appeared first on .*?\./gi, "")
+      .replace(/ONLY AVAILABLE IN PAID PLANS/gi, "")
       .trim();
   }
 
@@ -103,17 +135,30 @@
     return `${minutes} min read`;
   }
 
+  function detectRisk(article){
+    const text = `${article.title || ""} ${article.description || ""}`.toLowerCase();
+
+    if(text.includes("war") || text.includes("crash") || text.includes("emergency") || text.includes("lawsuit")){
+      return "High";
+    }
+
+    if(text.includes("market") || text.includes("bitcoin") || text.includes("stock") || text.includes("economy")){
+      return "Medium";
+    }
+
+    return "Low";
+  }
+
   function generateAISummary(article){
     const text = cleanText(article.description || article.content || "");
     const title = article.title || "This story";
 
     return `
       <p>
-        ${title} is currently one of the important stories being tracked by
-        Global Intel Times. The report highlights key updates, possible impact
-        and broader context for readers following this topic.
+        ${title} is one of the stories currently being tracked by Global Intel Times.
+        The update highlights the main development, the possible impact, and the broader
+        context for readers following this topic.
       </p>
-
       <p>
         ${text}
       </p>
@@ -124,10 +169,35 @@
     return `
       <ul>
         <li>${article.title}</li>
-        <li>This story may continue to develop as new updates become available.</li>
-        <li>Readers should follow trusted sources for further details.</li>
+        <li>This story may continue to develop as new details become available.</li>
+        <li>Readers should compare updates from trusted sources before making decisions.</li>
         <li>Global Intel Times will continue tracking related developments.</li>
       </ul>
+    `;
+  }
+
+  function generateLongAnalysis(article){
+    return `
+      <h2>Context</h2>
+      <p>
+        This update fits into a wider news cycle shaped by business, technology,
+        markets, politics and global events. Stories like this can influence public
+        discussion, investor attention, consumer behavior and industry sentiment.
+      </p>
+
+      <h2>Why It Matters</h2>
+      <p>
+        The story matters because it may affect how readers understand the direction
+        of the topic, especially when connected to markets, technology, public policy,
+        corporate activity or social trends.
+      </p>
+
+      <h2>What Happens Next</h2>
+      <p>
+        More updates may follow as officials, companies, analysts, journalists or
+        public sources release additional information. Readers should watch for
+        confirmed developments and avoid relying on early incomplete claims.
+      </p>
     `;
   }
 
@@ -135,7 +205,7 @@
     if(!article){
       articleDetail.innerHTML = `
         <h1>Article Not Found</h1>
-        <p>This article is not available. Please go back to the homepage.</p>
+        <p>This article is not available. Please return to the homepage.</p>
         <a class="source-button" href="/index.html">Back to Home</a>
       `;
       return;
@@ -143,10 +213,12 @@
 
     const title = article.title || "Untitled Article";
     const description = cleanText(article.description || article.content || "");
-    const source = article.source || "GNews";
+    const source = article.source || "News";
     const image = article.image || "";
     const link = article.link || "#";
     const section = article.section || "News";
+    const risk = detectRisk(article);
+
     const publishDate = new Date().toLocaleDateString("en-US", {
       year:"numeric",
       month:"long",
@@ -156,7 +228,7 @@
     document.title = `${title} | Global Intel Times`;
 
     articleDetail.innerHTML = `
-      ${image ? `<img src="${image}" onerror="this.style.display='none'" alt="${title}">` : ""}
+      ${image ? `<img loading="lazy" src="${image}" onerror="this.style.display='none'" alt="${title}">` : ""}
 
       <span class="section-label">${section}</span>
 
@@ -166,9 +238,11 @@
         By Global Intel Times Editorial Team • ${publishDate} • ${readingTime(description)}
       </p>
 
-      <p class="source-credit">
-        Source: ${source}
-      </p>
+      <p class="source-credit">Source: ${source}</p>
+
+      <div class="risk-box ${risk.toLowerCase()}">
+        Risk Level: ${risk}
+      </div>
 
       <p>${description}</p>
 
@@ -180,20 +254,7 @@
       <h2>Key Takeaways</h2>
       ${generateKeyTakeaways(article)}
 
-      <h2>Why It Matters</h2>
-      <p>
-        This story matters because it may influence public discussion, markets,
-        policy decisions, technology trends, business activity or daily life.
-        Global Intel Times highlights these updates to help readers understand
-        what is happening and why it matters.
-      </p>
-
-      <h2>What Happens Next</h2>
-      <p>
-        More updates may follow as additional facts become available. Readers
-        should monitor official statements, trusted news sources and future
-        developments connected to this topic.
-      </p>
+      ${generateLongAnalysis(article)}
 
       <a class="source-button" href="${link}" target="_blank">
         Open Original Source
@@ -201,6 +262,7 @@
     `;
 
     updateShareLinks(title);
+    injectArticleSchema(title, description, image);
   }
 
   function renderRelated(){
@@ -217,7 +279,7 @@
         <article class="news-card clickable-card"
           onclick="window.location.href='./article.html?id=${id}'">
 
-          ${item.image ? `<img src="${item.image}" onerror="this.style.display='none'" alt="${item.title}">` : ""}
+          ${item.image ? `<img loading="lazy" src="${item.image}" onerror="this.style.display='none'" alt="${item.title}">` : ""}
 
           <span class="section-label">${item.section || "News"}</span>
 
@@ -227,6 +289,21 @@
         </article>
       `;
     }).join("");
+  }
+
+  function renderTrending(){
+    if(!articleTrending) return;
+
+    articleTrending.innerHTML = savedArticles
+      .slice(0,8)
+      .map((item, index)=>`
+        <li>
+          <a href="./article.html?id=${index}">
+            ${item.title}
+          </a>
+        </li>
+      `)
+      .join("");
   }
 
   function updateShareLinks(title){
@@ -248,6 +325,59 @@
     alert("Article link copied!");
   }
 
+  function setupNewsletter(){
+    const input = document.querySelector(".newsletter-input");
+    const btn = document.querySelector(".newsletter-btn");
+
+    if(!input || !btn) return;
+
+    btn.addEventListener("click", ()=>{
+      const email = input.value.trim();
+
+      if(!email || !email.includes("@")){
+        alert("Please enter a valid email.");
+        return;
+      }
+
+      const savedEmails = JSON.parse(localStorage.getItem("newsletterEmails") || "[]");
+
+      if(!savedEmails.includes(email)){
+        savedEmails.push(email);
+        localStorage.setItem("newsletterEmails", JSON.stringify(savedEmails));
+      }
+
+      input.value = "";
+      alert("Thanks for subscribing!");
+    });
+  }
+
+  function injectArticleSchema(title, description, image){
+    const oldSchema = document.getElementById("articleSchema");
+    if(oldSchema) oldSchema.remove();
+
+    const script = document.createElement("script");
+    script.id = "articleSchema";
+    script.type = "application/ld+json";
+    script.textContent = JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "NewsArticle",
+      "headline": title,
+      "description": description,
+      "image": image ? [image] : [],
+      "author": {
+        "@type": "Organization",
+        "name": "Global Intel Times"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "Global Intel Times"
+      },
+      "datePublished": new Date().toISOString()
+    });
+
+    document.head.appendChild(script);
+  }
+
   const darkModeBtn = document.getElementById("darkModeBtn");
 
   darkModeBtn.addEventListener("click", () => {
@@ -264,8 +394,27 @@
     document.body.classList.add("dark-mode");
   }
 
+  const backToTop = document.getElementById("backToTop");
+
+  window.addEventListener("scroll", ()=>{
+    if(window.scrollY > 500){
+      backToTop.style.display = "block";
+    }else{
+      backToTop.style.display = "none";
+    }
+  });
+
+  backToTop.addEventListener("click", ()=>{
+    window.scrollTo({
+      top:0,
+      behavior:"smooth"
+    });
+  });
+
   renderArticle();
   renderRelated();
+  renderTrending();
+  setupNewsletter();
 </script>
 
 </body>
