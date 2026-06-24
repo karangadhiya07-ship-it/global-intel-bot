@@ -88,17 +88,35 @@ function shortText(text, limit = 180){
 function createArticleCard(item){
   const id = allNews.indexOf(item);
 
-  const image = item.image && item.image.startsWith("http")
-    ? item.image
-    : "https://placehold.co/800x450?text=Global+Intel+Times";
+  const image =
+    item.image &&
+    item.image.startsWith("http")
+      ? item.image
+      : "https://placehold.co/800x450?text=Global+Intel+Times";
 
   return `
-    <div class="clickable-card" onclick="window.location.href='./article.html?id=${id}'">
-      <img src="${image}" onerror="this.src='https://placehold.co/800x450?text=Global+Intel+Times'" alt="news image">
-      <span class="section-label">${item.section}</span>
+    <div class="news-card clickable-card"
+         onclick="window.location.href='./article.html?id=${id}'">
+
+      <img
+        src="${image}"
+        onerror="this.src='https://placehold.co/800x450?text=Global+Intel+Times'"
+        alt="news image">
+
+      <span class="section-label">
+        ${item.section || "NEWS"}
+      </span>
+
       <h2>${item.title}</h2>
-      <p>${shortText(item.description, 190)}</p>
-      <small>Source: ${item.source}</small>
+
+      <p>
+        ${shortText(item.description || "", 190)}
+      </p>
+
+      <small>
+        Source: ${item.source || item.source_id || "Global Intel Times"}
+      </small>
+
     </div>
   `;
 }
