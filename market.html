@@ -4,94 +4,140 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Market Watch | Global Intel Times</title>
-
 <link rel="stylesheet" href="./style.css">
 
 <style>
 body{
   margin:0;
-  font-family:Georgia, serif;
-  background:#fff;
+  background:#f7f7f2;
   color:#111;
+  font-family:Georgia, serif;
 }
 
-.market-container{
-  max-width:1200px;
+.market-page{
+  max-width:1180px;
   margin:auto;
   padding:20px;
 }
 
-.market-header{
-  text-align:center;
-  border-bottom:2px solid #111;
-  padding-bottom:20px;
-  margin-bottom:30px;
-}
-
-.market-header h1{
-  font-size:72px;
-  margin:0;
-}
-
 .back-link{
-  display:inline-block;
-  margin-bottom:15px;
+  font-size:14px;
   color:#111;
 }
 
-.market-top{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:25px;
-  margin-bottom:30px;
+.market-title{
+  text-align:center;
+  font-size:62px;
+  margin:10px 0 25px;
+  border-bottom:2px solid #111;
+  padding-bottom:15px;
 }
 
-.market-card{
+.market-summary{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  border-bottom:1px solid #ccc;
+  padding-bottom:15px;
+  margin-bottom:20px;
+}
+
+.market-summary h2{
+  font-size:34px;
+  margin:0;
+}
+
+.market-price{
+  font-size:26px;
+  font-weight:700;
+}
+
+.up{color:#059b3f;}
+.down{color:#d71920;}
+
+.chart-box{
+  background:#fff;
+  border:1px solid #ccc;
+  padding:15px;
+  margin-bottom:25px;
+}
+
+.analytics-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:15px;
+  margin-bottom:25px;
+}
+
+.analytics-card{
+  background:#fff;
+  border:1px solid #ddd;
+  padding:18px;
+}
+
+.analytics-card span{
+  font-size:13px;
+  color:#666;
+  text-transform:uppercase;
+}
+
+.analytics-card h3{
+  margin:8px 0 0;
+  font-size:24px;
+}
+
+.analysis-box{
+  background:#fff;
+  border:1px solid #ddd;
+  padding:22px;
+  margin-bottom:25px;
+}
+
+.analysis-box h2{
+  margin-top:0;
+}
+
+.peer-table{
+  background:#fff;
   border:1px solid #ddd;
   padding:20px;
 }
 
-.market-card h2{
-  margin-top:0;
+.peer-table table{
+  width:100%;
+  border-collapse:collapse;
 }
 
-.market-card p{
-  line-height:1.7;
+.peer-table th,
+.peer-table td{
+  border-bottom:1px solid #ddd;
+  padding:12px;
+  text-align:left;
 }
 
-.chart-box{
-  margin-top:30px;
-  border:1px solid #ddd;
-  padding:15px;
-}
-
-.related-news{
-  margin-top:30px;
-}
-
-.related-news h2{
-  border-bottom:2px solid #111;
-  padding-bottom:10px;
-}
-
-.related-news a{
-  display:block;
-  margin:10px 0;
-  text-decoration:none;
-  color:#111;
-}
-
-.related-news a:hover{
-  text-decoration:underline;
+.peer-table th{
+  background:#f0f0f0;
 }
 
 @media(max-width:900px){
-  .market-top{
-    grid-template-columns:1fr;
+  .market-title{
+    font-size:44px;
   }
 
-  .market-header h1{
-    font-size:48px;
+  .market-summary{
+    flex-direction:column;
+    align-items:flex-start;
+    gap:10px;
+  }
+
+  .analytics-grid{
+    grid-template-columns:1fr 1fr;
+  }
+}
+
+@media(max-width:600px){
+  .analytics-grid{
+    grid-template-columns:1fr;
   }
 }
 </style>
@@ -99,208 +145,233 @@ body{
 
 <body>
 
-<div class="market-container">
+<main class="market-page">
 
-<a href="./index.html" class="back-link">
-← Back To Home
-</a>
+<a href="./index.html" class="back-link">← Back To Home</a>
 
-<div class="market-header">
-<h1>Market Watch</h1>
-</div>
+<h1 class="market-title">Market Watch</h1>
 
-<div class="market-top">
+<section class="market-summary">
+  <div>
+    <h2 id="assetTitle">Loading...</h2>
+    <p id="assetSubtitle">Live market overview</p>
+  </div>
 
-<div class="market-card">
-<h2 id="assetTitle">Loading...</h2>
-<h3 id="assetPrice"></h3>
+  <div id="assetPrice" class="market-price">Loading...</div>
+</section>
 
-<h2>Overview</h2>
-<p id="assetOverview"></p>
-</div>
+<section class="chart-box">
+  <div id="tradingview_chart" style="height:620px;width:100%;"></div>
+</section>
 
-<div class="market-card">
-<h2>Market Signal</h2>
-<p id="assetSignal"></p>
+<section class="analytics-grid">
+  <div class="analytics-card">
+    <span>Market Cap</span>
+    <h3 id="marketCap">-</h3>
+  </div>
 
-<h2>Latest Related News</h2>
-<div id="assetNews"></div>
-</div>
+  <div class="analytics-card">
+    <span>P/E Ratio</span>
+    <h3 id="peRatio">-</h3>
+  </div>
 
-</div>
+  <div class="analytics-card">
+    <span>52 Week Range</span>
+    <h3 id="weekRange">-</h3>
+  </div>
 
-<div class="chart-box">
+  <div class="analytics-card">
+    <span>Analyst Signal</span>
+    <h3 id="signal">-</h3>
+  </div>
+</section>
 
-<h2>Live Chart</h2>
+<section class="analysis-box">
+  <h2>Market Analysis</h2>
+  <p id="analysisText">Loading analysis...</p>
+</section>
 
-<div
-class="tradingview-widget-container"
-style="height:600px;width:100%;">
+<section class="peer-table">
+  <h2>Related Companies / Assets</h2>
 
-<div
-id="tradingview_chart"
-style="height:600px;width:100%;">
-</div>
+  <table>
+    <thead>
+      <tr>
+        <th>Symbol</th>
+        <th>Name</th>
+        <th>Sector</th>
+        <th>Signal</th>
+      </tr>
+    </thead>
 
-</div>
+    <tbody id="peerTable"></tbody>
+  </table>
+</section>
 
-</div>
-
-<div class="related-news">
-
-<h2>More Market Coverage</h2>
-
-<a href="./market.html?symbol=AAPL">Apple (AAPL)</a>
-<a href="./market.html?symbol=MSFT">Microsoft (MSFT)</a>
-<a href="./market.html?symbol=NVDA">Nvidia (NVDA)</a>
-<a href="./market.html?symbol=AMZN">Amazon (AMZN)</a>
-<a href="./market.html?symbol=META">Meta (META)</a>
-<a href="./market.html?symbol=TSLA">Tesla (TSLA)</a>
-<a href="./market.html?symbol=GOOGL">Google (GOOGL)</a>
-<a href="./market.html?symbol=BTC">Bitcoin</a>
-
-</div>
-
-</div>
+</main>
 
 <script>
-
 const marketData = {
-
-AAPL:{
-name:"Apple Inc.",
-price:"+1.24% ↑",
-overview:"Apple remains one of the world's largest technology companies.",
-signal:"Positive trend."
-},
-
-MSFT:{
-name:"Microsoft Corporation",
-price:"+0.82% ↑",
-overview:"Microsoft continues strong growth in cloud and AI.",
-signal:"Bullish sentiment."
-},
-
-NVDA:{
-name:"Nvidia Corporation",
-price:"+2.31% ↑",
-overview:"Nvidia dominates AI chip infrastructure.",
-signal:"High momentum."
-},
-
-AMZN:{
-name:"Amazon.com Inc.",
-price:"-0.44% ↓",
-overview:"Amazon remains a major e-commerce and cloud provider.",
-signal:"Neutral."
-},
-
-META:{
-name:"Meta Platforms",
-price:"+1.09% ↑",
-overview:"Meta benefits from digital advertising growth.",
-signal:"Positive."
-},
-
-TSLA:{
-name:"Tesla Inc.",
-price:"-1.76% ↓",
-overview:"Tesla investors track EV demand and autonomous driving.",
-signal:"Volatile."
-},
-
-GOOGL:{
-name:"Alphabet Inc.",
-price:"+0.55% ↑",
-overview:"Google continues expansion in AI and cloud.",
-signal:"Positive."
-},
-
-BTC:{
-name:"Bitcoin",
-price:"+2.14% ↑",
-overview:"Bitcoin remains the largest cryptocurrency.",
-signal:"High volatility."
-}
-
+  AAPL:{
+    name:"Apple Inc.",
+    price:"+1.24% ↑",
+    trend:"up",
+    subtitle:"Technology • Consumer Electronics",
+    marketCap:"$3.2T",
+    pe:"31.4",
+    range:"$164 - $237",
+    signal:"Buy",
+    analysis:"Apple remains one of the strongest technology companies, supported by iPhone sales, services revenue and future AI product expansion."
+  },
+  MSFT:{
+    name:"Microsoft Corporation",
+    price:"+0.82% ↑",
+    trend:"up",
+    subtitle:"Technology • Cloud & AI",
+    marketCap:"$3.4T",
+    pe:"36.8",
+    range:"$309 - $468",
+    signal:"Buy",
+    analysis:"Microsoft continues to benefit from cloud growth, enterprise software demand and artificial intelligence infrastructure."
+  },
+  NVDA:{
+    name:"Nvidia Corporation",
+    price:"+2.31% ↑",
+    trend:"up",
+    subtitle:"Semiconductors • AI Chips",
+    marketCap:"$3.6T",
+    pe:"74.2",
+    range:"$90 - $153",
+    signal:"Strong Buy",
+    analysis:"Nvidia remains the leading AI chip company with strong data center demand and high investor momentum."
+  },
+  AMZN:{
+    name:"Amazon.com Inc.",
+    price:"-0.44% ↓",
+    trend:"down",
+    subtitle:"E-commerce • Cloud",
+    marketCap:"$2.0T",
+    pe:"52.1",
+    range:"$151 - $233",
+    signal:"Hold",
+    analysis:"Amazon remains strong in e-commerce and cloud, but investors continue watching AWS margins and retail demand."
+  },
+  META:{
+    name:"Meta Platforms",
+    price:"+1.09% ↑",
+    trend:"up",
+    subtitle:"Social Media • Advertising",
+    marketCap:"$1.5T",
+    pe:"28.6",
+    range:"$442 - $638",
+    signal:"Buy",
+    analysis:"Meta benefits from advertising recovery, strong engagement and growing AI investments across its platforms."
+  },
+  TSLA:{
+    name:"Tesla Inc.",
+    price:"-1.76% ↓",
+    trend:"down",
+    subtitle:"EV • Automotive",
+    marketCap:"$580B",
+    pe:"58.3",
+    range:"$138 - $299",
+    signal:"Volatile",
+    analysis:"Tesla remains highly volatile as investors monitor EV demand, margins, autonomous driving progress and competition."
+  },
+  GOOGL:{
+    name:"Alphabet Inc.",
+    price:"+0.55% ↑",
+    trend:"up",
+    subtitle:"Search • Cloud • AI",
+    marketCap:"$2.1T",
+    pe:"27.9",
+    range:"$129 - $191",
+    signal:"Buy",
+    analysis:"Alphabet is supported by Google Search, YouTube, cloud growth and artificial intelligence investment."
+  },
+  BTC:{
+    name:"Bitcoin",
+    price:"+2.14% ↑",
+    trend:"up",
+    subtitle:"Crypto Asset",
+    marketCap:"$1.3T",
+    pe:"N/A",
+    range:"$49K - $112K",
+    signal:"High Risk",
+    analysis:"Bitcoin remains the largest crypto asset, driven by ETF flows, liquidity, regulation and macroeconomic conditions."
+  }
 };
 
 const chartMap = {
-AAPL:"NASDAQ:AAPL",
-MSFT:"NASDAQ:MSFT",
-NVDA:"NASDAQ:NVDA",
-AMZN:"NASDAQ:AMZN",
-META:"NASDAQ:META",
-TSLA:"NASDAQ:TSLA",
-GOOGL:"NASDAQ:GOOGL",
-BTC:"BINANCE:BTCUSDT"
+  AAPL:"NASDAQ:AAPL",
+  MSFT:"NASDAQ:MSFT",
+  NVDA:"NASDAQ:NVDA",
+  AMZN:"NASDAQ:AMZN",
+  META:"NASDAQ:META",
+  TSLA:"NASDAQ:TSLA",
+  GOOGL:"NASDAQ:GOOGL",
+  BTC:"BINANCE:BTCUSDT"
 };
 
+const peers = [
+  ["AAPL","Apple Inc.","Technology","Buy"],
+  ["MSFT","Microsoft","Cloud & AI","Buy"],
+  ["NVDA","Nvidia","Semiconductors","Strong Buy"],
+  ["AMZN","Amazon","E-commerce","Hold"],
+  ["META","Meta","Advertising","Buy"],
+  ["TSLA","Tesla","EV","Volatile"],
+  ["GOOGL","Alphabet","Search & AI","Buy"],
+  ["BTC","Bitcoin","Crypto","High Risk"]
+];
+
 const params = new URLSearchParams(window.location.search);
+const symbol = (params.get("symbol") || "AAPL").toUpperCase();
+const asset = marketData[symbol] || marketData.AAPL;
 
-const symbol =
-(params.get("symbol") || "AAPL").toUpperCase();
+document.title = `${asset.name} Market Watch | Global Intel Times`;
 
-const asset =
-marketData[symbol] || marketData.AAPL;
+document.getElementById("assetTitle").textContent = `${asset.name} (${symbol})`;
+document.getElementById("assetSubtitle").textContent = asset.subtitle;
+document.getElementById("assetPrice").textContent = asset.price;
+document.getElementById("assetPrice").classList.add(asset.trend === "up" ? "up" : "down");
 
-document.getElementById("assetTitle").textContent =
-`${asset.name} (${symbol})`;
+document.getElementById("marketCap").textContent = asset.marketCap;
+document.getElementById("peRatio").textContent = asset.pe;
+document.getElementById("weekRange").textContent = asset.range;
+document.getElementById("signal").textContent = asset.signal;
+document.getElementById("analysisText").textContent = asset.analysis;
 
-document.getElementById("assetPrice").textContent =
-asset.price;
-
-document.getElementById("assetOverview").textContent =
-asset.overview;
-
-document.getElementById("assetSignal").textContent =
-asset.signal;
-
-document.getElementById("assetNews").innerHTML =
-`<a href="./index.html">View Latest Headlines →</a>`;
-
+document.getElementById("peerTable").innerHTML = peers.map(row => `
+  <tr>
+    <td><a href="./market.html?symbol=${row[0]}">${row[0]}</a></td>
+    <td>${row[1]}</td>
+    <td>${row[2]}</td>
+    <td>${row[3]}</td>
+  </tr>
+`).join("");
 </script>
 
 <script src="https://s3.tradingview.com/tv.js"></script>
 
 <script>
-
 window.addEventListener("load", function(){
-
-if(typeof TradingView !== "undefined"){
-
-new TradingView.widget({
-
-width:"100%",
-height:600,
-
-symbol:
-chartMap[symbol] || "NASDAQ:AAPL",
-
-interval:"D",
-
-timezone:"America/New_York",
-
-theme:"light",
-
-style:"1",
-
-locale:"en",
-
-toolbar_bg:"#ffffff",
-
-enable_publishing:false,
-
-allow_symbol_change:true,
-
-container_id:"tradingview_chart"
-
+  if(typeof TradingView !== "undefined"){
+    new TradingView.widget({
+      width:"100%",
+      height:620,
+      symbol:chartMap[symbol] || "NASDAQ:AAPL",
+      interval:"D",
+      timezone:"America/New_York",
+      theme:"light",
+      style:"1",
+      locale:"en",
+      toolbar_bg:"#ffffff",
+      enable_publishing:false,
+      allow_symbol_change:true,
+      container_id:"tradingview_chart"
+    });
+  }
 });
-
-}
-
-});
-
 </script>
 
 </body>
