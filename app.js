@@ -480,3 +480,81 @@ function setupMegaFeatures(){
 }
 
 setupMegaFeatures();
+function trackArticleClick(title){
+  const clicks = JSON.parse(localStorage.getItem("articleClicks") || "{}");
+  clicks[title] = (clicks[title] || 0) + 1;
+  localStorage.setItem("articleClicks", JSON.stringify(clicks));
+}
+
+function getMostClickedArticles(){
+  const clicks = JSON.parse(localStorage.getItem("articleClicks") || "{}");
+
+  return Object.entries(clicks)
+    .sort((a,b)=>b[1]-a[1])
+    .slice(0,10);
+}
+
+function updateVisitorCount(){
+  const today = new Date().toDateString();
+  const key = "visitorCount_" + today;
+
+  let count = Number(localStorage.getItem(key) || 0);
+  count++;
+
+  localStorage.setItem(key, count);
+
+  const box = document.getElementById("visitorCounter");
+  if(box){
+    box.textContent = count + " visits today";
+  }
+}
+
+function setupSearchAnalytics(){
+  if(!searchBox) return;
+
+  const originalSearchNews = searchNews;
+
+  window.searchNews = async function(){
+    const term = searchBox.value.trim();
+
+    if(term){
+      const searches = JSON.parse(localStorage.getItem("searchAnalytics") || "[]");
+      searches.push({
+        term,
+        time:new Date().toISOString()
+      });
+      localStorage.setItem("searchAnalytics", JSON.stringify(searches));
+    }
+
+    await originalSearchNews();
+  };
+}
+
+function showTrendingKeywords(){
+  const searches = JSON.parse(localStorage.getItem("searchAnalytics") || "[]");
+  const box = document.getElementById("trendingKeywords");
+
+  if(!box) return;
+
+  const counts = {};
+
+  searches.forEach(item=>{
+    counts[item.term] = (counts[item.term] || 0) + 1;
+  });
+
+  const top = Object.entries(counts)
+    .sort((a,b)=>b[1]-a[1])
+    .slice(0,5);
+
+  box.innerHTML = top.length
+    ? top.map(item=>`<p>${item[0]}</p>`).join("")
+    : "<p>No searches yet</p>";
+}
+
+function setupProFeatures(){
+  updateVisitorCount();
+  setupSearchAnalytics();
+  showTrendingKeywords();
+}
+
+setupProFeatures();
