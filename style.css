@@ -811,3 +811,23 @@ body{
   height:180px;
   object-fit:cover;
 }
+@media(max-width:900px){
+  .top-row h1{
+    font-size:42px;
+    line-height:1.05;
+  }
+
+  .subscribe-btn{
+    padding:8px 12px;
+    font-size:12px;
+  }
+
+  .top-trend-box{
+    font-size:18px;
+  }
+
+  .live-strip{
+    font-size:14px;
+    line-height:1.35;
+  }
+}
