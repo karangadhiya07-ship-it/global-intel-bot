@@ -360,14 +360,22 @@ async function searchNews(){
 await fetchNews(searchBox?.value.trim() || "bitcoin");
 }
 
-window.addEventListener("scroll", ()=>{
-  const nearBottom =
-    window.innerHeight + window.scrollY >= document.body.offsetHeight - 700;
+let scrollTimer = null;
 
-  if(nearBottom){
-    const nextTopic = topicPool[topicIndex % topicPool.length];
-    fetchNews(nextTopic);
-  }
+window.addEventListener("scroll", ()=>{
+  if(scrollTimer) return;
+
+  scrollTimer = setTimeout(()=>{
+    const nearBottom =
+      window.innerHeight + window.scrollY >= document.body.offsetHeight - 1200;
+
+    if(nearBottom && !isLoading){
+      const nextTopic = topicPool[topicIndex % topicPool.length];
+      fetchNews(nextTopic);
+    }
+
+    scrollTimer = null;
+  }, 800);
 });
 
 if(searchBtn){
