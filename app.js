@@ -91,16 +91,10 @@ function createArticleCard(item){
 
   return `
     <div class="clickable-card" onclick="window.location.href='./article.html?id=${id}'">
-      ${item.image ? `
-        <img src="${item.image}" onerror="this.style.display='none'" alt="news image">
-      ` : ""}
-
+      ${item.image ? `<img src="${item.image}" onerror="this.style.display='none'" alt="news image">` : ""}
       <span class="section-label">${item.section}</span>
-
       <h2>${item.title}</h2>
-
       <p>${shortText(item.description, 190)}</p>
-
       <small>Source: ${item.source}</small>
     </div>
   `;
@@ -117,9 +111,7 @@ function createSmallVideoCard(index){
       </div>
 
       <span class="section-label">VIDEO</span>
-
       <h2>${title}</h2>
-
       <p>Watch related video coverage for this story.</p>
 
       <a href="https://www.youtube.com/results?search_query=${encodeURIComponent(title)}" target="_blank">
@@ -185,6 +177,7 @@ function updateTrendAnalysis(){
   const ai = allNews.filter(x => x.section === "Technology").length;
   const finance = allNews.filter(x => x.section === "Business").length;
   const weather = allNews.filter(x => x.section === "Weather").length;
+  const normalNews = allNews.filter(x => x.section === "News").length;
 
   const total = allNews.length;
   const trendingScore = Math.min(
@@ -197,7 +190,7 @@ function updateTrendAnalysis(){
     Technology: ai,
     Business: finance,
     Weather: weather,
-    News: allNews.filter(x => x.section === "News").length
+    News: normalNews
   };
 
   const topCategory = Object.keys(counts).sort((a,b)=>counts[b]-counts[a])[0];
@@ -265,14 +258,17 @@ async function fetchNews(topic){
   topicIndex++;
 
   try{
-    const response = await fetch(`/api/news?q=${encodeURIComponent(finalTopic)}`);
-    const data = await response.json();
-    console.log("API DATA:", data);
-    console.log("RESULTS:", data.results);
+    const response = await fetch(
+      `${window.location.origin}/api/news?q=${encodeURIComponent(finalTopic)}`
+    );
 
-    loading.remove();
+    const data = await response.json();
+
+    console.log("API DATA:", data);
 
     const results = Array.isArray(data.results) ? data.results : [];
+
+    loading.remove();
 
     if(results.length === 0){
       if(allNews.length === 0){
@@ -295,9 +291,9 @@ async function fetchNews(topic){
           title,
           description: item.description || item.content || item.summary || "",
           section: detectSection(title),
-          source: item.source_id || item.source_name || "NewsData",
+          source: item.source_id || item.source_name || "GNews",
           link: item.link || "#",
-          image: item.image_url || ""
+          image: item.image_url || item.image || ""
         });
       }
     });
