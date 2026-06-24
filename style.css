@@ -494,3 +494,10 @@ body{
   display:inline-block;
   margin-top:10px;
 }
+.clickable-card{
+  cursor:pointer;
+}
+
+.clickable-card:hover h2{
+  text-decoration:underline;
+}
