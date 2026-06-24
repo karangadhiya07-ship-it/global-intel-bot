@@ -382,21 +382,8 @@ async function searchNews(){
 await fetchNews(searchBox?.value.trim() || "bitcoin");
 }
 
-let autoLoadCount = 0;
-const MAX_AUTO_LOADS = 2;
-
-const loadMoreTrigger = document.createElement("div");
-loadMoreTrigger.id = "loadMoreTrigger";
-loadMoreTrigger.style.height = "1px";
-document.body.appendChild(loadMoreTrigger);
-
-{
-  root:null,
-  rootMargin:"600px",
-  threshold:0
-});
-
-observer.observe(loadMoreTrigger);
+// Auto-load બંધ રાખ્યું છે જેથી website smooth રહે.
+// જો future માં infinite scroll જોઈએ તો આ block ફરી add કરીશું.
 
 if(searchBtn){
   searchBtn.addEventListener("click", searchNews);
@@ -421,11 +408,6 @@ setInterval(updateTopMarket, 5000);
 
 updateTopMarket();
 searchNews();
-function acceptCookies(){
-  localStorage.setItem("cookiesAccepted","yes");
-  document.getElementById("cookieBanner").style.display="none";
-}
-
 
 setTimeout(()=>{
   const popup=document.getElementById("breakingPopup");
