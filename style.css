@@ -1092,3 +1092,34 @@ html{
   font-weight:700;
   cursor:pointer;
 }
+.nyt-search-panel{
+  position:fixed;
+  top:95px;
+  left:75px;
+  display:none;
+  align-items:center;
+  gap:8px;
+  background:#fff;
+  border:1px solid #ddd;
+  padding:10px;
+  box-shadow:0 4px 12px rgba(0,0,0,.18);
+  z-index:999999;
+}
+
+.nyt-search-panel.active{
+  display:flex !important;
+}
+
+.nyt-search-panel input{
+  width:220px;
+  height:38px;
+  padding:0 10px;
+}
+
+.nyt-search-panel button{
+  height:38px;
+  padding:0 15px;
+  background:#56738b;
+  color:#fff;
+  border:0;
+}
