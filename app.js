@@ -85,34 +85,41 @@ function shortText(text, limit = 180){
   return clean.length > limit ? clean.slice(0, limit) + "..." : clean;
 }
 
+function getSmartImage(item){
+  const title = (item.title || "").toLowerCase();
+
+  if(item.image && item.image.startsWith("http")){
+    const badImages = ["benzinga", "logo", "placeholder", "default"];
+
+    if(!badImages.some(x => item.image.toLowerCase().includes(x))){
+      return item.image;
+    }
+  }
+
+  let keyword = "newspaper";
+
+  if(title.includes("bitcoin") || title.includes("crypto")) keyword = "bitcoin,crypto";
+  else if(title.includes("ai") || title.includes("artificial intelligence")) keyword = "artificial intelligence,technology";
+  else if(title.includes("stock") || title.includes("market")) keyword = "stock market,finance";
+  else if(title.includes("sport") || title.includes("football")) keyword = "sports";
+  else if(title.includes("weather")) keyword = "weather";
+  else if(title.includes("business")) keyword = "business news";
+
+  return `https://source.unsplash.com/800x450/?${encodeURIComponent(keyword)}`;
+}
+
 function createArticleCard(item){
   const id = allNews.indexOf(item);
-
-  const image =
-    item.image &&
-    item.image.startsWith("http")
-      ? item.image
-      : "https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=1200&q=80";
-
-  const badImages = [
-    "benzinga",
-    "logo",
-    "placeholder",
-    "default"
-  ];
-
-  const finalImage =
-    badImages.some(x => image.toLowerCase().includes(x))
-      ? "https://placehold.co/800x450?text=Global+Intel+Times"
-      : image;
+  const finalImage = getSmartImage(item);
 
   return `
     <div class="news-card clickable-card"
          onclick="window.location.href='./article.html?id=${id}'">
 
       <img
+        loading="lazy"
         src="${finalImage}"
-        onerror="this.src='https://placehold.co/800x450?text=Global+Intel+Times'"
+        onerror="this.src='https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=1200&q=80'"
         alt="news image">
 
       <span class="section-label">${item.section || "NEWS"}</span>
@@ -360,23 +367,29 @@ async function searchNews(){
 await fetchNews(searchBox?.value.trim() || "bitcoin");
 }
 
-let scrollTimer = null;
+let autoLoadCount = 0;
+const MAX_AUTO_LOADS = 2;
 
-window.addEventListener("scroll", ()=>{
-  if(scrollTimer) return;
+const loadMoreTrigger = document.createElement("div");
+loadMoreTrigger.id = "loadMoreTrigger";
+loadMoreTrigger.style.height = "1px";
+document.body.appendChild(loadMoreTrigger);
 
-  scrollTimer = setTimeout(()=>{
-    const nearBottom =
-      window.innerHeight + window.scrollY >= document.body.offsetHeight - 1200;
+const observer = new IntersectionObserver((entries)=>{
+  const entry = entries[0];
 
-    if(nearBottom && !isLoading){
-      const nextTopic = topicPool[topicIndex % topicPool.length];
-      fetchNews(nextTopic);
-    }
-
-    scrollTimer = null;
-  }, 800);
+  if(entry.isIntersecting && !isLoading && autoLoadCount < MAX_AUTO_LOADS){
+    autoLoadCount++;
+    const nextTopic = topicPool[topicIndex % topicPool.length];
+    fetchNews(nextTopic);
+  }
+},{
+  root:null,
+  rootMargin:"600px",
+  threshold:0
 });
+
+observer.observe(loadMoreTrigger);
 
 if(searchBtn){
   searchBtn.addEventListener("click", searchNews);
