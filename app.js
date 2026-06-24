@@ -88,9 +88,13 @@ function shortText(text, limit = 180){
 function createArticleCard(item){
   const id = allNews.indexOf(item);
 
+  const image = item.image && item.image.startsWith("http")
+    ? item.image
+    : "https://placehold.co/800x450?text=Global+Intel+Times";
+
   return `
     <div class="clickable-card" onclick="window.location.href='./article.html?id=${id}'">
-      ${item.image ? `<img src="${item.image}" onerror="this.style.display='none'" alt="news image">` : ""}
+      <img src="${image}" onerror="this.src='https://placehold.co/800x450?text=Global+Intel+Times'" alt="news image">
       <span class="section-label">${item.section}</span>
       <h2>${item.title}</h2>
       <p>${shortText(item.description, 190)}</p>
