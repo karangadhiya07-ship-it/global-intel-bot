@@ -1,3 +1,5 @@
+const API_ENDPOINT = "/.netlify/functions/news";
+
 const breakingTicker = document.getElementById("breakingTicker");
 const newsFeed = document.getElementById("newsFeed");
 const leadLeft = document.getElementById("leadLeft");
@@ -5,7 +7,6 @@ const leadMain = document.getElementById("leadMain");
 const leadRight = document.getElementById("leadRight");
 const todayDate = document.getElementById("todayDate");
 const mostReadList = document.getElementById("mostReadList");
-const category = document.getElementById("category");
 
 let allNews = [];
 let seenTitles = new Set();
@@ -33,7 +34,10 @@ const marketItems = [
 
 if(todayDate){
   todayDate.textContent = new Date().toLocaleDateString("en-US", {
-    weekday:"long", year:"numeric", month:"long", day:"numeric"
+    weekday:"long",
+    year:"numeric",
+    month:"long",
+    day:"numeric"
   });
 }
 
@@ -72,6 +76,7 @@ function isBadArticle(title, description){
 
 function getValidImage(item){
   const img = item.image || "";
+
   if(
     img.startsWith("http") &&
     !img.toLowerCase().includes("logo") &&
@@ -81,6 +86,7 @@ function getValidImage(item){
   ){
     return img;
   }
+
   return "";
 }
 
@@ -121,12 +127,18 @@ function renderLeads(){
 
 function renderBelowNews(){
   if(!newsFeed) return;
-  newsFeed.innerHTML = allNews.slice(3, MAX_HOME_ARTICLES).map(createArticleCard).join("");
+
+  newsFeed.innerHTML = allNews
+    .slice(3, MAX_HOME_ARTICLES)
+    .map(createArticleCard)
+    .join("");
+
   localStorage.setItem("articles", JSON.stringify(allNews));
 }
 
 function updateTicker(){
   if(!breakingTicker) return;
+
   breakingTicker.textContent = allNews.length
     ? "LIVE • " + allNews.slice(0,3).map(x => x.title).join(" • ")
     : "LIVE • Loading latest updates...";
@@ -134,7 +146,9 @@ function updateTicker(){
 
 function updateMostRead(){
   if(!mostReadList) return;
-  mostReadList.innerHTML = allNews.slice(0,8)
+
+  mostReadList.innerHTML = allNews
+    .slice(0,8)
     .map((item,i) => `<li><a href="${articleUrl(i)}">${item.title}</a></li>`)
     .join("");
 }
@@ -153,7 +167,16 @@ function updateTrendAnalysis(){
   };
 
   const topCategory = Object.keys(counts).sort((a,b) => counts[b] - counts[a])[0];
-  const score = Math.min(100, counts.Crypto*10 + counts.Technology*10 + counts.Business*9 + counts.Weather*6 + counts.Sports*4 + allNews.length*2);
+
+  const score = Math.min(
+    100,
+    counts.Crypto * 10 +
+    counts.Technology * 10 +
+    counts.Business * 9 +
+    counts.Weather * 6 +
+    counts.Sports * 4 +
+    allNews.length * 2
+  );
 
   box.innerHTML = `
     <p><b>Trending Score:</b> ${score}/100</p>
@@ -169,7 +192,9 @@ function updateTrendAnalysis(){
 function latestUpdatesWidget(){
   const box = document.getElementById("latestUpdatesBox");
   if(!box) return;
-  box.innerHTML = allNews.slice(0,5)
+
+  box.innerHTML = allNews
+    .slice(0,5)
     .map((item,i) => `<a class="latest-update-link" href="${articleUrl(i)}">${item.title}</a>`)
     .join("");
 }
@@ -181,18 +206,38 @@ function updateTopMarket(){
   const item = marketItems[marketIndex % marketItems.length];
 
   box.className = "top-trend-box " + item.trend;
-
-  box.onclick = () => {
-    window.location.href =
-      `./market.html?symbol=${item.symbol}`;
-  };
-
-  box.innerHTML =
-    `${item.symbol} ${item.change} ${item.trend === "up" ? "↑" : "↓"}`;
-
+  box.innerHTML = `${item.symbol} ${item.change} ${item.trend === "up" ? "↑" : "↓"}`;
   box.style.cursor = "pointer";
 
+  box.onclick = function(){
+    window.location.href = `./market.html?symbol=${item.symbol}`;
+  };
+
   marketIndex++;
+}
+
+function updateHomeSchema(){
+  const oldSchema = document.getElementById("homeItemListSchema");
+  if(oldSchema) oldSchema.remove();
+
+  const schema = document.createElement("script");
+  schema.type = "application/ld+json";
+  schema.id = "homeItemListSchema";
+
+  schema.textContent = JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    "name": "Latest News on Global Intel Times",
+    "numberOfItems": allNews.length,
+    "itemListElement": allNews.slice(0, 30).map((item, index) => ({
+      "@type": "ListItem",
+      "position": index + 1,
+      "url": `${window.location.origin}/article.html?id=${index}`,
+      "name": item.title
+    }))
+  });
+
+  document.head.appendChild(schema);
 }
 
 function renderPage(){
@@ -202,24 +247,23 @@ function renderPage(){
   renderLeads();
   renderBelowNews();
   updateTicker();
-  updateHomeSchema();
   updateMostRead();
   updateTrendAnalysis();
   latestUpdatesWidget();
   updateTopMarket();
+  updateHomeSchema();
 }
 
 async function fetchNews(topic){
   if(isLoading || !newsFeed) return;
-  isLoading = true;
 
+  isLoading = true;
   newsFeed.innerHTML = `<div class="loading">Loading live news...</div>`;
 
   try{
-    const response = await fetch(`${window.location.origin}/.netlify/functions/news?q=${encodeURIComponent(topic)}`);
+    const response = await fetch(`${API_ENDPOINT}?q=${encodeURIComponent(topic)}`);
     const data = await response.json();
     const results = Array.isArray(data.results) ? data.results : [];
-
     const fresh = [];
 
     results.forEach(item => {
@@ -251,6 +295,7 @@ async function fetchNews(topic){
     }else{
       newsFeed.innerHTML = `<div class="loading">No fresh news found.</div>`;
     }
+
   }catch(error){
     console.error(error);
     newsFeed.innerHTML = `<div class="loading">Failed to load stories.</div>`;
@@ -282,11 +327,13 @@ function setupCategoryButtons(){
 function setupCookieBanner(){
   const banner = document.getElementById("cookieBanner");
   if(!banner) return;
+
   banner.style.display = localStorage.getItem("cookiesAccepted") === "yes" ? "none" : "flex";
 }
 
 function acceptCookies(){
   localStorage.setItem("cookiesAccepted","yes");
+
   const banner = document.getElementById("cookieBanner");
   if(banner) banner.style.display = "none";
 }
@@ -298,12 +345,14 @@ function setupNewsletter(){
 
   btn.onclick = function(){
     const email = input.value.trim();
+
     if(!email || !email.includes("@")){
       alert("Please enter a valid email.");
       return;
     }
 
     const saved = JSON.parse(localStorage.getItem("newsletterEmails") || "[]");
+
     if(!saved.includes(email)){
       saved.push(email);
       localStorage.setItem("newsletterEmails", JSON.stringify(saved));
@@ -317,7 +366,8 @@ function setupNewsletter(){
 function updateVisitorCount(){
   const today = new Date().toDateString();
   const key = "visitorCount_" + today;
-  let count = Number(localStorage.getItem(key) || 0) + 1;
+
+  const count = Number(localStorage.getItem(key) || 0) + 1;
   localStorage.setItem(key, count);
 
   const box = document.getElementById("visitorCounter");
@@ -372,32 +422,8 @@ if(document.getElementById("articleView")){
   renderArticlePage();
 }else{
   searchNews("usa breaking news");
+
   setInterval(() => {
-  if (!document.getElementById("articleView")) {
     searchNews("usa breaking news");
-  }
-}, 300000);
-}
-function updateHomeSchema(){
-  let oldSchema = document.getElementById("homeItemListSchema");
-  if(oldSchema) oldSchema.remove();
-
-  const schema = document.createElement("script");
-  schema.type = "application/ld+json";
-  schema.id = "homeItemListSchema";
-
-  schema.textContent = JSON.stringify({
-    "@context": "https://schema.org",
-    "@type": "ItemList",
-    "name": "Latest News on Global Intel Times",
-    "numberOfItems": allNews.length,
-    "itemListElement": allNews.slice(0, 30).map((item, index) => ({
-      "@type": "ListItem",
-      "position": index + 1,
-      "url": `${window.location.origin}/article.html?id=${index}`,
-      "name": item.title
-    }))
-  });
-
-  document.head.appendChild(schema);
+  }, 300000);
 }
