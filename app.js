@@ -94,32 +94,38 @@ function createArticleCard(item){
       ? item.image
       : "https://placehold.co/800x450?text=Global+Intel+Times";
 
+  const badImages = [
+    "benzinga",
+    "logo",
+    "placeholder",
+    "default"
+  ];
+
+  const finalImage =
+    badImages.some(x => image.toLowerCase().includes(x))
+      ? "https://placehold.co/800x450?text=Global+Intel+Times"
+      : image;
+
   return `
     <div class="news-card clickable-card"
          onclick="window.location.href='./article.html?id=${id}'">
 
       <img
-        src="${image}"
+        src="${finalImage}"
         onerror="this.src='https://placehold.co/800x450?text=Global+Intel+Times'"
         alt="news image">
 
-      <span class="section-label">
-        ${item.section || "NEWS"}
-      </span>
+      <span class="section-label">${item.section || "NEWS"}</span>
 
       <h2>${item.title}</h2>
 
-      <p>
-        ${shortText(item.description || "", 190)}
-      </p>
+      <p>${shortText(item.description || "", 190)}</p>
 
-      <small>
-        Source: ${item.source || item.source_id || "Global Intel Times"}
-      </small>
-
+      <small>Source: ${item.source || item.source_id || "Global Intel Times"}</small>
     </div>
   `;
 }
+
 
 function createSmallVideoCard(index){
   const item = allNews[index + 3];
