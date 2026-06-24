@@ -339,7 +339,7 @@ console.log("TOTAL:", data.results?.length);
 ){
         seenTitles.add(cleanTitle);
 
-      fresh.push({
+  fresh.push({
   title,
   description: item.description || item.content || item.summary || "",
   section: detectSection(title),
