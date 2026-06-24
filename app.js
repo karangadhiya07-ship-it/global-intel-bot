@@ -573,3 +573,27 @@ if(searchToggle && searchPanel){
     searchPanel.classList.toggle("active");
   });
 }
+const searchToggle = document.getElementById("searchToggle");
+const searchPanel = document.getElementById("searchPanel");
+
+if (searchToggle && searchPanel) {
+  searchToggle.addEventListener("click", () => {
+    searchPanel.classList.toggle("active");
+  });
+}
+
+document.addEventListener("click", function (e) {
+  const goBtn = e.target.closest("#searchBtn");
+
+  if (goBtn) {
+    e.preventDefault();
+
+    const input = document.getElementById("searchBox");
+    const term = input ? input.value.trim() : "";
+
+    if (term) {
+      searchNews();
+      searchPanel.classList.remove("active");
+    }
+  }
+});
