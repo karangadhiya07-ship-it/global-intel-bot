@@ -191,6 +191,7 @@ function renderPage(){
   renderLeads();
   renderBelowNews();
   updateTicker();
+  updateHomeSchema();
   updateMostRead();
   updateTrendAnalysis();
   latestUpdatesWidget();
@@ -360,4 +361,27 @@ if(document.getElementById("articleView")){
   renderArticlePage();
 }else{
   searchNews("usa breaking news");
+}
+function updateHomeSchema(){
+  let oldSchema = document.getElementById("homeItemListSchema");
+  if(oldSchema) oldSchema.remove();
+
+  const schema = document.createElement("script");
+  schema.type = "application/ld+json";
+  schema.id = "homeItemListSchema";
+
+  schema.textContent = JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    "name": "Latest News on Global Intel Times",
+    "numberOfItems": allNews.length,
+    "itemListElement": allNews.slice(0, 30).map((item, index) => ({
+      "@type": "ListItem",
+      "position": index + 1,
+      "url": `${window.location.origin}/article.html?id=${index}`,
+      "name": item.title
+    }))
+  });
+
+  document.head.appendChild(schema);
 }
