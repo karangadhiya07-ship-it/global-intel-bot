@@ -1,190 +1,271 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Article | Global Intel Times</title>
-<link rel="stylesheet" href="./style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Article | Global Intel Times</title>
+
+  <meta name="description" content="Read the latest news, analysis and updates from Global Intel Times." />
+  <meta name="author" content="Global Intel Times Editorial Team" />
+
+  <meta property="og:title" content="Global Intel Times Article" />
+  <meta property="og:description" content="Latest news and analysis from Global Intel Times." />
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content="https://global-intel-bot.vercel.app/article.html" />
+  <meta property="og:image" content="https://global-intel-bot.vercel.app/preview.png" />
+
+  <link rel="canonical" href="https://global-intel-bot.vercel.app/article.html" />
+  <link rel="stylesheet" href="./style.css" />
 </head>
+
 <body>
 
-<header class="top-header">
-  <div class="top-row">
-    <div>
-      <a href="./index.html">← Back to Home</a>
-    </div>
-    <h1>Global Intel Times</h1>
-    <div></div>
-  </div>
+<header class="article-topbar">
+  <a href="/index.html">← Back to Home</a>
+  <h1>Global Intel Times</h1>
+  <button id="darkModeBtn" class="dark-btn">Dark Mode</button>
 </header>
 
 <main class="article-page">
-  <article id="articleBox" class="article-detail">
-    Loading article...
+
+  <article class="article-detail" id="articleDetail">
+    <div class="loading">Loading article...</div>
   </article>
-  
-<div class="related-section">
-  <h2>Related Articles</h2>
-  <div id="relatedArticles"></div>
-</div>
 
-  <div class="author-box">
+  <section class="author-box">
+    <h3>Global Intel Times Editorial Team</h3>
+    <p>
+      Independent coverage of global news, markets, technology, cryptocurrency,
+      AI, sports and world affairs.
+    </p>
+  </section>
 
-  <h3>Global Intel Times Editorial Team</h3>
+  <section class="share-box">
+    <h3>Share this article</h3>
 
-  <p>
-    Independent coverage of global news,
-    markets, technology and world affairs.
-  </p>
+    <div class="share-buttons">
+      <a id="shareWhatsApp" target="_blank">WhatsApp</a>
+      <a id="shareTwitter" target="_blank">X</a>
+      <a id="shareFacebook" target="_blank">Facebook</a>
+      <button onclick="copyArticleLink()">Copy Link</button>
+    </div>
+  </section>
 
-</div>
-  
   <section class="related-section">
     <h2>Related Stories</h2>
-    <div id="relatedNews" class="below-grid"></div>
+    <div class="below-grid" id="relatedArticles"></div>
   </section>
+
 </main>
 
+<footer class="site-footer">
+  <div class="footer-links">
+    <a href="/about.html">About Us</a>
+    <a href="/contact.html">Contact Us</a>
+    <a href="/privacy.html">Privacy Policy</a>
+  </div>
+
+  <div class="footer-links">
+    <a href="/sitemap.xml">Sitemap</a>
+    <a href="/robots.txt">Robots</a>
+  </div>
+
+  <p>© 2026 Global Intel Times. All Rights Reserved.</p>
+</footer>
+
 <script>
-function cleanText(text){
-  if(!text || text === "undefined" || text === undefined){
-    return "This story is developing. More updates may follow soon.";
+  const articleDetail = document.getElementById("articleDetail");
+  const relatedArticles = document.getElementById("relatedArticles");
+
+  const params = new URLSearchParams(window.location.search);
+  const articleId = Number(params.get("id")) || 0;
+
+  const savedArticles = JSON.parse(localStorage.getItem("articles") || "[]");
+  const article = savedArticles[articleId];
+
+  function cleanText(text){
+    if(!text || text === "undefined"){
+      return "This story is developing and more updates may follow soon.";
+    }
+
+    return String(text)
+      .replace("NEW", "")
+      .replace("You can now listen to Fox News articles!", "")
+      .replace(/\[\.\.\.\]/g, "")
+      .replace(/The post .* appeared first on .*?\./gi, "")
+      .trim();
   }
 
-  return String(text)
-    .replace("NEW", "")
-    .replace("You can now listen to Fox News articles!", "")
-    .replace(/\[\.\.\.\]/g, "")
-    .replace(/The post .* appeared first on .*?\./gi, "")
-    .trim();
-}
+  function readingTime(text){
+    const words = cleanText(text).split(/\s+/).length;
+    const minutes = Math.max(1, Math.ceil(words / 200));
+    return `${minutes} min read`;
+  }
 
-function generateAISummary(article){
+  function generateAISummary(article){
+    const text = cleanText(article.description || article.content || "");
+    const title = article.title || "This story";
 
-const title = article.title || "";
-const desc = cleanText(
-  article.description || article.content || article.summary || article.full_description || article.title
-);
+    return `
+      <p>
+        ${title} is currently one of the important stories being tracked by
+        Global Intel Times. The report highlights key updates, possible impact
+        and broader context for readers following this topic.
+      </p>
 
-return `
-<h2>AI Summary</h2>
+      <p>
+        ${text}
+      </p>
+    `;
+  }
 
-<p>${desc}</p>
+  function generateKeyTakeaways(article){
+    return `
+      <ul>
+        <li>${article.title}</li>
+        <li>This story may continue to develop as new updates become available.</li>
+        <li>Readers should follow trusted sources for further details.</li>
+        <li>Global Intel Times will continue tracking related developments.</li>
+      </ul>
+    `;
+  }
 
-<h2>Background</h2>
+  function renderArticle(){
+    if(!article){
+      articleDetail.innerHTML = `
+        <h1>Article Not Found</h1>
+        <p>This article is not available. Please go back to the homepage.</p>
+        <a class="source-button" href="/index.html">Back to Home</a>
+      `;
+      return;
+    }
 
-<p>
-This story has attracted attention because of its potential impact on people,
-businesses, governments, investors, consumers, and global markets.
-</p>
+    const title = article.title || "Untitled Article";
+    const description = cleanText(article.description || article.content || "");
+    const source = article.source || "GNews";
+    const image = article.image || "";
+    const link = article.link || "#";
+    const section = article.section || "News";
+    const publishDate = new Date().toLocaleDateString("en-US", {
+      year:"numeric",
+      month:"long",
+      day:"numeric"
+    });
 
-<h2>Key Takeaways</h2>
+    document.title = `${title} | Global Intel Times`;
 
-<ul>
-<li>${title}</li>
-<li>This remains a developing story.</li>
-<li>Further updates are expected soon.</li>
-</ul>
+    articleDetail.innerHTML = `
+      ${image ? `<img src="${image}" onerror="this.style.display='none'" alt="${title}">` : ""}
 
-<h2>Why This Matters</h2>
+      <span class="section-label">${section}</span>
 
-<p>
-The significance of this story extends beyond the immediate headlines.
-</p>
+      <h1>${title}</h1>
 
-<h2>What Happens Next</h2>
+      <p class="article-meta">
+        By Global Intel Times Editorial Team • ${publishDate} • ${readingTime(description)}
+      </p>
 
-<p>
-More announcements and official statements are expected.
-</p>
-`;
-}
-  
-function generateAISummary(article){
-  const title = article.title || "This story";
-  const desc = cleanText(article.description);
+      <p class="source-credit">
+        Source: ${source}
+      </p>
 
-  return `
-    <h2>AI Summary</h2>
-    <p>${desc}</p>
+      <p>${description}</p>
 
-    <h2>Key Takeaways</h2>
-    <ul>
-      <li>${title}</li>
-      <li>This story is currently developing.</li>
-      <li>More updates may come from official and trusted sources.</li>
-      <li>Readers should watch for new details in the coming hours.</li>
-    </ul>
-  `;
-}
+      <hr>
 
-const params = new URLSearchParams(window.location.search);
-const id = Number(params.get("id"));
+      <h2>AI Summary</h2>
+      ${generateAISummary(article)}
 
-const saved = JSON.parse(localStorage.getItem("articles") || "[]");
-const article = saved[id];
+      <h2>Key Takeaways</h2>
+      ${generateKeyTakeaways(article)}
 
-const articleBox = document.getElementById("articleBox");
-const relatedNews = document.getElementById("relatedNews");
+      <h2>Why It Matters</h2>
+      <p>
+        This story matters because it may influence public discussion, markets,
+        policy decisions, technology trends, business activity or daily life.
+        Global Intel Times highlights these updates to help readers understand
+        what is happening and why it matters.
+      </p>
 
-if(article){
+      <h2>What Happens Next</h2>
+      <p>
+        More updates may follow as additional facts become available. Readers
+        should monitor official statements, trusted news sources and future
+        developments connected to this topic.
+      </p>
 
-const cleanDesc = cleanText(
-  article.description || article.content || article.summary || article.full_description || article.title
-);
-  document.title = article.title + " | Global Intel Times";
+      <a class="source-button" href="${link}" target="_blank">
+        Open Original Source
+      </a>
+    `;
 
- articleBox.innerHTML = `
+    updateShareLinks(title);
+  }
 
-${article.image ? `<img src="${article.image}">` : ""}
+  function renderRelated(){
+    if(!relatedArticles) return;
 
-<h1>${article.title}</h1>
+    const related = savedArticles
+      .filter((item, index) => index !== articleId)
+      .slice(0,6);
 
-<p>${cleanDesc}</p>
+    relatedArticles.innerHTML = related.map(item => {
+      const id = savedArticles.indexOf(item);
 
-<hr>
+      return `
+        <article class="news-card clickable-card"
+          onclick="window.location.href='./article.html?id=${id}'">
 
-${generateAISummary(article)}
+          ${item.image ? `<img src="${item.image}" onerror="this.style.display='none'" alt="${item.title}">` : ""}
 
-<h2>Original Story</h2>
+          <span class="section-label">${item.section || "News"}</span>
 
-<p>${cleanDesc}</p>
+          <h2>${item.title}</h2>
 
-<p class="source-credit">
-Source: ${article.source || "News Source"}
-</p>
+          <p>${cleanText(item.description)}</p>
+        </article>
+      `;
+    }).join("");
+  }
 
-<a
-class="source-button"
-href="${article.link}"
-target="_blank">
-Open Original Source
-</a>
+  function updateShareLinks(title){
+    const url = encodeURIComponent(window.location.href);
+    const text = encodeURIComponent(title);
 
-`;
-  const related = saved
-    .filter((item, index) => index !== id)
-    .slice(0, 6);
+    document.getElementById("shareWhatsApp").href =
+      `https://api.whatsapp.com/send?text=${text}%20${url}`;
 
- relatedNews.innerHTML = related.map((item) => `
-  <article class="news-card clickable-card"
-    onclick="window.location.href='./article.html?id=${saved.indexOf(item)}'">
+    document.getElementById("shareTwitter").href =
+      `https://twitter.com/intent/tweet?text=${text}&url=${url}`;
 
-    ${item.image ? `<img src="${item.image}" onerror="this.style.display='none'">` : ""}
+    document.getElementById("shareFacebook").href =
+      `https://www.facebook.com/sharer/sharer.php?u=${url}`;
+  }
 
-    <span class="section-label">${item.section || "News"}</span>
-    <h2>${item.title}</h2>
-    <p>${cleanText(item.description)}</p>
-  </article>
-`).join("");
+  function copyArticleLink(){
+    navigator.clipboard.writeText(window.location.href);
+    alert("Article link copied!");
+  }
 
-}else{
-  articleBox.innerHTML = `
-    <h1>Article not found</h1>
-    <p>Please go back to the homepage and open the article again.</p>
-    <a href="./index.html">← Back to Home</a>
-  `;
-}
+  const darkModeBtn = document.getElementById("darkModeBtn");
+
+  darkModeBtn.addEventListener("click", () => {
+    document.body.classList.toggle("dark-mode");
+
+    if(document.body.classList.contains("dark-mode")){
+      localStorage.setItem("darkMode", "yes");
+    }else{
+      localStorage.setItem("darkMode", "no");
+    }
+  });
+
+  if(localStorage.getItem("darkMode") === "yes"){
+    document.body.classList.add("dark-mode");
+  }
+
+  renderArticle();
+  renderRelated();
 </script>
 
 </body>
