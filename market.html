@@ -42,6 +42,44 @@
       <div id="assetNews">Loading news...</div>
     </div>
   </section>
+  <section class="chart-section">
+  <h2>Live Price Chart</h2>
+
+  <div class="tradingview-widget-container">
+    <div id="tradingview_chart"></div>
+  </div>
+</section>
+
+<script src="https://s3.tradingview.com/tv.js"></script>
+<script>
+  const chartSymbolMap = {
+    AAPL: "NASDAQ:AAPL",
+    MSFT: "NASDAQ:MSFT",
+    NVDA: "NASDAQ:NVDA",
+    AMZN: "NASDAQ:AMZN",
+    META: "NASDAQ:META",
+    TSLA: "NASDAQ:TSLA",
+    GOOGL: "NASDAQ:GOOGL",
+    BTC: "BINANCE:BTCUSDT",
+    GOLD: "TVC:GOLD",
+    SILVER: "TVC:SILVER"
+  };
+
+  new TradingView.widget({
+    "width": "100%",
+    "height": 520,
+    "symbol": chartSymbolMap[symbol] || "NASDAQ:AAPL",
+    "interval": "60",
+    "timezone": "America/New_York",
+    "theme": "light",
+    "style": "1",
+    "locale": "en",
+    "toolbar_bg": "#ffffff",
+    "enable_publishing": false,
+    "allow_symbol_change": true,
+    "container_id": "tradingview_chart"
+  });
+</script>
 </main>
 
 <script>
