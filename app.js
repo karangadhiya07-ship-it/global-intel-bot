@@ -364,3 +364,14 @@ setInterval(updateTopMarket, 5000);
 
 updateTopMarket();
 searchNews();
+function acceptCookies(){
+  localStorage.setItem("cookiesAccepted","yes");
+  document.getElementById("cookieBanner").style.display="none";
+}
+
+window.addEventListener("load",()=>{
+  if(localStorage.getItem("cookiesAccepted")==="yes"){
+    const banner=document.getElementById("cookieBanner");
+    if(banner) banner.style.display="none";
+  }
+});
