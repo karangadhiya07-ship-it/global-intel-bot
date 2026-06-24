@@ -13,38 +13,14 @@ const mostReadList = document.getElementById("mostReadList");
 let allNews = [];
 let seenTitles = new Set();
 let isLoading = false;
-let topicIndex = 0;
 let marketIndex = 0;
 
 const MAX_HOME_ARTICLES = 30;
 
-const topicPool = [
-  "usa breaking news",
-  "us politics",
-  "stock market news",
-  "artificial intelligence news",
-  "technology news",
-  "new york news",
-  "business news",
-  "weather news",
-  "crypto news",
-  "sports news"
-];
-
 const blockedKeywords = [
-  "prediction",
-  "betting",
-  "odds",
-  "casino",
-  "promo code",
-  "coupon",
-  "gaming controller",
-  "easysmx",
-  "sponsored",
-  "affiliate",
-  "deal",
-  "buy now",
-  "tips and bets"
+  "prediction", "betting", "odds", "casino", "promo code", "coupon",
+  "gaming controller", "easysmx", "sponsored", "affiliate", "deal",
+  "buy now", "tips and bets"
 ];
 
 const marketItems = [
@@ -58,7 +34,7 @@ const marketItems = [
   { name:"Bitcoin", symbol:"BTC", change:"+2.14%", trend:"up" }
 ];
 
-if(todayDate){
+if (todayDate) {
   todayDate.textContent = new Date().toLocaleDateString("en-US", {
     weekday:"long",
     year:"numeric",
@@ -137,10 +113,11 @@ function trackArticleClick(title){
 function createArticleCard(item){
   const id = allNews.indexOf(item);
   const img = getValidImage(item);
+  const safeTitle = item.title.replace(/'/g, "");
 
   return `
     <article class="news-card clickable-card ${!img ? "no-image-card" : ""}">
-      <a href="${articleUrl(id)}" onclick="trackArticleClick('${item.title.replace(/'/g, "")}')">
+      <a href="${articleUrl(id)}" onclick="trackArticleClick('${safeTitle}')">
         ${img ? `
           <img loading="lazy" decoding="async" src="${img}" onerror="this.remove()" alt="${item.title}">
         ` : ""}
@@ -239,19 +216,12 @@ function updateTopMarket(){
   const box = document.getElementById("topTrendBox");
   if(!box) return;
 
-  const search = searchBox?.value.trim().toLowerCase() || "";
-
-  const found = marketItems.find(item =>
-    item.name.toLowerCase().includes(search) ||
-    item.symbol.toLowerCase().includes(search)
-  );
-
-  const item = search && found ? found : marketItems[marketIndex % marketItems.length];
+  const item = marketItems[marketIndex % marketItems.length];
 
   box.className = "top-trend-box " + item.trend;
   box.innerHTML = `${item.symbol} ${item.change} ${item.trend === "up" ? "↑" : "↓"}`;
 
-  if(!search) marketIndex++;
+  marketIndex++;
 }
 
 function renderPage(){
@@ -279,17 +249,9 @@ async function fetchNews(topic){
   loading.textContent = "Loading latest stories...";
   newsFeed.appendChild(loading);
 
-  const finalTopic =
-    topic ||
-    searchBox?.value.trim() ||
-    category?.value ||
-    topicPool[topicIndex % topicPool.length];
-
-  topicIndex++;
-
   try{
     const response = await fetch(
-      `${window.location.origin}/api/news?q=${encodeURIComponent(finalTopic)}`
+      `${window.location.origin}/api/news?q=${encodeURIComponent(topic)}`
     );
 
     const data = await response.json();
@@ -321,7 +283,7 @@ async function fetchNews(topic){
       });
     });
 
-    allNews = allNews.concat(fresh).slice(0, MAX_HOME_ARTICLES);
+    allNews = fresh.slice(0, MAX_HOME_ARTICLES);
 
     if(allNews.length === 0){
       newsFeed.innerHTML = `<div class="loading">No fresh news found. Try another topic.</div>`;
@@ -337,10 +299,11 @@ async function fetchNews(topic){
   isLoading = false;
 }
 
-async function searchNews(){
+async function searchNews(term){
+  const finalTerm = term || "usa breaking news";
+
   allNews = [];
   seenTitles = new Set();
-  topicIndex = 0;
 
   if(leadLeft) leadLeft.innerHTML = "";
   if(leadMain) leadMain.innerHTML = "";
@@ -348,7 +311,7 @@ async function searchNews(){
   if(newsFeed) newsFeed.innerHTML = `<div class="loading">Loading live news...</div>`;
   if(mostReadList) mostReadList.innerHTML = `<li>Loading...</li>`;
 
-  await fetchNews(searchBox?.value.trim() || category?.value || "usa breaking news");
+  await fetchNews(finalTerm);
 }
 
 function updateArticleSEO(article){
@@ -529,31 +492,60 @@ function updateVisitorCount(){
   if(box) box.textContent = count + " visits today";
 }
 
+function setupSearchPopup(){
+  const searchToggle = document.getElementById("searchToggle");
+  const searchPanel = document.getElementById("searchPanel");
+  const popupInput = document.querySelector("#searchPanel #searchBox");
+  const popupBtn = document.querySelector("#searchPanel #searchBtn");
+
+  if(searchToggle && searchPanel){
+    searchToggle.onclick = function(e){
+      e.preventDefault();
+      searchPanel.classList.toggle("active");
+      if(popupInput) popupInput.focus();
+    };
+  }
+
+  if(popupBtn){
+    popupBtn.onclick = function(e){
+      e.preventDefault();
+      const term = popupInput ? popupInput.value.trim() : "";
+      if(!term) return;
+      searchNews(term);
+      if(searchPanel) searchPanel.classList.remove("active");
+    };
+  }
+
+  if(popupInput){
+    popupInput.onkeydown = function(e){
+      if(e.key === "Enter"){
+        e.preventDefault();
+        const term = popupInput.value.trim();
+        if(!term) return;
+        searchNews(term);
+        if(searchPanel) searchPanel.classList.remove("active");
+      }
+    };
+  }
+}
+
+function setupCategoryButtons(){
+  document.querySelectorAll(".topicBtn").forEach(btn=>{
+    btn.onclick = function(){
+      const topic = btn.dataset.topic || "usa breaking news";
+      searchNews(topic);
+    };
+  });
+}
+
 function setupProFeatures(){
   setupCookieBanner();
   setupNewsletter();
   setupKeyboardSearch();
   updateVisitorCount();
+  setupSearchPopup();
+  setupCategoryButtons();
 }
-
-if(searchBtn){
-  searchBtn.addEventListener("click", searchNews);
-}
-
-if(searchBox){
-  searchBox.addEventListener("keydown", e=>{
-    if(e.key === "Enter") searchNews();
-  });
-
-  searchBox.addEventListener("input", updateTopMarket);
-}
-
-document.querySelectorAll(".topicBtn").forEach(btn=>{
-  btn.addEventListener("click", ()=>{
-    if(searchBox) searchBox.value = btn.dataset.topic;
-    searchNews();
-  });
-});
 
 setInterval(updateTopMarket, 5000);
 
@@ -563,13 +555,5 @@ setupProFeatures();
 if(document.getElementById("articleView")){
   renderArticlePage();
 }else{
-  searchNews();
-}
-var searchToggleBtn = document.getElementById("searchToggle");
-var searchPanelBox = document.getElementById("searchPanel");
-
-if (searchToggleBtn && searchPanelBox) {
-  searchToggleBtn.onclick = function () {
-    searchPanelBox.classList.toggle("active");
-  };
+  searchNews("usa breaking news");
 }
