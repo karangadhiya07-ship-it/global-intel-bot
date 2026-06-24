@@ -150,15 +150,17 @@ Open Original Source
     .filter((item, index) => index !== id)
     .slice(0, 6);
 
-  relatedNews.innerHTML = related.map((item) => `
-    <article class="news-card">
-      ${item.image ? `<img src="${item.image}" onerror="this.style.display='none'">` : ""}
-      <span class="section-label">${item.section || "News"}</span>
-      <h2>${item.title}</h2>
-      <p>${cleanText(item.description)}</p>
-      <a href="./article.html?id=${saved.indexOf(item)}">Read more ›</a>
-    </article>
-  `).join("");
+ relatedNews.innerHTML = related.map((item) => `
+  <article class="news-card clickable-card"
+    onclick="window.location.href='./article.html?id=${saved.indexOf(item)}'">
+
+    ${item.image ? `<img src="${item.image}" onerror="this.style.display='none'">` : ""}
+
+    <span class="section-label">${item.section || "News"}</span>
+    <h2>${item.title}</h2>
+    <p>${cleanText(item.description)}</p>
+  </article>
+`).join("");
 
 }else{
   articleBox.innerHTML = `
