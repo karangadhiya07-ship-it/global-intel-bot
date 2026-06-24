@@ -151,7 +151,7 @@ export default async function handler(req, res) {
           seen.add(key);
           return true;
         })
-        .slice(0, 10);
+        .slice(0, 30);
 
       if (cleanResults.length > 0) {
         return res.status(200).json({
