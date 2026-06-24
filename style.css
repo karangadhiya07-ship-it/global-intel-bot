@@ -946,3 +946,53 @@ html{
     height:auto;
   }
 }
+.category-nav{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:24px;
+  border-top:1px solid #111;
+  border-bottom:3px double #111;
+  padding:12px 0;
+  margin-top:18px;
+  overflow-x:auto;
+  white-space:nowrap;
+}
+
+.category-nav .topicBtn{
+  background:none;
+  border:0;
+  font-size:14px;
+  font-family:Arial, sans-serif;
+  cursor:pointer;
+  color:#111;
+  padding:4px 2px;
+}
+
+.category-nav .topicBtn:hover{
+  text-decoration:underline;
+}
+
+.side-search-btn{
+  margin-right:auto;
+  background:none;
+  border:0;
+  font-size:24px;
+  cursor:pointer;
+  padding:0 12px;
+}
+
+@media(max-width:900px){
+  .category-nav{
+    justify-content:flex-start;
+    gap:18px;
+    padding:12px 8px;
+  }
+
+  .side-search-btn{
+    position:sticky;
+    left:0;
+    background:#f7f7f2;
+    z-index:2;
+  }
+}
