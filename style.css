@@ -1042,3 +1042,53 @@ html{
   border:none;
   cursor:pointer;
 }
+.nyt-search-wrap{
+  position:relative;
+  display:inline-flex;
+  align-items:center;
+  z-index:9999;
+}
+
+.nyt-search-icon{
+  background:none;
+  border:0;
+  font-size:24px;
+  cursor:pointer;
+  padding:4px 8px;
+}
+
+.nyt-search-panel{
+  position:absolute;
+  top:34px;
+  left:0;
+  display:none;
+  align-items:center;
+  gap:8px;
+  background:#fff;
+  border:1px solid #ddd;
+  padding:10px;
+  box-shadow:0 4px 12px rgba(0,0,0,.15);
+  z-index:99999;
+}
+
+.nyt-search-panel.active{
+  display:flex;
+}
+
+.nyt-search-panel input{
+  width:220px;
+  height:38px;
+  padding:0 10px;
+  border:1px solid #aaa;
+  font-size:14px;
+}
+
+.nyt-search-panel button{
+  height:38px;
+  padding:0 15px;
+  border:0;
+  background:#56738b;
+  color:#fff;
+  font-weight:700;
+  cursor:pointer;
+}
