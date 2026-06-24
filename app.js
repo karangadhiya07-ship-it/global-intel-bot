@@ -264,7 +264,7 @@ async function fetchNews(topic){
 
     const data = await response.json();
 
-    console.log("API DATA:", data);
+    console.log(JSON.stringify(data));
 
     const results = Array.isArray(data.results) ? data.results : [];
 
