@@ -577,3 +577,16 @@ body{
   border:none;
   cursor:pointer;
 }
+.newsletter-input{
+  width:100%;
+  padding:10px;
+  margin-bottom:10px;
+}
+
+.newsletter-btn{
+  width:100%;
+  padding:10px;
+  background:#111;
+  color:white;
+  border:none;
+}
