@@ -838,3 +838,17 @@ html{
 img{
   loading:lazy;
 }
+html{
+  scroll-behavior:smooth;
+}
+
+.news-card img,
+.lead-card img{
+  height:190px;
+  object-fit:cover;
+  background:#eee;
+}
+
+.news-card{
+  min-height:540px;
+}
