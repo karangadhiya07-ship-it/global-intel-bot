@@ -92,7 +92,7 @@ function createArticleCard(item){
     item.image &&
     item.image.startsWith("http")
       ? item.image
-      : "https://placehold.co/800x450?text=Global+Intel+Times";
+      : "https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=1200";
 
   const badImages = [
     "benzinga",
