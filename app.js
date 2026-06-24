@@ -110,17 +110,26 @@ function getSmartImage(item){
 
 function createArticleCard(item){
   const id = allNews.indexOf(item);
-  const finalImage = getSmartImage(item);
+
+  const hasImage =
+    item.image &&
+    item.image.startsWith("http") &&
+    !item.image.toLowerCase().includes("logo") &&
+    !item.image.toLowerCase().includes("placeholder") &&
+    !item.image.toLowerCase().includes("default") &&
+    !item.image.toLowerCase().includes("benzinga");
 
   return `
-    <div class="news-card clickable-card"
+    <div class="news-card clickable-card ${!hasImage ? "no-image-card" : ""}"
          onclick="window.location.href='./article.html?id=${id}'">
 
-      <img
-        loading="lazy"
-        src="${finalImage}"
-        onerror="this.src='https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=1200&q=80'"
-        alt="news image">
+      ${hasImage ? `
+        <img
+          loading="lazy"
+          src="${item.image}"
+          onerror="this.style.display='none'"
+          alt="news image">
+      ` : ""}
 
       <span class="section-label">${item.section || "NEWS"}</span>
 
