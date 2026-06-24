@@ -7,9 +7,7 @@
   <title>Global Intel Times - Breaking USA News, World News, Finance, Crypto & AI</title>
 
   <meta name="description" content="Global Intel Times delivers fast USA-focused breaking news, world updates, finance, crypto, AI, business, weather, sports and technology stories." />
-
   <meta name="keywords" content="USA news, breaking news, world news, finance news, crypto news, AI news, business news, technology news, weather news, sports news" />
-
   <meta name="robots" content="index, follow" />
   <meta name="author" content="Global Intel Times" />
 
@@ -70,8 +68,26 @@
 <body>
 
 <header class="top-header">
+
+  <div class="mini-top-nav">
+    <button id="sideSearchBtn" class="header-search-icon">⌕</button>
+
+    <div class="mini-links">
+      <span>U.S.</span>
+      <span>International</span>
+      <span>Canada</span>
+      <span>Español</span>
+      <span>中文</span>
+    </div>
+
+    <div class="account-area">
+      <button class="subscribe-btn">SUBSCRIBE FOR ₹25/WEEK</button>
+      <span class="account-text">Account⌄</span>
+    </div>
+  </div>
+
   <div class="top-row">
-    <div>
+    <div class="date-box">
       <span id="todayDate">Loading date...</span><br>
       <small>Global Intel Daily</small>
     </div>
@@ -79,45 +95,61 @@
     <h1>Global Intel Times</h1>
 
     <div class="top-market-box">
-      <button class="subscribe-btn">SUBSCRIBE FOR ₹25/WEEK</button>
       <div id="topTrendBox" class="top-trend-box">Loading market...</div>
     </div>
   </div>
 
-  <nav class="nav-bar">
-    <button class="topicBtn" data-topic="new york news">U.S.</button>
+  <nav class="nav-bar category-nav">
+    <button class="topicBtn" data-topic="us news">U.S.</button>
     <button class="topicBtn" data-topic="world news">World</button>
-    <button class="topicBtn" data-topic="stock market">Business</button>
-    <button class="topicBtn" data-topic="artificial intelligence">Technology</button>
-    <button class="topicBtn" data-topic="bitcoin">Crypto</button>
-    <button class="topicBtn" data-topic="sports news">Sports</button>
-    <button class="topicBtn" data-topic="weather news">Weather</button>
-    <button class="topicBtn" data-topic="entertainment news">Culture</button>
+    <button class="topicBtn" data-topic="business news">Business</button>
+    <button class="topicBtn" data-topic="arts news">Arts</button>
+    <button class="topicBtn" data-topic="lifestyle news">Lifestyle</button>
+    <button class="topicBtn" data-topic="opinion news">Opinion</button>
+    <button class="topicBtn" data-topic="video news">Video</button>
+    <button class="topicBtn" data-topic="audio news">Audio</button>
+    <button class="topicBtn" data-topic="games news">Games</button>
+    <button class="topicBtn" data-topic="cooking news">Cooking</button>
+    <button class="topicBtn" data-topic="product reviews">Wirecutter</button>
+    <button class="topicBtn" data-topic="sports news">The Athletic</button>
   </nav>
+
 </header>
 
 <div class="live-strip" id="breakingTicker">
   LIVE • Loading latest updates...
 </div>
 
-<section class="search-box">
+<section class="search-box" id="searchSection">
   <select id="category">
-    <option value="new york news">U.S.</option>
+    <option value="us news">U.S.</option>
     <option value="world news">World</option>
-    <option value="stock market">Business</option>
-    <option value="artificial intelligence">Technology</option>
+    <option value="business news">Business</option>
+    <option value="arts news">Arts</option>
+    <option value="lifestyle news">Lifestyle</option>
+    <option value="opinion news">Opinion</option>
+    <option value="video news">Video</option>
+    <option value="audio news">Audio</option>
+    <option value="games news">Games</option>
+    <option value="cooking news">Cooking</option>
+    <option value="product reviews">Wirecutter</option>
+    <option value="sports news">The Athletic</option>
+    <option value="technology news">Technology</option>
     <option value="bitcoin">Crypto</option>
-    <option value="sports news">Sports</option>
     <option value="weather news">Weather</option>
   </select>
 
-  <input id="searchBox" placeholder="Search news topic...">
+  <input id="searchBox" placeholder="Search news topic..." />
   <button id="searchBtn">Search</button>
 </section>
 
 <main class="homepage-layout">
 
   <section class="main-news-area">
+
+    <section class="free-read-box">
+      <p>These top stories are <b>free to read.</b></p>
+    </section>
 
     <section class="lead-grid">
       <article class="lead-card" id="leadLeft"></article>
@@ -150,6 +182,11 @@
     </div>
 
     <div class="sidebar-box">
+      <h2>⚡ Latest Updates</h2>
+      <div id="latestUpdatesBox">Loading updates...</div>
+    </div>
+
+    <div class="sidebar-box">
       <h2>📌 Trending Topics</h2>
       <button class="topicBtn side-topic" data-topic="bitcoin">Bitcoin</button>
       <button class="topicBtn side-topic" data-topic="artificial intelligence">AI</button>
@@ -167,20 +204,20 @@
     </div>
 
     <div class="sidebar-box">
-  <h2>👥 Visitor Counter</h2>
-  <p id="visitorCounter">Loading visits...</p>
-</div>
+      <h2>👥 Visitor Counter</h2>
+      <p id="visitorCounter">Loading visits...</p>
+    </div>
 
-<div class="sidebar-box">
-  <h2>🔎 Trending Searches</h2>
-  <div id="trendingKeywords">
-    <p>No searches yet</p>
-  </div>
-</div>
+    <div class="sidebar-box">
+      <h2>🔎 Trending Searches</h2>
+      <div id="trendingKeywords">
+        <p>No searches yet</p>
+      </div>
+    </div>
 
     <div class="sidebar-box">
       <h2>📧 Newsletter</h2>
-      <input type="email" placeholder="Your Email" class="newsletter-input">
+      <input type="email" placeholder="Your Email" class="newsletter-input" />
       <button class="newsletter-btn">Subscribe</button>
     </div>
 
@@ -212,6 +249,9 @@
     <a href="/about.html">About Us</a>
     <a href="/contact.html">Contact Us</a>
     <a href="/privacy.html">Privacy Policy</a>
+    <a href="/editorial-policy.html">Editorial Policy</a>
+    <a href="/terms.html">Terms of Service</a>
+    <a href="/corrections.html">Corrections Policy</a>
   </div>
 
   <div class="footer-links">
