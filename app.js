@@ -565,11 +565,3 @@ if(document.getElementById("articleView")){
 }else{
   searchNews();
 }
-const sideSearchBtn = document.getElementById("sideSearchBtn");
-
-if(sideSearchBtn && searchBox){
-  sideSearchBtn.addEventListener("click", ()=>{
-    searchBox.focus();
-    searchBox.scrollIntoView({ behavior:"smooth", block:"center" });
-  });
-}
