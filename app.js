@@ -236,6 +236,7 @@ function renderPage(){
   updateMostRead();
   updateTrendAnalysis();
   updateTopMarket();
+  enhanceImages();
 }
 
 async function fetchNews(topic){
@@ -382,3 +383,100 @@ setTimeout(()=>{
     popup.style.display="block";
   }
 },5000);
+function acceptCookies(){
+  localStorage.setItem("cookiesAccepted","yes");
+
+  const banner = document.getElementById("cookieBanner");
+  if(banner){
+    banner.style.display = "none";
+  }
+}
+
+function setupCookieBanner(){
+  const banner = document.getElementById("cookieBanner");
+
+  if(!banner) return;
+
+  if(localStorage.getItem("cookiesAccepted") === "yes"){
+    banner.style.display = "none";
+  }else{
+    banner.style.display = "flex";
+  }
+}
+
+function setupBreakingPopup(){
+  const popup = document.getElementById("breakingPopup");
+
+  if(!popup) return;
+
+  popup.style.display = "none";
+
+  setTimeout(()=>{
+    if(allNews.length > 0){
+      popup.textContent = "🚨 " + allNews[0].title;
+      popup.style.display = "block";
+
+      popup.onclick = ()=>{
+        window.location.href = "./article.html?id=0";
+      };
+
+      setTimeout(()=>{
+        popup.style.display = "none";
+      },8000);
+    }
+  },6000);
+}
+
+function setupNewsletter(){
+  const input = document.querySelector(".newsletter-input");
+  const btn = document.querySelector(".newsletter-btn");
+
+  if(!input || !btn) return;
+
+  btn.addEventListener("click", ()=>{
+    const email = input.value.trim();
+
+    if(!email || !email.includes("@")){
+      alert("Please enter a valid email.");
+      return;
+    }
+
+    const savedEmails = JSON.parse(localStorage.getItem("newsletterEmails") || "[]");
+
+    if(!savedEmails.includes(email)){
+      savedEmails.push(email);
+      localStorage.setItem("newsletterEmails", JSON.stringify(savedEmails));
+    }
+
+    input.value = "";
+    alert("Thanks for subscribing!");
+  });
+}
+
+function enhanceImages(){
+  document.querySelectorAll("img").forEach(img=>{
+    img.setAttribute("loading","lazy");
+  });
+}
+
+function setupKeyboardSearch(){
+  document.addEventListener("keydown", e=>{
+    if(e.key === "/" && searchBox){
+      e.preventDefault();
+      searchBox.focus();
+    }
+  });
+}
+
+function setupMegaFeatures(){
+  setupCookieBanner();
+  setupNewsletter();
+  setupKeyboardSearch();
+
+  setTimeout(()=>{
+    setupBreakingPopup();
+    enhanceImages();
+  },1500);
+}
+
+setupMegaFeatures();
