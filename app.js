@@ -1,0 +1,363 @@
+const breakingTicker = document.getElementById("breakingTicker");
+const newsFeed = document.getElementById("newsFeed");
+const leadLeft = document.getElementById("leadLeft");
+const leadMain = document.getElementById("leadMain");
+const leadRight = document.getElementById("leadRight");
+const todayDate = document.getElementById("todayDate");
+const mostReadList = document.getElementById("mostReadList");
+const category = document.getElementById("category");
+
+let allNews = [];
+let seenTitles = new Set();
+let isLoading = false;
+let marketIndex = 0;
+
+const MAX_HOME_ARTICLES = 30;
+
+const blockedKeywords = [
+  "prediction","betting","odds","casino","promo code","coupon",
+  "gaming controller","easysmx","sponsored","affiliate","deal",
+  "buy now","tips and bets"
+];
+
+const marketItems = [
+  { symbol:"AAPL", change:"+1.24%", trend:"up" },
+  { symbol:"MSFT", change:"+0.82%", trend:"up" },
+  { symbol:"NVDA", change:"+2.31%", trend:"up" },
+  { symbol:"AMZN", change:"-0.44%", trend:"down" },
+  { symbol:"META", change:"+1.09%", trend:"up" },
+  { symbol:"TSLA", change:"-1.76%", trend:"down" },
+  { symbol:"GOOGL", change:"+0.55%", trend:"up" },
+  { symbol:"BTC", change:"+2.14%", trend:"up" }
+];
+
+if(todayDate){
+  todayDate.textContent = new Date().toLocaleDateString("en-US", {
+    weekday:"long", year:"numeric", month:"long", day:"numeric"
+  });
+}
+
+function cleanText(text = ""){
+  return String(text || "This story is developing and more updates may follow soon.")
+    .replace(/<[^>]*>/g,"")
+    .replace(/\[\.\.\.\]/g,"")
+    .replace(/The post .* appeared first on .*?\./gi,"")
+    .replace(/\s+/g," ")
+    .trim();
+}
+
+function shortText(text, limit = 170){
+  const t = cleanText(text);
+  return t.length > limit ? t.slice(0, limit) + "..." : t;
+}
+
+function detectSection(title){
+  const t = String(title || "").toLowerCase();
+
+  if(t.includes("bitcoin") || t.includes("crypto") || t.includes("ethereum")) return "Crypto";
+  if(t.includes("stock") || t.includes("market") || t.includes("economy") || t.includes("fed") || t.includes("nasdaq")) return "Business";
+  if(t.includes("ai") || t.includes("openai") || t.includes("technology") || t.includes("nvidia")) return "Technology";
+  if(t.includes("weather") || t.includes("storm") || t.includes("rain")) return "Weather";
+  if(t.includes("sport") || t.includes("nfl") || t.includes("nba") || t.includes("fifa")) return "Sports";
+  if(t.includes("new york") || t.includes("nyc")) return "New York";
+  if(t.includes("trump") || t.includes("biden") || t.includes("election") || t.includes("white house")) return "U.S.";
+
+  return "News";
+}
+
+function isBadArticle(title, description){
+  const text = `${title} ${description}`.toLowerCase();
+  return blockedKeywords.some(word => text.includes(word));
+}
+
+function getValidImage(item){
+  const img = item.image || "";
+  if(
+    img.startsWith("http") &&
+    !img.toLowerCase().includes("logo") &&
+    !img.toLowerCase().includes("placeholder") &&
+    !img.toLowerCase().includes("default") &&
+    !img.toLowerCase().includes("benzinga")
+  ){
+    return img;
+  }
+  return "";
+}
+
+function articleUrl(id){
+  return `./article.html?id=${id}`;
+}
+
+function trackArticleClick(title){
+  const clicks = JSON.parse(localStorage.getItem("articleClicks") || "{}");
+  clicks[title] = (clicks[title] || 0) + 1;
+  localStorage.setItem("articleClicks", JSON.stringify(clicks));
+}
+
+function createArticleCard(item){
+  const id = allNews.indexOf(item);
+  const img = getValidImage(item);
+  const safeTitle = item.title.replace(/'/g,"");
+
+  return `
+    <article class="news-card clickable-card ${!img ? "no-image-card" : ""}">
+      <a href="${articleUrl(id)}" onclick="trackArticleClick('${safeTitle}')">
+        ${img ? `<img loading="lazy" decoding="async" src="${img}" onerror="this.remove()" alt="${item.title}">` : ""}
+        <span class="section-label">${item.section || "NEWS"}</span>
+        <h2>${item.title}</h2>
+        <p>${shortText(item.description || "",185)}</p>
+        <small>Source: ${item.source || "Global Intel Times"}</small>
+        <div class="read-more-btn">Read Full Story →</div>
+      </a>
+    </article>
+  `;
+}
+
+function renderLeads(){
+  if(leadMain) leadMain.innerHTML = allNews[0] ? createArticleCard(allNews[0]) : "";
+  if(leadLeft) leadLeft.innerHTML = allNews[1] ? createArticleCard(allNews[1]) : "";
+  if(leadRight) leadRight.innerHTML = allNews[2] ? createArticleCard(allNews[2]) : "";
+}
+
+function renderBelowNews(){
+  if(!newsFeed) return;
+  newsFeed.innerHTML = allNews.slice(3, MAX_HOME_ARTICLES).map(createArticleCard).join("");
+  localStorage.setItem("articles", JSON.stringify(allNews));
+}
+
+function updateTicker(){
+  if(!breakingTicker) return;
+  breakingTicker.textContent = allNews.length
+    ? "LIVE • " + allNews.slice(0,3).map(x => x.title).join(" • ")
+    : "LIVE • Loading latest updates...";
+}
+
+function updateMostRead(){
+  if(!mostReadList) return;
+  mostReadList.innerHTML = allNews.slice(0,8)
+    .map((item,i) => `<li><a href="${articleUrl(i)}">${item.title}</a></li>`)
+    .join("");
+}
+
+function updateTrendAnalysis(){
+  const box = document.getElementById("trendAnalysis");
+  if(!box) return;
+
+  const counts = {
+    Crypto: allNews.filter(x => x.section === "Crypto").length,
+    Technology: allNews.filter(x => x.section === "Technology").length,
+    Business: allNews.filter(x => x.section === "Business").length,
+    Weather: allNews.filter(x => x.section === "Weather").length,
+    Sports: allNews.filter(x => x.section === "Sports").length,
+    News: allNews.filter(x => x.section === "News").length
+  };
+
+  const topCategory = Object.keys(counts).sort((a,b) => counts[b] - counts[a])[0];
+  const score = Math.min(100, counts.Crypto*10 + counts.Technology*10 + counts.Business*9 + counts.Weather*6 + counts.Sports*4 + allNews.length*2);
+
+  box.innerHTML = `
+    <p><b>Trending Score:</b> ${score}/100</p>
+    <p><b>Top Category:</b> ${topCategory}</p>
+    <p><b>Total Headlines:</b> ${allNews.length}</p>
+    <p><b>AI Mentions:</b> ${counts.Technology}</p>
+    <p><b>Finance Mentions:</b> ${counts.Business}</p>
+    <p><b>Crypto Mentions:</b> ${counts.Crypto}</p>
+    <p><b>Weather Mentions:</b> ${counts.Weather}</p>
+  `;
+}
+
+function latestUpdatesWidget(){
+  const box = document.getElementById("latestUpdatesBox");
+  if(!box) return;
+  box.innerHTML = allNews.slice(0,5)
+    .map((item,i) => `<a class="latest-update-link" href="${articleUrl(i)}">${item.title}</a>`)
+    .join("");
+}
+
+function updateTopMarket(){
+  const box = document.getElementById("topTrendBox");
+  if(!box) return;
+
+  const item = marketItems[marketIndex % marketItems.length];
+  box.className = "top-trend-box " + item.trend;
+  box.innerHTML = `${item.symbol} ${item.change} ${item.trend === "up" ? "↑" : "↓"}`;
+  marketIndex++;
+}
+
+function renderPage(){
+  allNews = allNews.slice(0, MAX_HOME_ARTICLES);
+  localStorage.setItem("articles", JSON.stringify(allNews));
+
+  renderLeads();
+  renderBelowNews();
+  updateTicker();
+  updateMostRead();
+  updateTrendAnalysis();
+  latestUpdatesWidget();
+  updateTopMarket();
+}
+
+async function fetchNews(topic){
+  if(isLoading || !newsFeed) return;
+  isLoading = true;
+
+  newsFeed.innerHTML = `<div class="loading">Loading live news...</div>`;
+
+  try{
+    const response = await fetch(`${window.location.origin}/api/news?q=${encodeURIComponent(topic)}`);
+    const data = await response.json();
+    const results = Array.isArray(data.results) ? data.results : [];
+
+    const fresh = [];
+
+    results.forEach(item => {
+      const title = cleanText(item.title || "");
+      const description = cleanText(item.description || item.content || item.summary || "");
+      const key = title.toLowerCase();
+
+      if(!title) return;
+      if(seenTitles.has(key)) return;
+      if(isBadArticle(title, description)) return;
+
+      seenTitles.add(key);
+
+      fresh.push({
+        title,
+        description,
+        section: detectSection(title),
+        source: item.source_id || item.source || "News",
+        link: item.link || item.url || "#",
+        image: item.image_url || item.image || "",
+        publishedAt: item.pubDate || item.publishedAt || item.published_at || new Date().toISOString()
+      });
+    });
+
+    allNews = fresh.slice(0, MAX_HOME_ARTICLES);
+
+    if(allNews.length){
+      renderPage();
+    }else{
+      newsFeed.innerHTML = `<div class="loading">No fresh news found.</div>`;
+    }
+  }catch(error){
+    console.error(error);
+    newsFeed.innerHTML = `<div class="loading">Failed to load stories.</div>`;
+  }
+
+  isLoading = false;
+}
+
+async function searchNews(topic = "usa breaking news"){
+  allNews = [];
+  seenTitles = new Set();
+
+  if(leadLeft) leadLeft.innerHTML = "";
+  if(leadMain) leadMain.innerHTML = "";
+  if(leadRight) leadRight.innerHTML = "";
+  if(mostReadList) mostReadList.innerHTML = `<li>Loading...</li>`;
+
+  await fetchNews(topic);
+}
+
+function setupCategoryButtons(){
+  document.querySelectorAll(".topicBtn").forEach(btn => {
+    btn.onclick = function(){
+      searchNews(btn.dataset.topic || "usa breaking news");
+    };
+  });
+}
+
+function setupCookieBanner(){
+  const banner = document.getElementById("cookieBanner");
+  if(!banner) return;
+  banner.style.display = localStorage.getItem("cookiesAccepted") === "yes" ? "none" : "flex";
+}
+
+function acceptCookies(){
+  localStorage.setItem("cookiesAccepted","yes");
+  const banner = document.getElementById("cookieBanner");
+  if(banner) banner.style.display = "none";
+}
+
+function setupNewsletter(){
+  const input = document.querySelector(".newsletter-input");
+  const btn = document.querySelector(".newsletter-btn");
+  if(!input || !btn) return;
+
+  btn.onclick = function(){
+    const email = input.value.trim();
+    if(!email || !email.includes("@")){
+      alert("Please enter a valid email.");
+      return;
+    }
+
+    const saved = JSON.parse(localStorage.getItem("newsletterEmails") || "[]");
+    if(!saved.includes(email)){
+      saved.push(email);
+      localStorage.setItem("newsletterEmails", JSON.stringify(saved));
+    }
+
+    input.value = "";
+    alert("Thanks for subscribing!");
+  };
+}
+
+function updateVisitorCount(){
+  const today = new Date().toDateString();
+  const key = "visitorCount_" + today;
+  let count = Number(localStorage.getItem(key) || 0) + 1;
+  localStorage.setItem(key, count);
+
+  const box = document.getElementById("visitorCounter");
+  if(box) box.textContent = count + " visits today";
+}
+
+function updateArticleSEO(article){
+  document.title = `${article.title} | Global Intel Times`;
+}
+
+function readingTime(text){
+  return `${Math.max(1, Math.ceil(cleanText(text).split(" ").length / 220))} min read`;
+}
+
+function renderArticlePage(){
+  const articleBox = document.getElementById("articleView");
+  if(!articleBox) return;
+
+  const articles = JSON.parse(localStorage.getItem("articles") || "[]");
+  const id = Number(new URLSearchParams(window.location.search).get("id") || 0);
+  const article = articles[id];
+
+  if(!article){
+    articleBox.innerHTML = `<h1>Article not found</h1><p>Please go back to homepage.</p>`;
+    return;
+  }
+
+  updateArticleSEO(article);
+  const img = getValidImage(article);
+
+  articleBox.innerHTML = `
+    <div class="breadcrumb"><a href="./index.html">Home</a> › ${article.section}</div>
+    <span class="section-label">${article.section}</span>
+    <h1>${article.title}</h1>
+    <p class="article-meta">${article.source || "Global Intel Times"} • ${readingTime(article.description)}</p>
+    ${img ? `<img class="article-main-img" src="${img}" alt="${article.title}" onerror="this.remove()">` : ""}
+    <p class="article-intro">${article.description}</p>
+    <p>Global Intel Times is tracking this developing story as part of our USA-focused news coverage.</p>
+    ${article.link && article.link !== "#" ? `<a href="${article.link}" target="_blank" rel="noopener nofollow" class="source-link">Original Source</a>` : ""}
+  `;
+}
+
+setupCookieBanner();
+setupNewsletter();
+updateVisitorCount();
+setupCategoryButtons();
+
+setInterval(updateTopMarket, 5000);
+updateTopMarket();
+
+if(document.getElementById("articleView")){
+  renderArticlePage();
+}else{
+  searchNews("usa breaking news");
+}
