@@ -1,40 +1,35 @@
 export default async function handler(req, res) {
+
   const q = req.query.q || "breaking news";
 
   try {
+
     const response = await fetch(
-      `https://gnews.io/api/v4/search?q=${encodeURIComponent(q)}&lang=en&country=us&max=25&apikey=${process.env.GNEWS_API_KEY}`
+      `https://newsdata.io/api/1/news?apikey=${process.env.NEWSDATA_API_KEY}&q=${encodeURIComponent(q)}&language=en`
     );
 
     const data = await response.json();
 
-    if (!response.ok) {
-      return res.status(500).json({
-        results: [],
-        error: data.errors || "GNews API Error"
-      });
-    }
-
-    const results = (data.articles || []).map(article => ({
+    const results = (data.results || []).map(article => ({
       title: article.title || "",
       description: article.description || "",
       content: article.content || "",
-      image_url: article.image || "",
-      link: article.url || "#",
-      source_id: article.source?.name || "GNews"
+      image_url: article.image_url || "",
+      link: article.link || "#",
+      source_id: article.source_id || "NewsData"
     }));
 
     return res.status(200).json({
-      results,
-      totalResults: results.length
+      results
     });
 
-  } catch (error) {
-    console.error("GNEWS ERROR:", error);
+  } catch(error){
 
     return res.status(500).json({
       results: [],
       error: error.message
     });
+
   }
+
 }
