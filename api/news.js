@@ -1,18 +1,72 @@
 export default async function handler(req, res) {
-  const q = req.query.q || "bitcoin";
+  const q = req.query.q || "usa breaking news";
 
   const topics = [
     q,
-    `${q} latest news`,
-    `${q} market`,
-    "artificial intelligence",
-    "stock market",
+    "usa breaking news",
+    "us politics",
+    "white house",
+    "stock market news",
+    "business news",
     "technology news",
-    "business news"
+    "artificial intelligence news",
+    "new york news",
+    "world news"
+  ];
+
+  const blockedWords = [
+    "prediction",
+    "betting",
+    "odds",
+    "casino",
+    "promo code",
+    "coupon",
+    "gaming controller",
+    "deal",
+    "buy now",
+    "singer",
+    "celebrity",
+    "movie",
+    "tv show",
+    "concert",
+    "horoscope",
+    "lottery",
+    "recipe",
+    "tips and bets"
+  ];
+
+  const priorityWords = [
+    "trump",
+    "white house",
+    "congress",
+    "senate",
+    "supreme court",
+    "federal",
+    "election",
+    "economy",
+    "inflation",
+    "stock",
+    "market",
+    "fed",
+    "ai",
+    "artificial intelligence",
+    "technology",
+    "nvidia",
+    "microsoft",
+    "apple",
+    "bitcoin",
+    "crypto",
+    "new york",
+    "weather",
+    "storm",
+    "world"
   ];
 
   const clean = (text = "") =>
-    String(text).replace(/\s+/g, " ").trim();
+    String(text)
+      .replace(/<[^>]*>/g, "")
+      .replace(/\s+/g, " ")
+      .trim();
 
   const normalize = (article) => ({
     title: clean(article.title),
@@ -25,14 +79,40 @@ export default async function handler(req, res) {
 
   function isGoodArticle(item) {
     const badText = "ONLY AVAILABLE IN PAID PLANS";
+    const text = `${item.title} ${item.description} ${item.content}`.toLowerCase();
 
-    return (
-      item.title &&
-      item.description &&
-      !item.title.includes(badText) &&
-      !item.description.includes(badText) &&
-      !(item.content || "").includes(badText)
-    );
+    if (!item.title || !item.description) return false;
+    if (item.title.includes(badText)) return false;
+    if (item.description.includes(badText)) return false;
+    if ((item.content || "").includes(badText)) return false;
+
+    if (blockedWords.some(word => text.includes(word))) return false;
+
+    if (item.title.length < 35) return false;
+    if (item.description.length < 45) return false;
+
+    return true;
+  }
+
+  function scoreArticle(item) {
+    const text = `${item.title} ${item.description}`.toLowerCase();
+
+    let score = 0;
+
+    priorityWords.forEach(word => {
+      if (text.includes(word)) score += 10;
+    });
+
+    if (text.includes("breaking")) score += 8;
+    if (text.includes("live")) score += 6;
+    if (text.includes("us") || text.includes("america") || text.includes("united states")) score += 8;
+    if (item.image_url) score += 4;
+
+    if (text.includes("sports")) score -= 8;
+    if (text.includes("music")) score -= 10;
+    if (text.includes("entertainment")) score -= 10;
+
+    return score;
   }
 
   async function tryGNews(topic) {
@@ -54,7 +134,7 @@ export default async function handler(req, res) {
 
     const url =
       `https://newsdata.io/api/1/news?apikey=${process.env.NEWSDATA_API_KEY}` +
-      `&q=${encodeURIComponent(topic)}&language=en`;
+      `&q=${encodeURIComponent(topic)}&language=en&country=us`;
 
     const r = await fetch(url);
     const data = await r.json();
@@ -68,7 +148,7 @@ export default async function handler(req, res) {
 
     const url =
       `https://api.thenewsapi.com/v1/news/all?api_token=${process.env.THENEWS_API_KEY}` +
-      `&search=${encodeURIComponent(topic)}&language=en&limit=30`;
+      `&search=${encodeURIComponent(topic)}&language=en&locale=us&limit=30`;
 
     const r = await fetch(url);
     const data = await r.json();
@@ -82,7 +162,7 @@ export default async function handler(req, res) {
 
     const url =
       `https://api.mediastack.com/v1/news?access_key=${process.env.MEDIASTACK_API_KEY}` +
-      `&keywords=${encodeURIComponent(topic)}&languages=en&limit=30`;
+      `&keywords=${encodeURIComponent(topic)}&languages=en&countries=us&limit=30`;
 
     const r = await fetch(url);
     const data = await r.json();
@@ -96,7 +176,7 @@ export default async function handler(req, res) {
 
     const url =
       `https://api.currentsapi.services/v1/search?apiKey=${process.env.CURRENTS_API_KEY}` +
-      `&keywords=${encodeURIComponent(topic)}&language=en`;
+      `&keywords=${encodeURIComponent(topic)}&language=en&country=US`;
 
     const r = await fetch(url);
     const data = await r.json();
@@ -121,7 +201,7 @@ export default async function handler(req, res) {
     ["CurrentsAPI", tryCurrents]
   ];
 
-  const finalResults = [];
+  const collected = [];
   const seen = new Set();
   const usedProviders = [];
 
@@ -135,9 +215,12 @@ export default async function handler(req, res) {
           .forEach(item => {
             const key = item.title.toLowerCase();
 
-            if (!seen.has(key) && finalResults.length < 30) {
+            if (!seen.has(key)) {
               seen.add(key);
-              finalResults.push(item);
+              collected.push({
+                ...item,
+                score: scoreArticle(item)
+              });
             }
           });
 
@@ -145,15 +228,16 @@ export default async function handler(req, res) {
           usedProviders.push(provider);
         }
 
-        if (finalResults.length >= 30) break;
-
       } catch (e) {
         console.log(provider + " failed:", e.message);
       }
     }
-
-    if (finalResults.length >= 30) break;
   }
+
+  const finalResults = collected
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 30)
+    .map(({ score, ...item }) => item);
 
   if (finalResults.length > 0) {
     return res.status(200).json({
@@ -168,24 +252,24 @@ export default async function handler(req, res) {
     totalResults: 3,
     results: [
       {
-        title: "Global markets remain active as investors track technology, crypto and economic signals",
-        description: "Markets continue reacting to business updates, technology developments and global indicators.",
+        title: "U.S. markets remain active as investors track technology and economic signals",
+        description: "Markets continue reacting to business updates, technology developments and economic indicators across the United States.",
         content: "Fallback story shown when live APIs are unavailable.",
         image_url: "",
         link: "#",
         source_id: "Global Intel Times"
       },
       {
-        title: "Technology and AI remain major focus areas for global businesses",
-        description: "Companies continue investing in artificial intelligence, automation and digital infrastructure.",
+        title: "Artificial intelligence remains a major focus for U.S. technology companies",
+        description: "Companies continue investing in artificial intelligence, automation and digital infrastructure as competition grows.",
         content: "Fallback story shown when live APIs are unavailable.",
         image_url: "",
         link: "#",
         source_id: "Global Intel Times"
       },
       {
-        title: "Crypto market watchers follow Bitcoin and digital asset trends",
-        description: "Crypto investors monitor Bitcoin, regulation, ETFs and institutional activity.",
+        title: "New York business leaders monitor economy, housing and market trends",
+        description: "New York remains a major center for finance, real estate, technology and national business developments.",
         content: "Fallback story shown when live APIs are unavailable.",
         image_url: "",
         link: "#",
