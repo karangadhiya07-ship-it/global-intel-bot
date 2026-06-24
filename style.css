@@ -590,3 +590,8 @@ body{
   color:white;
   border:none;
 }
+.author-box{
+  border:1px solid #ddd;
+  padding:20px;
+  margin-top:30px;
+}
