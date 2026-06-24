@@ -803,3 +803,11 @@ body{
     bottom:75px;
   }
 }
+.news-card{
+  min-height:520px;
+}
+
+.news-card img{
+  height:180px;
+  object-fit:cover;
+}
