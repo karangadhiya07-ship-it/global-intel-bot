@@ -996,3 +996,49 @@ html{
     z-index:2;
   }
 }
+.nyt-search-wrap{
+  position:relative;
+  display:flex;
+  align-items:center;
+}
+
+.nyt-search-icon{
+  border:none;
+  background:none;
+  font-size:20px;
+  cursor:pointer;
+}
+
+.nyt-search-panel{
+  position:absolute;
+  top:40px;
+  left:0;
+  background:#fff;
+  border:1px solid #ddd;
+  padding:10px;
+  display:none;
+  gap:8px;
+  align-items:center;
+  z-index:999;
+  box-shadow:0 4px 12px rgba(0,0,0,.12);
+}
+
+.nyt-search-panel.active{
+  display:flex;
+}
+
+.nyt-search-panel input{
+  width:220px;
+  height:38px;
+  border:1px solid #ccc;
+  padding:0 10px;
+}
+
+.nyt-search-panel button{
+  height:38px;
+  padding:0 15px;
+  background:#56738b;
+  color:#fff;
+  border:none;
+  cursor:pointer;
+}
