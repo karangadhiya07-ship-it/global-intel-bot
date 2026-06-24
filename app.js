@@ -361,6 +361,11 @@ if(document.getElementById("articleView")){
   renderArticlePage();
 }else{
   searchNews("usa breaking news");
+  setInterval(() => {
+  if (!document.getElementById("articleView")) {
+    searchNews("usa breaking news");
+  }
+}, 300000);
 }
 function updateHomeSchema(){
   let oldSchema = document.getElementById("homeItemListSchema");
