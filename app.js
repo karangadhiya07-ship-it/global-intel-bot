@@ -267,6 +267,8 @@ async function fetchNews(topic){
   try{
     const response = await fetch(`/api/news?q=${encodeURIComponent(finalTopic)}`);
     const data = await response.json();
+    console.log("API DATA:", data);
+    console.log("RESULTS:", data.results);
 
     loading.remove();
 
