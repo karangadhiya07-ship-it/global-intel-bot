@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Market Watch | Global Intel Times</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="top-header">
+  <div class="top-row">
+    <div>
+      <a href="./index.html">← Back to Home</a>
+    </div>
+
+    <h1>Market Watch</h1>
+
+    <div></div>
+  </div>
+</header>
+
+<main class="market-page">
+  <section class="market-hero">
+    <h2 id="assetTitle">Loading...</h2>
+    <p id="assetPrice">Loading market data...</p>
+  </section>
+
+  <section class="market-info-grid">
+    <div class="market-info-box">
+      <h3>Overview</h3>
+      <p id="assetOverview">Loading overview...</p>
+    </div>
+
+    <div class="market-info-box">
+      <h3>Market Signal</h3>
+      <p id="assetSignal">Loading signal...</p>
+    </div>
+
+    <div class="market-info-box">
+      <h3>Latest Related News</h3>
+      <div id="assetNews">Loading news...</div>
+    </div>
+  </section>
+</main>
+
+<script>
+const marketData = {
+  AAPL: {
+    name: "Apple Inc.",
+    price: "+1.24% ↑",
+    overview: "Apple remains one of the most watched technology stocks, with investors tracking iPhone demand, services revenue and AI-related product strategy.",
+    signal: "Positive short-term sentiment based on technology sector momentum."
+  },
+  MSFT: {
+    name: "Microsoft Corporation",
+    price: "+0.82% ↑",
+    overview: "Microsoft continues to attract investor attention through cloud growth, enterprise software and artificial intelligence infrastructure.",
+    signal: "Stable positive trend with strong AI and cloud focus."
+  },
+  NVDA: {
+    name: "Nvidia Corporation",
+    price: "+2.31% ↑",
+    overview: "Nvidia remains central to the AI chip market, with demand from data centers and artificial intelligence companies driving attention.",
+    signal: "High momentum, but volatility may remain elevated."
+  },
+  AMZN: {
+    name: "Amazon.com Inc.",
+    price: "-0.44% ↓",
+    overview: "Amazon is closely watched for e-commerce demand, AWS cloud growth and advertising revenue trends.",
+    signal: "Mixed sentiment due to market rotation and margin focus."
+  },
+  META: {
+    name: "Meta Platforms",
+    price: "+1.09% ↑",
+    overview: "Meta is tracked for advertising growth, AI investment and social media engagement across its platforms.",
+    signal: "Positive trend with AI and ad recovery support."
+  },
+  TSLA: {
+    name: "Tesla Inc.",
+    price: "-1.76% ↓",
+    overview: "Tesla investors monitor EV demand, delivery numbers, margins, battery technology and autonomous driving progress.",
+    signal: "Volatile trend with pressure from EV competition."
+  },
+  GOOGL: {
+    name: "Alphabet Inc.",
+    price: "+0.55% ↑",
+    overview: "Alphabet is watched for Google Search, YouTube, cloud performance and artificial intelligence competition.",
+    signal: "Moderate positive trend with AI focus."
+  },
+  BTC: {
+    name: "Bitcoin",
+    price: "+2.14% ↑",
+    overview: "Bitcoin remains the largest cryptocurrency, with investors tracking ETF flows, regulation, liquidity and macroeconomic signals.",
+    signal: "Positive crypto momentum, but volatility remains high."
+  },
+  GOLD: {
+    name: "Gold",
+    price: "+0.61% ↑",
+    overview: "Gold is often watched as a safe-haven asset during inflation, geopolitical uncertainty and currency weakness.",
+    signal: "Defensive demand remains supportive."
+  },
+  SILVER: {
+    name: "Silver",
+    price: "-0.22% ↓",
+    overview: "Silver moves with both precious metal demand and industrial usage, making it more volatile than gold.",
+    signal: "Mixed short-term sentiment."
+  }
+};
+
+const params = new URLSearchParams(window.location.search);
+const symbol = (params.get("symbol") || "AAPL").toUpperCase();
+const asset = marketData[symbol] || marketData.AAPL;
+
+document.title = `${asset.name} Market Watch | Global Intel Times`;
+
+document.getElementById("assetTitle").textContent = `${asset.name} (${symbol})`;
+document.getElementById("assetPrice").textContent = asset.price;
+document.getElementById("assetOverview").textContent = asset.overview;
+document.getElementById("assetSignal").textContent = asset.signal;
+
+document.getElementById("assetNews").innerHTML = `
+  <a href="./index.html">View latest related market headlines on Global Intel Times →</a>
+`;
+</script>
+
+</body>
+</html>
