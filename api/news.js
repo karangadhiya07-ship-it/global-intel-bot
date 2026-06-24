@@ -29,7 +29,7 @@ export default async function handler(req, res) {
 
     const url =
       `https://gnews.io/api/v4/search?q=${encodeURIComponent(q)}` +
-      `&lang=en&country=us&max=10&apikey=${process.env.GNEWS_API_KEY}`;
+      `&lang=en&country=us&max=30&apikey=${process.env.GNEWS_API_KEY}`;
 
     const r = await fetch(url);
     const data = await r.json();
@@ -57,7 +57,7 @@ export default async function handler(req, res) {
 
     const url =
       `https://api.thenewsapi.com/v1/news/all?api_token=${process.env.THENEWS_API_KEY}` +
-      `&search=${encodeURIComponent(q)}&language=en&limit=10`;
+      `&search=${encodeURIComponent(q)}&language=en&limit=30`;
 
     const r = await fetch(url);
     const data = await r.json();
@@ -71,7 +71,7 @@ export default async function handler(req, res) {
 
     const url =
       `https://api.mediastack.com/v1/news?access_key=${process.env.MEDIASTACK_API_KEY}` +
-      `&keywords=${encodeURIComponent(q)}&languages=en&limit=10`;
+      `&keywords=${encodeURIComponent(q)}&languages=en&limit=30`;
 
     const r = await fetch(url);
     const data = await r.json();
