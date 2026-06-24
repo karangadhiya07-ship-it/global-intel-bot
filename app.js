@@ -16,18 +16,21 @@ let isLoading = false;
 let topicIndex = 0;
 let marketIndex = 0;
 
+const MAX_HOME_ARTICLES = 30;
+
 const topicPool = [
-  "bitcoin",
-  "artificial intelligence",
+  "usa news",
+  "breaking news",
   "stock market",
-  "tesla",
-  "apple",
-  "nvidia",
-  "microsoft",
-  "gold price",
-  "silver price",
-  "crypto"
+  "artificial intelligence",
+  "bitcoin",
+  "new york",
+  "technology",
+  "business",
+  "weather",
+  "sports"
 ];
+
 const marketItems = [
   { name:"Apple", symbol:"AAPL", change:"+1.24%", trend:"up" },
   { name:"Microsoft", symbol:"MSFT", change:"+0.82%", trend:"up" },
@@ -36,12 +39,6 @@ const marketItems = [
   { name:"Meta", symbol:"META", change:"+1.09%", trend:"up" },
   { name:"Tesla", symbol:"TSLA", change:"-1.76%", trend:"down" },
   { name:"Google", symbol:"GOOGL", change:"+0.55%", trend:"up" },
-  { name:"Netflix", symbol:"NFLX", change:"-0.69%", trend:"down" },
-  { name:"JPMorgan", symbol:"JPM", change:"+0.28%", trend:"up" },
-  { name:"Walmart", symbol:"WMT", change:"+0.39%", trend:"up" },
-  { name:"Gold", symbol:"GOLD", change:"+0.61%", trend:"up" },
-  { name:"Silver", symbol:"SILVER", change:"-0.22%", trend:"down" },
-  { name:"Crude Oil", symbol:"OIL", change:"+1.18%", trend:"up" },
   { name:"Bitcoin", symbol:"BTC", change:"+2.14%", trend:"up" }
 ];
 
@@ -54,6 +51,26 @@ if(todayDate){
   });
 }
 
+function cleanText(text){
+  if(!text || text === "undefined"){
+    return "This story is developing and more updates may follow soon.";
+  }
+
+  return String(text)
+    .replace(/<[^>]*>/g, "")
+    .replace("NEW", "")
+    .replace("You can now listen to Fox News articles!", "")
+    .replace(/\[\.\.\.\]/g, "")
+    .replace(/The post .* appeared first on .*?\./gi, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function shortText(text, limit = 180){
+  const clean = cleanText(text);
+  return clean.length > limit ? clean.slice(0, limit) + "..." : clean;
+}
+
 function detectSection(title){
   const t = String(title || "").toLowerCase();
 
@@ -63,85 +80,60 @@ function detectSection(title){
   if(t.includes("weather") || t.includes("storm") || t.includes("heatwave") || t.includes("rain")) return "Weather";
   if(t.includes("sport") || t.includes("nfl") || t.includes("nba") || t.includes("world cup") || t.includes("fifa")) return "Sports";
   if(t.includes("music") || t.includes("movie") || t.includes("celebrity")) return "Culture";
+  if(t.includes("new york") || t.includes("nyc")) return "New York";
 
   return "News";
 }
 
-function cleanText(text){
-  if(!text || text === "undefined"){
-    return "This story is developing and more updates may follow soon.";
+function getValidImage(item){
+  const img = item.image || "";
+
+  if(
+    img &&
+    img.startsWith("http") &&
+    !img.toLowerCase().includes("logo") &&
+    !img.toLowerCase().includes("placeholder") &&
+    !img.toLowerCase().includes("default") &&
+    !img.toLowerCase().includes("benzinga")
+  ){
+    return img;
   }
 
-  return String(text)
-    .replace("NEW", "")
-    .replace("You can now listen to Fox News articles!", "")
-    .replace(/\[\.\.\.\]/g, "")
-    .replace(/The post .* appeared first on .*?\./gi, "")
-    .trim();
+  return "";
 }
 
-function shortText(text, limit = 180){
-  const clean = cleanText(text);
-  return clean.length > limit ? clean.slice(0, limit) + "..." : clean;
-}
-
-function getSmartImage(item){
-  const title = (item.title || "").toLowerCase();
-
-  if(item.image && item.image.startsWith("http")){
-    const badImages = ["benzinga", "logo", "placeholder", "default"];
-
-    if(!badImages.some(x => item.image.toLowerCase().includes(x))){
-      return item.image;
-    }
-  }
-
-  let keyword = "newspaper";
-
-  if(title.includes("bitcoin") || title.includes("crypto")) keyword = "bitcoin,crypto";
-  else if(title.includes("ai") || title.includes("artificial intelligence")) keyword = "artificial intelligence,technology";
-  else if(title.includes("stock") || title.includes("market")) keyword = "stock market,finance";
-  else if(title.includes("sport") || title.includes("football")) keyword = "sports";
-  else if(title.includes("weather")) keyword = "weather";
-  else if(title.includes("business")) keyword = "business news";
-
-  return `https://source.unsplash.com/800x450/?${encodeURIComponent(keyword)}`;
+function articleUrl(id){
+  return `./article.html?id=${id}`;
 }
 
 function createArticleCard(item){
   const id = allNews.indexOf(item);
-
-  const hasImage =
-    item.image &&
-    item.image.startsWith("http") &&
-    !item.image.toLowerCase().includes("logo") &&
-    !item.image.toLowerCase().includes("placeholder") &&
-    !item.image.toLowerCase().includes("default") &&
-    !item.image.toLowerCase().includes("benzinga");
+  const img = getValidImage(item);
 
   return `
-    <div class="news-card clickable-card ${!hasImage ? "no-image-card" : ""}"
-         onclick="window.location.href='./article.html?id=${id}'">
+    <article class="news-card clickable-card ${!img ? "no-image-card" : ""}">
+      <a href="${articleUrl(id)}" onclick="trackArticleClick('${item.title.replace(/'/g, "")}')">
+        ${img ? `
+          <img
+            loading="lazy"
+            src="${img}"
+            onerror="this.remove()"
+            alt="${item.title}">
+        ` : ""}
 
-      ${hasImage ? `
-        <img
-          loading="lazy"
-          src="${item.image}"
-          onerror="this.style.display='none'"
-          alt="news image">
-      ` : ""}
+        <span class="section-label">${item.section || "NEWS"}</span>
 
-      <span class="section-label">${item.section || "NEWS"}</span>
+        <h2>${item.title}</h2>
 
-      <h2>${item.title}</h2>
+        <p>${shortText(item.description || "", 190)}</p>
 
-      <p>${shortText(item.description || "", 190)}</p>
+        <small>Source: ${item.source || "Global Intel Times"}</small>
 
-      <small>Source: ${item.source || item.source_id || "Global Intel Times"}</small>
-    </div>
+        <div class="read-more-btn">Read Full Story →</div>
+      </a>
+    </article>
   `;
 }
-
 
 function createSmallVideoCard(index){
   const item = allNews[index + 3];
@@ -149,19 +141,19 @@ function createSmallVideoCard(index){
 
   return `
     <article class="news-card video-news-card">
-      <div class="video-thumb">
-        <span>▶</span>
-      </div>
-
+      <div class="video-thumb"><span>▶</span></div>
       <span class="section-label">VIDEO</span>
       <h2>${title}</h2>
       <p>Watch related video coverage for this story.</p>
-
       <a href="https://www.youtube.com/results?search_query=${encodeURIComponent(title)}" target="_blank">
         Watch video ›
       </a>
     </article>
   `;
+}
+
+function limitHomepageArticles(){
+  allNews = allNews.slice(0, MAX_HOME_ARTICLES);
 }
 
 function renderLeads(){
@@ -175,15 +167,12 @@ function renderBelowNews(){
 
   newsFeed.innerHTML = "";
 
- allNews.forEach((item, index)=>{
+  allNews.slice(3, MAX_HOME_ARTICLES).forEach((item, index)=>{
     if(index > 0 && index % 6 === 0){
       newsFeed.insertAdjacentHTML("beforeend", createSmallVideoCard(index));
     }
 
-    const article = document.createElement("article");
-    article.className = "news-card";
-    article.innerHTML = createArticleCard(item);
-    newsFeed.appendChild(article);
+    newsFeed.insertAdjacentHTML("beforeend", createArticleCard(item));
   });
 
   localStorage.setItem("articles", JSON.stringify(allNews));
@@ -192,13 +181,9 @@ function renderBelowNews(){
 function updateTicker(){
   if(!breakingTicker) return;
 
-  if(!allNews.length){
-    breakingTicker.textContent = "LIVE • Loading latest updates...";
-    return;
-  }
-
-  breakingTicker.textContent =
-    "LIVE • " + allNews.slice(0,8).map(item=>item.title).join(" • ");
+  breakingTicker.textContent = allNews.length
+    ? "LIVE • " + allNews.slice(0,8).map(item=>item.title).join(" • ")
+    : "LIVE • Loading latest updates...";
 }
 
 function updateMostRead(){
@@ -206,9 +191,7 @@ function updateMostRead(){
 
   mostReadList.innerHTML = allNews
     .slice(0,8)
-    .map((item, i)=>`
-      <li><a href="./article.html?id=${i}">${item.title}</a></li>
-    `)
+    .map((item, i)=>`<li><a href="${articleUrl(i)}">${item.title}</a></li>`)
     .join("");
 }
 
@@ -216,69 +199,76 @@ function updateTrendAnalysis(){
   const box = document.getElementById("trendAnalysis");
   if(!box) return;
 
-  const crypto = allNews.filter(x => x.section === "Crypto").length;
-  const ai = allNews.filter(x => x.section === "Technology").length;
-  const finance = allNews.filter(x => x.section === "Business").length;
-  const weather = allNews.filter(x => x.section === "Weather").length;
-  const normalNews = allNews.filter(x => x.section === "News").length;
-
-  const total = allNews.length;
-  const trendingScore = Math.min(
-    100,
-    crypto * 12 + ai * 10 + finance * 9 + weather * 6 + total * 2
-  );
-
   const counts = {
-    Crypto: crypto,
-    Technology: ai,
-    Business: finance,
-    Weather: weather,
-    News: normalNews
+    Crypto: allNews.filter(x => x.section === "Crypto").length,
+    Technology: allNews.filter(x => x.section === "Technology").length,
+    Business: allNews.filter(x => x.section === "Business").length,
+    Weather: allNews.filter(x => x.section === "Weather").length,
+    News: allNews.filter(x => x.section === "News").length
   };
 
   const topCategory = Object.keys(counts).sort((a,b)=>counts[b]-counts[a])[0];
+
+  const trendingScore = Math.min(
+    100,
+    counts.Crypto * 12 +
+    counts.Technology * 10 +
+    counts.Business * 9 +
+    counts.Weather * 6 +
+    allNews.length * 2
+  );
 
   box.innerHTML = `
     <p><b>Trending Score:</b> ${trendingScore}/100</p>
     <p><b>Top Category:</b> ${topCategory}</p>
     <p><b>Total Headlines:</b> ${allNews.length}</p>
-    <p><b>Crypto Mentions:</b> ${crypto}</p>
-    <p><b>AI Mentions:</b> ${ai}</p>
-    <p><b>Finance Mentions:</b> ${finance}</p>
-    <p><b>Weather Mentions:</b> ${weather}</p>
+    <p><b>Crypto Mentions:</b> ${counts.Crypto}</p>
+    <p><b>AI Mentions:</b> ${counts.Technology}</p>
+    <p><b>Finance Mentions:</b> ${counts.Business}</p>
+    <p><b>Weather Mentions:</b> ${counts.Weather}</p>
   `;
+}
+
+function latestUpdatesWidget(){
+  const box = document.getElementById("latestUpdatesBox");
+  if(!box) return;
+
+  box.innerHTML = allNews
+    .slice(0,5)
+    .map((item, i)=>`<a class="latest-update-link" href="${articleUrl(i)}">${item.title}</a>`)
+    .join("");
 }
 
 function updateTopMarket(){
   const box = document.getElementById("topTrendBox");
-  if(!box || !searchBox) return;
+  if(!box) return;
 
-  const search = searchBox.value.trim().toLowerCase();
+  const search = searchBox?.value.trim().toLowerCase() || "";
 
   const found = marketItems.find(item =>
     item.name.toLowerCase().includes(search) ||
     item.symbol.toLowerCase().includes(search)
   );
 
-  const item = search && found
-    ? found
-    : marketItems[marketIndex % marketItems.length];
+  const item = search && found ? found : marketItems[marketIndex % marketItems.length];
 
   box.className = "top-trend-box " + item.trend;
   box.innerHTML = `${item.symbol} ${item.change} ${item.trend === "up" ? "↑" : "↓"}`;
 
-  if(!search){
-    marketIndex++;
-  }
+  if(!search) marketIndex++;
 }
 
 function renderPage(){
+  limitHomepageArticles();
+
   localStorage.setItem("articles", JSON.stringify(allNews));
+
   renderLeads();
   renderBelowNews();
   updateTicker();
   updateMostRead();
   updateTrendAnalysis();
+  latestUpdatesWidget();
   updateTopMarket();
   enhanceImages();
 }
@@ -290,7 +280,7 @@ async function fetchNews(topic){
 
   const loading = document.createElement("div");
   loading.className = "loading";
-  loading.textContent = "Loading more stories...";
+  loading.textContent = "Loading latest stories...";
   newsFeed.appendChild(loading);
 
   const finalTopic =
@@ -307,13 +297,6 @@ async function fetchNews(topic){
     );
 
     const data = await response.json();
-
-    console.log("API DATA:", data);
-console.log("RESULTS:", data.results);
-console.log("TOTAL:", data.results?.length);
-
-    console.log(JSON.stringify(data));
-
     const results = Array.isArray(data.results) ? data.results : [];
 
     loading.remove();
@@ -329,28 +312,25 @@ console.log("TOTAL:", data.results?.length);
     const fresh = [];
 
     results.forEach(item=>{
-      const title = (item.title || "").trim();
-      const img = item.image_url || item.image || "";
+      const title = cleanText(item.title || "");
       const cleanTitle = title.toLowerCase();
 
-     if(
-  title &&
-  !seenTitles.has(cleanTitle)
-){
+      if(title && !seenTitles.has(cleanTitle)){
         seenTitles.add(cleanTitle);
 
-  fresh.push({
-  title,
-  description: item.description || item.content || item.summary || "",
-  section: detectSection(title),
-  source: item.source_id || "News",
-  link: item.link || "#",
-  image: img
-});
+        fresh.push({
+          title,
+          description: cleanText(item.description || item.content || item.summary || ""),
+          section: detectSection(title),
+          source: item.source_id || item.source || "News",
+          link: item.link || item.url || "#",
+          image: item.image_url || item.image || "",
+          publishedAt: item.pubDate || item.publishedAt || item.published_at || new Date().toISOString()
+        });
       }
     });
 
-    allNews = allNews.concat(fresh);
+    allNews = allNews.concat(fresh).slice(0, MAX_HOME_ARTICLES);
 
     if(allNews.length === 0){
       newsFeed.innerHTML = `<div class="loading">No fresh news found. Try another topic.</div>`;
@@ -377,67 +357,161 @@ async function searchNews(){
   if(newsFeed) newsFeed.innerHTML = `<div class="loading">Loading live news...</div>`;
   if(mostReadList) mostReadList.innerHTML = `<li>Loading...</li>`;
 
-await fetchNews(searchBox?.value.trim() || "bitcoin");
+  await fetchNews(searchBox?.value.trim() || category?.value || "usa news");
 }
 
-// Auto-load બંધ રાખ્યું છે જેથી website smooth રહે.
-// જો future માં infinite scroll જોઈએ તો આ block ફરી add કરીશું.
+function updateArticleSEO(article){
+  document.title = `${article.title} | Global Intel Times`;
 
-if(searchBtn){
-  searchBtn.addEventListener("click", searchNews);
-}
+  const desc = article.description || article.title;
 
-if(searchBox){
-  searchBox.addEventListener("keydown", e=>{
-    if(e.key === "Enter") searchNews();
-  });
+  const descriptionTag = document.querySelector('meta[name="description"]');
+  if(descriptionTag) descriptionTag.setAttribute("content", desc);
 
-  searchBox.addEventListener("input", updateTopMarket);
-}
+  const ogTitle = document.querySelector('meta[property="og:title"]');
+  if(ogTitle) ogTitle.setAttribute("content", article.title);
 
-document.querySelectorAll(".topicBtn").forEach(btn=>{
-  btn.addEventListener("click", ()=>{
-    if(searchBox) searchBox.value = btn.dataset.topic;
-    searchNews();
-  });
-});
+  const ogDescription = document.querySelector('meta[property="og:description"]');
+  if(ogDescription) ogDescription.setAttribute("content", desc);
 
-setInterval(updateTopMarket, 5000);
+  const ogImage = document.querySelector('meta[property="og:image"]');
+  if(ogImage && article.image) ogImage.setAttribute("content", article.image);
 
-updateTopMarket();
-searchNews();
-
-setTimeout(()=>{
-  const popup=document.getElementById("breakingPopup");
-
-  if(popup){
-    popup.style.display="block";
+  const schema = document.getElementById("articleSchema");
+  if(schema){
+    schema.textContent = JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "NewsArticle",
+      "headline": article.title,
+      "description": desc,
+      "image": article.image || "https://globalinteltimes.com/og-image.jpg",
+      "datePublished": article.publishedAt || new Date().toISOString(),
+      "author": {
+        "@type": "Organization",
+        "name": "Global Intel Times"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "Global Intel Times",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://globalinteltimes.com/logo.png"
+        }
+      },
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": window.location.href
+      }
+    });
   }
-},5000);
+}
+
+function readingTime(text){
+  const words = cleanText(text).split(" ").length;
+  const mins = Math.max(1, Math.ceil(words / 220));
+  return `${mins} min read`;
+}
+
+function renderArticlePage(){
+  const articleBox = document.getElementById("articleView");
+  if(!articleBox) return;
+
+  const articles = JSON.parse(localStorage.getItem("articles") || "[]");
+  const params = new URLSearchParams(window.location.search);
+  const id = Number(params.get("id") || 0);
+  const article = articles[id];
+
+  if(!article){
+    articleBox.innerHTML = `
+      <h1>Article not found</h1>
+      <p>Please go back to the homepage and open a story again.</p>
+      <a href="./index.html" class="read-more-btn">Back to Home</a>
+    `;
+    return;
+  }
+
+  updateArticleSEO(article);
+
+  const img = getValidImage(article);
+
+  articleBox.innerHTML = `
+    <span class="section-label">${article.section}</span>
+    <h1>${article.title}</h1>
+
+    <p class="article-meta">
+      ${article.source || "Global Intel Times"} •
+      ${article.publishedAt ? new Date(article.publishedAt).toLocaleString("en-US") : "Latest update"} •
+      ${readingTime(article.description)}
+    </p>
+
+    ${img ? `<img class="article-main-img" src="${img}" alt="${article.title}" onerror="this.remove()">` : ""}
+
+    <p class="article-intro">${article.description}</p>
+
+    <p>
+      This developing story is being tracked by Global Intel Times as part of our USA-focused news coverage.
+      More context, market reaction and official updates may follow as the situation develops.
+    </p>
+
+    ${article.link && article.link !== "#" ? `
+      <a href="${article.link}" target="_blank" rel="noopener nofollow" class="source-link">
+        Original Source
+      </a>
+    ` : ""}
+
+    <div class="share-box">
+      <a target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(location.href)}">Facebook</a>
+      <a target="_blank" href="https://twitter.com/intent/tweet?url=${encodeURIComponent(location.href)}&text=${encodeURIComponent(article.title)}">X</a>
+      <a target="_blank" href="https://api.whatsapp.com/send?text=${encodeURIComponent(article.title + " " + location.href)}">WhatsApp</a>
+    </div>
+  `;
+
+  renderRelatedArticles(article, id, articles);
+}
+
+function renderRelatedArticles(currentArticle, currentId, articles){
+  const box = document.getElementById("relatedArticles") || document.getElementById("relatedGrid");
+  if(!box) return;
+
+  let related = articles
+    .map((item, index)=>({ ...item, realIndex:index }))
+    .filter(item => item.realIndex !== currentId && item.section === currentArticle.section)
+    .slice(0,6);
+
+  if(related.length < 3){
+    related = articles
+      .map((item, index)=>({ ...item, realIndex:index }))
+      .filter(item => item.realIndex !== currentId)
+      .slice(0,6);
+  }
+
+  box.innerHTML = related.map(item => `
+    <a class="related-card news-card" href="./article.html?id=${item.realIndex}">
+      ${getValidImage(item) ? `<img loading="lazy" src="${getValidImage(item)}" alt="${item.title}" onerror="this.remove()">` : ""}
+      <span class="section-label">${item.section}</span>
+      <h3>${item.title}</h3>
+      <p>${shortText(item.description, 120)}</p>
+    </a>
+  `).join("");
+}
+
 function acceptCookies(){
   localStorage.setItem("cookiesAccepted","yes");
 
   const banner = document.getElementById("cookieBanner");
-  if(banner){
-    banner.style.display = "none";
-  }
+  if(banner) banner.style.display = "none";
 }
 
 function setupCookieBanner(){
   const banner = document.getElementById("cookieBanner");
-
   if(!banner) return;
 
-  if(localStorage.getItem("cookiesAccepted") === "yes"){
-    banner.style.display = "none";
-  }else{
-    banner.style.display = "flex";
-  }
+  banner.style.display =
+    localStorage.getItem("cookiesAccepted") === "yes" ? "none" : "flex";
 }
 
 function setupBreakingPopup(){
   const popup = document.getElementById("breakingPopup");
-
   if(!popup) return;
 
   popup.style.display = "none";
@@ -487,6 +561,7 @@ function setupNewsletter(){
 function enhanceImages(){
   document.querySelectorAll("img").forEach(img=>{
     img.setAttribute("loading","lazy");
+    img.setAttribute("decoding","async");
   });
 }
 
@@ -499,30 +574,10 @@ function setupKeyboardSearch(){
   });
 }
 
-function setupMegaFeatures(){
-  setupCookieBanner();
-  setupNewsletter();
-  setupKeyboardSearch();
-
-  setTimeout(()=>{
-    setupBreakingPopup();
-    enhanceImages();
-  },1500);
-}
-
-setupMegaFeatures();
 function trackArticleClick(title){
   const clicks = JSON.parse(localStorage.getItem("articleClicks") || "{}");
   clicks[title] = (clicks[title] || 0) + 1;
   localStorage.setItem("articleClicks", JSON.stringify(clicks));
-}
-
-function getMostClickedArticles(){
-  const clicks = JSON.parse(localStorage.getItem("articleClicks") || "{}");
-
-  return Object.entries(clicks)
-    .sort((a,b)=>b[1]-a[1])
-    .slice(0,10);
 }
 
 function updateVisitorCount(){
@@ -535,36 +590,12 @@ function updateVisitorCount(){
   localStorage.setItem(key, count);
 
   const box = document.getElementById("visitorCounter");
-  if(box){
-    box.textContent = count + " visits today";
-  }
-}
-
-function setupSearchAnalytics(){
-  if(!searchBox) return;
-
-  const originalSearchNews = searchNews;
-
-  window.searchNews = async function(){
-    const term = searchBox.value.trim();
-
-    if(term){
-      const searches = JSON.parse(localStorage.getItem("searchAnalytics") || "[]");
-      searches.push({
-        term,
-        time:new Date().toISOString()
-      });
-      localStorage.setItem("searchAnalytics", JSON.stringify(searches));
-    }
-
-    await originalSearchNews();
-  };
+  if(box) box.textContent = count + " visits today";
 }
 
 function showTrendingKeywords(){
   const searches = JSON.parse(localStorage.getItem("searchAnalytics") || "[]");
   const box = document.getElementById("trendingKeywords");
-
   if(!box) return;
 
   const counts = {};
@@ -582,10 +613,63 @@ function showTrendingKeywords(){
     : "<p>No searches yet</p>";
 }
 
-function setupProFeatures(){
-  updateVisitorCount();
-  setupSearchAnalytics();
-  showTrendingKeywords();
+function setupSearchAnalytics(){
+  if(!searchBtn || !searchBox) return;
+
+  searchBtn.addEventListener("click", ()=>{
+    const term = searchBox.value.trim();
+
+    if(term){
+      const searches = JSON.parse(localStorage.getItem("searchAnalytics") || "[]");
+      searches.push({
+        term,
+        time:new Date().toISOString()
+      });
+      localStorage.setItem("searchAnalytics", JSON.stringify(searches));
+    }
+  });
 }
 
+function setupProFeatures(){
+  setupCookieBanner();
+  setupNewsletter();
+  setupKeyboardSearch();
+  setupSearchAnalytics();
+  updateVisitorCount();
+  showTrendingKeywords();
+
+  setTimeout(()=>{
+    setupBreakingPopup();
+    enhanceImages();
+  },1500);
+}
+
+if(searchBtn){
+  searchBtn.addEventListener("click", searchNews);
+}
+
+if(searchBox){
+  searchBox.addEventListener("keydown", e=>{
+    if(e.key === "Enter") searchNews();
+  });
+
+  searchBox.addEventListener("input", updateTopMarket);
+}
+
+document.querySelectorAll(".topicBtn").forEach(btn=>{
+  btn.addEventListener("click", ()=>{
+    if(searchBox) searchBox.value = btn.dataset.topic;
+    searchNews();
+  });
+});
+
+setInterval(updateTopMarket, 5000);
+
+updateTopMarket();
 setupProFeatures();
+
+if(document.getElementById("articleView")){
+  renderArticlePage();
+}else{
+  searchNews();
+}
