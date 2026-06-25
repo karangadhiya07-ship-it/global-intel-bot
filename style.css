@@ -1216,3 +1216,143 @@ box-shadow:0 4px 12px rgba(0,0,0,.08);
     height: 240px;
   }
 }
+/* ================= NYT STYLE MEGA MENU ================= */
+
+#mainNav {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 22px;
+  border-top: 1px solid #ddd;
+  border-bottom: 1px solid #ddd;
+  min-height: 45px;
+  background: #fff;
+  position: relative;
+  z-index: 1000;
+}
+
+.nyt-nav-item {
+  position: static;
+}
+
+.nyt-nav-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 14px 0;
+  font-size: 14px;
+  color: #111;
+  text-decoration: none;
+  border-bottom: 2px solid transparent;
+}
+
+.nyt-nav-link:hover {
+  border-bottom-color: #111;
+}
+
+.nyt-mega-panel {
+  display: none;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 100%;
+  background: #fff;
+  border-bottom: 1px solid #ddd;
+  box-shadow: 0 12px 25px rgba(0,0,0,0.08);
+  padding: 28px 6%;
+  z-index: 9999;
+}
+
+.nyt-nav-item:hover .nyt-mega-panel {
+  display: block;
+}
+
+.nyt-mega-inner {
+  max-width: 1200px;
+  margin: auto;
+  display: grid;
+  grid-template-columns: 1.2fr repeat(5, 1fr);
+  gap: 35px;
+}
+
+.nyt-mega-intro h2 {
+  font-family: Georgia, serif;
+  font-size: 26px;
+  margin-bottom: 10px;
+}
+
+.nyt-mega-intro p {
+  font-size: 14px;
+  color: #555;
+  line-height: 1.5;
+}
+
+.nyt-mega-col h4 {
+  font-size: 11px;
+  text-transform: uppercase;
+  color: #777;
+  letter-spacing: .06em;
+  margin-bottom: 18px;
+}
+
+.nyt-mega-col a {
+  display: block;
+  font-size: 14px;
+  color: #111;
+  text-decoration: none;
+  margin-bottom: 13px;
+}
+
+.nyt-mega-col a:hover {
+  text-decoration: underline;
+}
+
+.strict-category-head {
+  max-width: 1100px;
+  margin: 35px auto 25px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid #111;
+}
+
+.strict-category-head .eyebrow {
+  font-size: 11px;
+  letter-spacing: .12em;
+  font-weight: 700;
+}
+
+.strict-category-head h1 {
+  font-family: Georgia, serif;
+  font-size: 48px;
+  margin: 8px 0;
+}
+
+.strict-category-head p {
+  color: #555;
+}
+
+.empty-topic {
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 35px;
+  border: 1px solid #ddd;
+  background: #fafafa;
+}
+
+@media (max-width: 768px) {
+  #mainNav {
+    overflow-x: auto;
+    justify-content: flex-start;
+    padding: 0 14px;
+  }
+
+  .nyt-mega-panel {
+    position: fixed;
+    top: 110px;
+    max-height: 70vh;
+    overflow-y: auto;
+  }
+
+  .nyt-mega-inner {
+    grid-template-columns: 1fr;
+  }
+}
