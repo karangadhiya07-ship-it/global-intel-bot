@@ -4,295 +4,145 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <title>Global Intel Times - Breaking USA News, World News, Finance, Crypto & AI</title>
+  <title>Global Intel Times | USA News, Markets, AI & Politics</title>
+  <meta name="description" content="Global Intel Times delivers USA-focused news, markets, AI, business, politics and world affairs." />
 
-  <meta name="description" content="Global Intel Times delivers fast USA-focused breaking news, world updates, finance, crypto, AI, business, weather, sports and technology stories." />
-  <meta name="keywords" content="USA news, breaking news, world news, finance news, crypto news, AI news, business news, technology news, weather news, sports news" />
-  <meta name="robots" content="index, follow" />
-  <meta name="author" content="Global Intel Times" />
-
-  <link rel="canonical" href="https://globalinteltimes.com/" />
-
+  <meta property="og:title" content="Global Intel Times" />
+  <meta property="og:description" content="Professional USA-focused news, markets and analysis." />
   <meta property="og:type" content="website" />
-  <meta property="og:title" content="Global Intel Times - Breaking USA News & Global Updates" />
-  <meta property="og:description" content="Fast USA-focused news portal covering breaking news, finance, crypto, AI, business, weather, sports and global updates." />
-  <meta property="og:url" content="https://globalinteltimes.com/" />
-  <meta property="og:image" content="https://globalinteltimes.com/og-image.jpg" />
 
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Global Intel Times - Breaking USA News & Global Updates" />
-  <meta name="twitter:description" content="USA-focused breaking news, finance, crypto, AI, business and world updates." />
-  <meta name="twitter:image" content="https://globalinteltimes.com/og-image.jpg" />
 
   <link rel="stylesheet" href="style.css" />
 
   <script type="application/ld+json">
   {
-    "@context": "https://schema.org",
-    "@type": "WebSite",
-    "name": "Global Intel Times",
-    "url": "https://globalinteltimes.com/",
-    "description": "USA-focused digital news publication covering breaking news, finance, crypto, AI, business, weather, sports and world updates.",
-    "publisher": {
-      "@type": "NewsMediaOrganization",
-      "name": "Global Intel Times",
-      "url": "https://globalinteltimes.com/",
-      "logo": {
-        "@type": "ImageObject",
-        "url": "https://globalinteltimes.com/logo.png"
-      }
-    },
-    "potentialAction": {
-      "@type": "SearchAction",
-      "target": "https://globalinteltimes.com/?q={search_term_string}",
-      "query-input": "required name=search_term_string"
-    }
+    "@context":"https://schema.org",
+    "@type":"NewsMediaOrganization",
+    "name":"Global Intel Times",
+    "url":"https://globalinteltimes.com",
+    "description":"USA-focused news, markets, AI, business and politics coverage."
   }
   </script>
-
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "NewsMediaOrganization",
-    "name": "Global Intel Times",
-    "url": "https://globalinteltimes.com/",
-    "logo": {
-      "@type": "ImageObject",
-      "url": "https://globalinteltimes.com/logo.png"
-    },
-    "sameAs": []
-  }
-  </script>
-  <script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "WebSite",
-  "name": "Global Intel Times",
-  "url": "https://global-intel-bot.vercel.app/",
-  "description": "Global Intel Times covers USA news, world updates, business, technology, crypto, weather, sports and culture.",
-  "potentialAction": {
-    "@type": "SearchAction",
-    "target": "https://global-intel-bot.vercel.app/index.html?q={search_term_string}",
-    "query-input": "required name=search_term_string"
-  },
-  "publisher": {
-    "@type": "NewsMediaOrganization",
-    "name": "Global Intel Times",
-    "url": "https://global-intel-bot.vercel.app/"
-  }
-}
-</script>
-
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "NewsMediaOrganization",
-  "name": "Global Intel Times",
-  "url": "https://global-intel-bot.vercel.app/",
-  "logo": {
-    "@type": "ImageObject",
-    "url": "https://global-intel-bot.vercel.app/logo.png"
-  },
-  "foundingDate": "2026",
-  "publishingPrinciples": "https://global-intel-bot.vercel.app/editorial-policy.html",
-  "ethicsPolicy": "https://global-intel-bot.vercel.app/editorial-policy.html",
-  "sameAs": []
-}
-</script>
 </head>
 
 <body>
 
-<header class="top-header">
-
-  <div class="mini-top-nav">
-<div class="nyt-search-wrap">
-  
-</div>
-    <div class="mini-links">
-      <span>U.S.</span>
-      <span>International</span>
-      <span>Canada</span>
-      <span>Español</span>
-      <span>中文</span>
-    </div>
-
-    <div class="account-area">
-      <button class="subscribe-btn">SUBSCRIBE FOR ₹25/WEEK</button>
-      <span class="account-text">Account⌄</span>
-    </div>
+  <div class="top-strip">
+    <div id="todayDate">Loading date...</div>
+    <div class="market-mini" id="topTrendBox">AAPL +1.24% ↑</div>
   </div>
 
-  <div class="top-row">
-    <div class="date-box">
-      <span id="todayDate">Loading date...</span><br>
-      <small>Global Intel Daily</small>
-    </div>
-
+  <header class="masthead">
     <h1>Global Intel Times</h1>
+    <p>USA News • Markets • AI • Politics • World Affairs</p>
+  </header>
 
-    <div class="top-market-box">
-<div id="topTrendBox">
-  <a href="./market.html?symbol=AAPL">AAPL +1.24% ↑</a>
-</div>
-    </div>
-  </div>
-
-  <nav class="nav-bar category-nav">
-    <button class="topicBtn" data-topic="us news">U.S.</button>
-    <button class="topicBtn" data-topic="world news">World</button>
-    <button class="topicBtn" data-topic="business news">Business</button>
-    <button class="topicBtn" data-topic="arts news">Arts</button>
-    <button class="topicBtn" data-topic="lifestyle news">Lifestyle</button>
-    <button class="topicBtn" data-topic="opinion news">Opinion</button>
-    <button class="topicBtn" data-topic="video news">Video</button>
-    <button class="topicBtn" data-topic="audio news">Audio</button>
-    <button class="topicBtn" data-topic="games news">Games</button>
-    <button class="topicBtn" data-topic="cooking news">Cooking</button>
-    <button class="topicBtn" data-topic="product reviews">Wirecutter</button>
-    <button class="topicBtn" data-topic="sports news">The Athletic</button>
+  <nav class="nav">
+    <button class="topicBtn" data-topic="us politics white house congress">U.S.</button>
+    <button class="topicBtn" data-topic="world affairs geopolitics">World</button>
+    <button class="topicBtn" data-topic="business economy inflation">Business</button>
+    <button class="topicBtn" data-topic="technology apple microsoft nvidia">Technology</button>
+    <button class="topicBtn" data-topic="artificial intelligence openai nvidia microsoft">AI</button>
+    <button class="topicBtn" data-topic="stock market wall street finance">Markets</button>
+    <button class="topicBtn" data-topic="politics election congress white house">Politics</button>
+    <button class="topicBtn" data-topic="opinion analysis usa">Opinion</button>
+    <button class="topicBtn" data-topic="lifestyle america">Lifestyle</button>
   </nav>
 
-</header>
-
-<div class="live-strip" id="breakingTicker">
-  LIVE • Loading latest updates...
-</div>
-
-<main class="homepage-layout">
-
-  <section class="main-news-area">
-
-    <section class="free-read-box">
-      <p>These top stories are <b>free to read.</b></p>
-    </section>
-
-    <section class="lead-grid">
-      <article class="lead-card" id="leadLeft"></article>
-      <article class="lead-card big" id="leadMain"></article>
-      <article class="lead-card" id="leadRight"></article>
-    </section>
-
-    <section class="section-title">
-      <h2>Latest Stories</h2>
-    </section>
-
-    <section class="below-grid" id="newsFeed">
-      <div class="loading">Loading live news...</div>
-    </section>
-
-  </section>
-
-  <aside class="homepage-sidebar">
-
-    <div class="sidebar-box">
-      <h2>📊 Live Trending Analysis</h2>
-      <div id="trendAnalysis">Loading analysis...</div>
-    </div>
-
-    <div class="sidebar-box">
-      <h2>🔥 Most Read</h2>
-      <ol id="mostReadList">
-        <li>Loading...</li>
-      </ol>
-    </div>
-
-    <div class="sidebar-box">
-      <h2>⚡ Latest Updates</h2>
-      <div id="latestUpdatesBox">Loading updates...</div>
-    </div>
-
-    <div class="sidebar-box">
-      <h2>📌 Trending Topics</h2>
-      <button class="topicBtn side-topic" data-topic="bitcoin">Bitcoin</button>
-      <button class="topicBtn side-topic" data-topic="artificial intelligence">AI</button>
-      <button class="topicBtn side-topic" data-topic="usa politics">U.S. Politics</button>
-      <button class="topicBtn side-topic" data-topic="stock market">Stock Market</button>
-      <button class="topicBtn side-topic" data-topic="new york news">New York</button>
-    </div>
-
-    <div class="sidebar-box">
-      <h2>⚡ Live Watch</h2>
-      <p>Markets: Monitoring</p>
-      <p>Crypto: Active</p>
-      <p>AI: Active</p>
-      <p>Weather: Tracking</p>
-    </div>
-
-    <div class="sidebar-box">
-      <h2>👥 Visitor Counter</h2>
-      <p id="visitorCounter">Loading visits...</p>
-    </div>
-
-    <div class="sidebar-box">
-      <h2>🔎 Trending Searches</h2>
-      <div id="trendingKeywords">
-        <p>No searches yet</p>
-      </div>
-    </div>
-
-    <div class="sidebar-box">
-      <h2>📧 Newsletter</h2>
-      <input type="email" placeholder="Your Email" class="newsletter-input" />
-      <button class="newsletter-btn">Subscribe</button>
-    </div>
-
-    <div class="sidebar-box">
-      <h2>📈 Market Watch</h2>
-
-      <div class="market-row">
-        <span>Bitcoin</span>
-        <span class="market-up">+2.4%</span>
-      </div>
-
-      <div class="market-row">
-        <span>Gold</span>
-        <span class="market-up">+0.8%</span>
-      </div>
-
-      <div class="market-row">
-        <span>Silver</span>
-        <span class="market-down">-0.3%</span>
-      </div>
-    </div>
-
-  </aside>
-
-</main>
-
-<footer class="site-footer">
-  <div class="footer-links">
-    <a href="/about.html">About Us</a>
-    <a href="/contact.html">Contact Us</a>
-    <a href="/privacy.html">Privacy Policy</a>
-    <a href="/editorial-policy.html">Editorial Policy</a>
-    <a href="/terms.html">Terms of Service</a>
-    <a href="/corrections.html">Corrections Policy</a>
+  <div class="breaking-bar">
+    <strong>Breaking</strong>
+    <span id="breakingTicker">Loading live updates...</span>
   </div>
 
-  <div class="footer-links">
-    <a href="/sitemap.xml">Sitemap</a>
-    <a href="/robots.txt">Robots</a>
+  <main class="page">
+
+    <section class="hero-grid">
+      <div id="leadLeft"></div>
+      <div id="leadMain"></div>
+      <div id="leadRight"></div>
+    </section>
+
+    <section class="content-layout">
+
+      <div class="main-feed">
+        <div class="section-title">
+          <h2>Latest Headlines</h2>
+          <span>Top 30 curated stories</span>
+        </div>
+
+        <div id="newsFeed">
+          <div class="loading">Loading live news...</div>
+        </div>
+      </div>
+
+      <aside class="sidebar">
+
+        <div class="side-box">
+          <h3>Trending Analytics</h3>
+          <div id="trendAnalysis">
+            <p>Loading analytics...</p>
+          </div>
+        </div>
+
+        <div class="side-box">
+          <h3>Market Watch</h3>
+          <div class="market-list">
+            <a href="market.html?symbol=AAPL">AAPL</a>
+            <a href="market.html?symbol=MSFT">MSFT</a>
+            <a href="market.html?symbol=NVDA">NVDA</a>
+            <a href="market.html?symbol=AMZN">AMZN</a>
+            <a href="market.html?symbol=META">META</a>
+            <a href="market.html?symbol=GOOGL">GOOGL</a>
+            <a href="market.html?symbol=TSLA">TSLA</a>
+            <a href="market.html?symbol=BTC">BTC</a>
+            <a href="market.html?symbol=GOLD">GOLD</a>
+            <a href="market.html?symbol=SILVER">SILVER</a>
+          </div>
+        </div>
+
+        <div class="side-box">
+          <h3>Most Read</h3>
+          <ol id="mostReadList">
+            <li>Loading...</li>
+          </ol>
+        </div>
+
+        <div class="side-box">
+          <h3>Latest Updates</h3>
+          <div id="latestUpdatesBox">Loading...</div>
+        </div>
+
+        <div class="ad-box">
+          Advertisement
+        </div>
+
+        <div class="side-box">
+          <h3>Newsletter</h3>
+          <input class="newsletter-input" type="email" placeholder="Enter email" />
+          <button class="newsletter-btn">Subscribe</button>
+        </div>
+
+        <div class="visitor-box" id="visitorCounter">0 visits today</div>
+
+      </aside>
+
+    </section>
+
+  </main>
+
+  <div id="cookieBanner" class="cookie-banner">
+    <span>This site uses cookies for analytics and better experience.</span>
+    <button onclick="acceptCookies()">Accept</button>
   </div>
 
-  <p>© 2026 Global Intel Times. All Rights Reserved.</p>
-</footer>
+  <footer class="footer">
+    <a href="about.html">About</a>
+    <a href="contact.html">Contact</a>
+    <a href="privacy.html">Privacy</a>
+    <p>© 2026 Global Intel Times. All rights reserved.</p>
+  </footer>
 
-<div id="cookieBanner" class="cookie-banner">
-  <p>We use cookies to improve your experience.</p>
-  <button onclick="acceptCookies()">Accept</button>
-</div>
-
-<div id="breakingPopup" class="breaking-popup">
-  🚨 Breaking News Alert
-</div>
-  
-<div id="searchPanel" class="nyt-search-panel">
-  <input type="text" id="searchBox" placeholder="Search news..." />
-  <button type="button" id="searchBtn">GO</button>
-</div>
-  
-<script src="./app.js"></script>
-
+  <script src="app.js"></script>
 </body>
 </html>
