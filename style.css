@@ -642,3 +642,23 @@ a,
   background: #111;
   color: #fff;
 }
+.chart-box {
+  height: 560px;
+  width: 100%;
+  overflow: hidden;
+}
+
+#tradingview_chart {
+  height: 100%;
+  width: 100%;
+}
+
+#tradingview_chart iframe {
+  height: 100% !important;
+  width: 100% !important;
+}
+@media (max-width: 720px) {
+  .chart-box {
+    height: 420px;
+  }
+}
