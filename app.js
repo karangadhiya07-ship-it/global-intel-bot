@@ -1153,3 +1153,417 @@ function articleSchema(article) {
 
 window.updateTradingView = updateTradingView;
 window.loadMoreArticles = loadMoreArticles;
+```=js
+/* =====================================================
+   GLOBAL INTEL TIMES — NYT STYLE MEGA MENU + STRICT PAGES
+===================================================== */
+
+const GIT_MEGA_MENUS = {
+  "U.S.": {
+    description: "U.S. news, politics, courts, education and local coverage.",
+    columns: [
+      {
+        title: "Sections",
+        items: ["U.S.", "Politics", "New York", "California", "Education", "Health", "Science"]
+      },
+      {
+        title: "More",
+        items: ["Climate", "Weather", "Sports", "Business", "Tech", "Crime", "Immigration"]
+      },
+      {
+        title: "Top Stories",
+        items: ["Donald Trump", "Supreme Court", "Congress", "Immigration", "Abortion", "White House"]
+      },
+      {
+        title: "Newsletters",
+        items: ["The Morning", "The Evening", "U.S. Briefing"]
+      },
+      {
+        title: "Podcasts",
+        items: ["The Daily", "Politics Podcast", "See all podcasts"]
+      }
+    ]
+  },
+
+  "World": {
+    description: "Global news, diplomacy, war, climate and international affairs.",
+    columns: [
+      {
+        title: "Sections",
+        items: ["World", "Africa", "Americas", "Asia", "Australia", "Canada", "Europe"]
+      },
+      {
+        title: "More",
+        items: ["Middle East", "Science", "Climate", "Weather", "Health", "Obituaries"]
+      },
+      {
+        title: "Top Stories",
+        items: ["Middle East Crisis", "Russia Ukraine War", "China", "Global Profile", "Europe News"]
+      },
+      {
+        title: "Newsletters",
+        items: ["The World", "Global Update", "Canada Letter"]
+      },
+      {
+        title: "Podcasts",
+        items: ["World Briefing", "Global Dispatch"]
+      }
+    ]
+  },
+
+  "Business": {
+    description: "Markets, economy, technology, finance and business news.",
+    columns: [
+      {
+        title: "Sections",
+        items: ["Business", "Tech", "Economy", "Media", "Finance and Markets"]
+      },
+      {
+        title: "More",
+        items: ["DealBook", "Personal Tech", "Energy Transition", "Your Money", "Real Estate"]
+      },
+      {
+        title: "Top Stories",
+        items: ["U.S. Economy", "Stock Market", "Artificial Intelligence", "Bitcoin", "Crypto"]
+      },
+      {
+        title: "Newsletters",
+        items: ["DealBook", "On Tech", "Markets Briefing"]
+      },
+      {
+        title: "Podcasts",
+        items: ["Hard Fork", "Business Daily"]
+      }
+    ]
+  },
+
+  "Arts": {
+    description: "Movies, music, books, theater and culture coverage.",
+    columns: [
+      {
+        title: "Sections",
+        items: ["Today’s Arts", "Book Review", "Best Sellers", "Dance", "Movies", "Music"]
+      },
+      {
+        title: "More",
+        items: ["Television", "Theater", "Pop Culture", "T Magazine", "Visual Arts"]
+      },
+      {
+        title: "Recommendations",
+        items: ["Best Movies", "Critic’s Picks", "What to Read", "What to Watch", "What to Listen To"]
+      },
+      {
+        title: "Newsletters",
+        items: ["Books", "Watching"]
+      },
+      {
+        title: "Podcasts",
+        items: ["Book Review", "Culture Podcast"]
+      }
+    ]
+  },
+
+  "Lifestyle": {
+    description: "Travel, health, food, style, family and daily life.",
+    columns: [
+      {
+        title: "Sections",
+        items: ["Lifestyle", "Food", "Well", "Love", "Travel", "Style", "Real Estate"]
+      },
+      {
+        title: "Columns",
+        items: ["36 Hours", "Ask Well", "Modern Love", "Where to Eat", "Social Q’s"]
+      },
+      {
+        title: "Topics",
+        items: ["Health", "Fitness", "Relationships", "Money", "Home"]
+      },
+      {
+        title: "Newsletters",
+        items: ["The Weekender", "Well"]
+      },
+      {
+        title: "Podcasts",
+        items: ["Modern Love"]
+      }
+    ]
+  },
+
+  "Opinion": {
+    description: "Editorials, guest essays, columns and analysis.",
+    columns: [
+      {
+        title: "Sections",
+        items: ["Opinion", "Guest Essays", "Editorials", "Op-Docs", "Videos", "Letters"]
+      },
+      {
+        title: "Topics",
+        items: ["Politics", "World", "Business", "Tech", "Climate", "Health", "Culture"]
+      },
+      {
+        title: "Columnists",
+        items: ["Politics Opinion", "Business Opinion", "World Opinion", "Tech Opinion"]
+      },
+      {
+        title: "Featured",
+        items: ["Reader Center", "Debate", "Editorial Board"]
+      },
+      {
+        title: "Podcasts",
+        items: ["The Opinions", "Opinion Audio"]
+      }
+    ]
+  },
+
+  "Video": {
+    description: "News videos, explainers, documentaries and visual reporting.",
+    columns: [
+      {
+        title: "Playlists",
+        items: ["Today’s Videos", "U.S.", "Politics", "Immigration", "NY Region"]
+      },
+      {
+        title: "More",
+        items: ["Science", "Business", "Culture", "Books", "Wellness"]
+      },
+      {
+        title: "World",
+        items: ["World", "Africa", "Americas", "Asia", "South Asia"]
+      },
+      {
+        title: "Top Stories",
+        items: ["Donald Trump", "Middle East Crisis", "Russia Ukraine Crisis", "Visual Investigations"]
+      },
+      {
+        title: "More Video",
+        items: ["Opinion Video", "See all videos"]
+      }
+    ]
+  },
+
+  "Audio": {
+    description: "Podcasts and audio journalism.",
+    columns: [
+      {
+        title: "Listen",
+        items: ["The Headlines", "The Daily", "Hard Fork", "The Ezra Klein Show", "Interesting Times"]
+      },
+      {
+        title: "Shows",
+        items: ["The Opinions", "Serial Productions", "The Book Review Podcast", "Modern Love"]
+      },
+      {
+        title: "Featured",
+        items: ["Reporter Reads", "Cannonball", "The Interview", "See all audio"]
+      },
+      {
+        title: "Newsletters",
+        items: ["Audio", "Serial"]
+      },
+      {
+        title: "More",
+        items: ["Markets Audio", "Politics Audio", "Culture Audio"]
+      }
+    ]
+  },
+
+  "Games": {
+    description: "Word games, puzzles, crosswords and logic games.",
+    columns: [
+      {
+        title: "Games",
+        items: ["Wordle", "Connections", "Sudoku", "Mini Crossword", "Spelling Bee"]
+      },
+      {
+        title: "More",
+        items: ["Strands", "Pips", "Tiles", "Letter Boxed", "Crossword"]
+      },
+      {
+        title: "Community",
+        items: ["Spelling Bee Forum", "Wordplay Column", "Wordle Review"]
+      },
+      {
+        title: "Newsletters",
+        items: ["Gameplay", "Easy Mode"]
+      },
+      {
+        title: "Play",
+        items: ["Puzzle Archive", "Daily Challenge"]
+      }
+    ]
+  },
+
+  "Cooking": {
+    description: "Recipes, cooking advice and food inspiration.",
+    columns: [
+      {
+        title: "Cooking",
+        items: ["Recipes", "Breakfast", "Dinner", "Healthy", "Dessert"]
+      },
+      {
+        title: "More",
+        items: ["Easy", "Vegetarian", "Vegan", "Chicken", "Pasta"]
+      },
+      {
+        title: "Editors’ Picks",
+        items: ["Easy Salmon Recipes", "Grilling Recipes", "Newest Recipes", "Slow Cooker Recipes"]
+      },
+      {
+        title: "Newsletters",
+        items: ["Cooking Newsletter", "The Veggie"]
+      },
+      {
+        title: "Guides",
+        items: ["Meal Plan", "Kitchen Tips"]
+      }
+    ]
+  },
+
+  "Wirecutter": {
+    description: "Product reviews, recommendations and buying guides.",
+    columns: [
+      {
+        title: "Reviews",
+        items: ["Kitchen", "Tech", "Sleep", "Appliances", "Home and Garden", "Moving"]
+      },
+      {
+        title: "More",
+        items: ["Travel", "Gifts", "Deals", "Baby and Kid", "Health and Fitness"]
+      },
+      {
+        title: "The Best",
+        items: ["Air Purifier", "Electric Toothbrush", "Office Chair", "Robot Vacuum"]
+      },
+      {
+        title: "Newsletters",
+        items: ["The Recommendation", "Clean Everything"]
+      },
+      {
+        title: "Guides",
+        items: ["Best Picks", "Shopping Guides"]
+      }
+    ]
+  },
+
+  "The Athletic": {
+    description: "Sports coverage, leagues, teams and live analysis.",
+    columns: [
+      {
+        title: "Leagues",
+        items: ["NFL", "NBA", "NHL", "Premier League", "MLB", "College Football"]
+      },
+      {
+        title: "More",
+        items: ["NCAA Men’s", "NCAA Women’s", "Tennis", "F1", "WNBA"]
+      },
+      {
+        title: "Top Stories",
+        items: ["Today’s Headlines", "2026 Men’s World Cup", "Live Scores", "Standings"]
+      },
+      {
+        title: "Newsletters",
+        items: ["The Pulse", "World Cup Briefing"]
+      },
+      {
+        title: "Play",
+        items: ["Connections Sports", "Fantasy"]
+      }
+    ]
+  }
+};
+
+function initNYTMegaMenu() {
+  const nav = document.querySelector("#mainNav");
+  if (!nav) return;
+
+  nav.innerHTML = Object.keys(GIT_MEGA_MENUS)
+    .map(menu => `
+      <div class="nyt-nav-item">
+        <a class="nyt-nav-link" href="category.html?topic=${slugify(menu)}">
+          ${menu} <span>⌄</span>
+        </a>
+
+        <div class="nyt-mega-panel">
+          <div class="nyt-mega-inner">
+            <div class="nyt-mega-intro">
+              <h2>${menu}</h2>
+              <p>${GIT_MEGA_MENUS[menu].description}</p>
+            </div>
+
+            ${GIT_MEGA_MENUS[menu].columns.map(col => `
+              <div class="nyt-mega-col">
+                <h4>${col.title}</h4>
+                ${col.items.map(item => `
+                  <a href="category.html?topic=${slugify(item)}">
+                    ${item}
+                  </a>
+                `).join("")}
+              </div>
+            `).join("")}
+          </div>
+        </div>
+      </div>
+    `).join("");
+}
+
+function getStrictTopicArticles(topic) {
+  const cleanTopic = String(topic || "us").toLowerCase().replace(/-/g, " ");
+
+  return allArticles.filter(article => {
+    const title = String(article.title || "").toLowerCase();
+    const summary = String(article.summary || "").toLowerCase();
+    const content = String(article.content || "").toLowerCase();
+    const category = String(article.category || "").toLowerCase().replace(/-/g, " ");
+    const section = String(article.section || "").toLowerCase().replace(/-/g, " ");
+
+    return (
+      category === cleanTopic ||
+      section === cleanTopic ||
+      title.includes(cleanTopic) ||
+      summary.includes(cleanTopic) ||
+      content.includes(cleanTopic)
+    );
+  });
+}
+
+function renderStrictTopicPage() {
+  const root = document.querySelector("#categoryArticles");
+  if (!root) return;
+
+  const titleBox = document.querySelector("#categoryTitle");
+  const topic = getQueryParam("topic") || "us";
+  const readable = titleCase(topic);
+
+  const articles = getStrictTopicArticles(topic);
+
+  if (titleBox) titleBox.textContent = readable;
+
+  document.title = `${readable} News - Global Intel Times`;
+
+  root.innerHTML = `
+    <section class="strict-category-head">
+      <p class="eyebrow">GLOBAL INTEL TIMES</p>
+      <h1>${readable}</h1>
+      <p>Latest ${readable} news, analysis, updates and explainers.</p>
+    </section>
+
+    ${
+      articles.length
+        ? `<div class="article-grid">${articles.map(articleCard).join("")}</div>`
+        : `<div class="empty-topic">
+             <h2>No ${readable} news found right now.</h2>
+             <p>This page only shows ${readable} related articles. No unrelated news will appear here.</p>
+           </div>`
+    }
+  `;
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  initNYTMegaMenu();
+
+  if (location.pathname.includes("category.html")) {
+    setTimeout(renderStrictTopicPage, 300);
+  }
+});
+```
+
