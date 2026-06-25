@@ -1,280 +1,244 @@
-export default async function handler(req, res) {
-  const q = req.query.q || "usa breaking news";
+const fallbackArticles = [
+  {
+    title: "White House Faces New Economic Pressure",
+    description: "US policymakers continue discussions around inflation, jobs and economic growth.",
+    section: "U.S.",
+    source: "Global Intel Times",
+    url: "#",
+    image: "https://images.unsplash.com/photo-1529107386315-e1a2ed48a620?w=1200",
+    publishedAt: new Date().toISOString()
+  },
+  {
+    title: "Nvidia And Microsoft Lead AI Market Expansion",
+    description: "Artificial intelligence investments continue driving major technology companies higher.",
+    section: "Technology",
+    source: "Global Intel Times",
+    url: "#",
+    image: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=1200",
+    publishedAt: new Date().toISOString()
+  },
+  {
+    title: "Bitcoin Traders Watch Key Resistance Levels",
+    description: "Crypto investors remain focused on market liquidity and institutional demand.",
+    section: "Crypto",
+    source: "Global Intel Times",
+    url: "#",
+    image: "https://images.unsplash.com/photo-1518546305927-5a555bb7020d?w=1200",
+    publishedAt: new Date().toISOString()
+  }
+];
 
-  const topics = [
-    q,
-    "usa breaking news",
-    "us politics",
-    "white house",
-    "stock market news",
-    "business news",
-    "technology news",
-    "artificial intelligence news",
-    "new york news",
-    "world news"
-  ];
+const blockedWords = [
+  "prediction",
+  "betting",
+  "odds",
+  "casino",
+  "promo code",
+  "coupon",
+  "gaming controller",
+  "deal",
+  "buy now",
+  "celebrity gossip",
+  "movie star",
+  "lottery"
+];
 
-  const blockedWords = [
-    "prediction",
-    "betting",
-    "odds",
-    "casino",
-    "promo code",
-    "coupon",
-    "gaming controller",
-    "deal",
-    "buy now",
-    "singer",
-    "celebrity",
-    "movie",
-    "tv show",
-    "concert",
-    "horoscope",
-    "lottery",
-    "recipe",
-    "tips and bets"
-  ];
+function cleanText(text = "") {
+  return String(text || "")
+    .replace(/<[^>]*>/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
 
-  const priorityWords = [
-    "trump",
+function isBlocked(article) {
+  const text = `${article.title || ""} ${article.description || ""}`.toLowerCase();
+  return blockedWords.some(word => text.includes(word));
+}
+
+function scoreArticle(article) {
+  const text = `${article.title || ""} ${article.description || ""}`.toLowerCase();
+
+  let score = 0;
+
+  const priority = [
     "white house",
     "congress",
-    "senate",
-    "supreme court",
-    "federal",
-    "election",
+    "us politics",
+    "u.s.",
     "economy",
     "inflation",
-    "stock",
-    "market",
-    "fed",
+    "stock market",
+    "wall street",
+    "federal reserve",
     "ai",
     "artificial intelligence",
-    "technology",
     "nvidia",
     "microsoft",
     "apple",
     "bitcoin",
     "crypto",
-    "new york",
-    "weather",
-    "storm",
-    "world"
+    "world affairs"
   ];
 
-  const clean = (text = "") =>
-    String(text)
-      .replace(/<[^>]*>/g, "")
-      .replace(/\s+/g, " ")
-      .trim();
-
-  const normalize = (article) => ({
-    title: clean(article.title),
-    description: clean(article.description || article.snippet || article.content),
-    content: clean(article.content || article.description || article.snippet),
-    image_url: article.image_url || article.image || article.urlToImage || "",
-    link: article.link || article.url || "#",
-    source_id: article.source_id || article.source?.name || article.source || "News"
+  priority.forEach(word => {
+    if (text.includes(word)) score += 10;
   });
 
-  function isGoodArticle(item) {
-    const badText = "ONLY AVAILABLE IN PAID PLANS";
-    const text = `${item.title} ${item.description} ${item.content}`.toLowerCase();
+  if (article.image || article.image_url) score += 5;
+  if (article.publishedAt || article.pubDate || article.published_at) score += 3;
 
-    if (!item.title || !item.description) return false;
-    if (item.title.includes(badText)) return false;
-    if (item.description.includes(badText)) return false;
-    if ((item.content || "").includes(badText)) return false;
-
-    if (blockedWords.some(word => text.includes(word))) return false;
-
-    if (item.title.length < 35) return false;
-    if (item.description.length < 45) return false;
-
-    return true;
-  }
-
-  function scoreArticle(item) {
-    const text = `${item.title} ${item.description}`.toLowerCase();
-
-    let score = 0;
-
-    priorityWords.forEach(word => {
-      if (text.includes(word)) score += 10;
-    });
-
-    if (text.includes("breaking")) score += 8;
-    if (text.includes("live")) score += 6;
-    if (text.includes("us") || text.includes("america") || text.includes("united states")) score += 8;
-    if (item.image_url) score += 4;
-
-    if (text.includes("sports")) score -= 8;
-    if (text.includes("music")) score -= 10;
-    if (text.includes("entertainment")) score -= 10;
-
-    return score;
-  }
-
-  async function tryGNews(topic) {
-    if (!process.env.GNEWS_API_KEY) return [];
-
-    const url =
-      `https://gnews.io/api/v4/search?q=${encodeURIComponent(topic)}` +
-      `&lang=en&country=us&max=30&apikey=${process.env.GNEWS_API_KEY}`;
-
-    const r = await fetch(url);
-    const data = await r.json();
-
-    if (!r.ok || data.errors) return [];
-    return (data.articles || []).map(normalize);
-  }
-
-  async function tryNewsData(topic) {
-    if (!process.env.NEWSDATA_API_KEY) return [];
-
-    const url =
-      `https://newsdata.io/api/1/news?apikey=${process.env.NEWSDATA_API_KEY}` +
-      `&q=${encodeURIComponent(topic)}&language=en&country=us`;
-
-    const r = await fetch(url);
-    const data = await r.json();
-
-    if (!r.ok || data.status === "error") return [];
-    return (data.results || []).map(normalize);
-  }
-
-  async function tryTheNewsAPI(topic) {
-    if (!process.env.THENEWS_API_KEY) return [];
-
-    const url =
-      `https://api.thenewsapi.com/v1/news/all?api_token=${process.env.THENEWS_API_KEY}` +
-      `&search=${encodeURIComponent(topic)}&language=en&locale=us&limit=30`;
-
-    const r = await fetch(url);
-    const data = await r.json();
-
-    if (!r.ok || data.error) return [];
-    return (data.data || []).map(normalize);
-  }
-
-  async function tryMediastack(topic) {
-    if (!process.env.MEDIASTACK_API_KEY) return [];
-
-    const url =
-      `https://api.mediastack.com/v1/news?access_key=${process.env.MEDIASTACK_API_KEY}` +
-      `&keywords=${encodeURIComponent(topic)}&languages=en&countries=us&limit=30`;
-
-    const r = await fetch(url);
-    const data = await r.json();
-
-    if (!r.ok || data.error) return [];
-    return (data.data || []).map(normalize);
-  }
-
-  async function tryCurrents(topic) {
-    if (!process.env.CURRENTS_API_KEY) return [];
-
-    const url =
-      `https://api.currentsapi.services/v1/search?apiKey=${process.env.CURRENTS_API_KEY}` +
-      `&keywords=${encodeURIComponent(topic)}&language=en&country=US`;
-
-    const r = await fetch(url);
-    const data = await r.json();
-
-    if (!r.ok || data.status === "error") return [];
-
-    return (data.news || []).map(article => normalize({
-      title: article.title,
-      description: article.description,
-      content: article.description,
-      image_url: article.image,
-      link: article.url,
-      source_id: article.author || "CurrentsAPI"
-    }));
-  }
-
-  const providers = [
-    ["GNews", tryGNews],
-    ["NewsData", tryNewsData],
-    ["TheNewsAPI", tryTheNewsAPI],
-    ["Mediastack", tryMediastack],
-    ["CurrentsAPI", tryCurrents]
-  ];
-
-  const collected = [];
-  const seen = new Set();
-  const usedProviders = [];
-
-  for (const [provider, fn] of providers) {
-    for (const topic of topics) {
-      try {
-        const results = await fn(topic);
-
-        results
-          .filter(isGoodArticle)
-          .forEach(item => {
-            const key = item.title.toLowerCase();
-
-            if (!seen.has(key)) {
-              seen.add(key);
-              collected.push({
-                ...item,
-                score: scoreArticle(item)
-              });
-            }
-          });
-
-        if (results.length > 0 && !usedProviders.includes(provider)) {
-          usedProviders.push(provider);
-        }
-
-      } catch (e) {
-        console.log(provider + " failed:", e.message);
-      }
-    }
-  }
-
-  const finalResults = collected
-    .sort((a, b) => b.score - a.score)
-    .slice(0, 30)
-    .map(({ score, ...item }) => item);
-
-  if (finalResults.length > 0) {
-    return res.status(200).json({
-      provider: usedProviders.join(" + ") || "MultiAPI",
-      totalResults: finalResults.length,
-      results: finalResults
-    });
-  }
-
-  return res.status(200).json({
-    provider: "StaticFallback",
-    totalResults: 3,
-    results: [
-      {
-        title: "U.S. markets remain active as investors track technology and economic signals",
-        description: "Markets continue reacting to business updates, technology developments and economic indicators across the United States.",
-        content: "Fallback story shown when live APIs are unavailable.",
-        image_url: "",
-        link: "#",
-        source_id: "Global Intel Times"
-      },
-      {
-        title: "Artificial intelligence remains a major focus for U.S. technology companies",
-        description: "Companies continue investing in artificial intelligence, automation and digital infrastructure as competition grows.",
-        content: "Fallback story shown when live APIs are unavailable.",
-        image_url: "",
-        link: "#",
-        source_id: "Global Intel Times"
-      },
-      {
-        title: "New York business leaders monitor economy, housing and market trends",
-        description: "New York remains a major center for finance, real estate, technology and national business developments.",
-        content: "Fallback story shown when live APIs are unavailable.",
-        image_url: "",
-        link: "#",
-        source_id: "Global Intel Times"
-      }
-    ]
-  });
+  return score;
 }
+
+function normalizeArticle(item) {
+  return {
+    title: cleanText(item.title),
+    description: cleanText(
+      item.description ||
+      item.content ||
+      item.summary ||
+      "This story is developing and more updates may follow soon."
+    ),
+    source:
+      item.source_id ||
+      item.source ||
+      item.source_name ||
+      "News",
+    url:
+      item.url ||
+      item.link ||
+      "#",
+    image:
+      item.image_url ||
+      item.image ||
+      item.imageUrl ||
+      "",
+    publishedAt:
+      item.publishedAt ||
+      item.pubDate ||
+      item.published_at ||
+      new Date().toISOString()
+  };
+}
+
+async function safeFetch(url) {
+  try {
+    const controller = new AbortController();
+
+    setTimeout(() => {
+      controller.abort();
+    }, 4000);
+
+    const response = await fetch(url, {
+      signal: controller.signal,
+      headers: {
+        "Accept": "application/json"
+      }
+    });
+
+    if (!response.ok) return [];
+
+    const data = await response.json();
+
+    if (Array.isArray(data.articles)) return data.articles;
+    if (Array.isArray(data.results)) return data.results;
+    if (Array.isArray(data.data)) return data.data;
+    if (Array.isArray(data.news)) return data.news;
+
+    return [];
+  } catch (error) {
+    return [];
+  }
+}
+
+exports.handler = async function (event) {
+  const q = event.queryStringParameters?.q || "usa breaking news politics economy ai stock market";
+
+  const GNEWS_KEY = process.env.GNEWS_KEY;
+  const NEWSDATA_KEY = process.env.NEWSDATA_KEY;
+  const THENEWSAPI_KEY = process.env.THENEWSAPI_KEY;
+  const MEDIASTACK_KEY = process.env.MEDIASTACK_KEY;
+  const CURRENTS_KEY = process.env.CURRENTS_KEY;
+
+  const urls = [];
+
+  if (GNEWS_KEY) {
+    urls.push(
+      `https://gnews.io/api/v4/search?q=${encodeURIComponent(q)}&lang=en&country=us&max=30&apikey=${GNEWS_KEY}`
+    );
+  }
+
+  if (NEWSDATA_KEY) {
+    urls.push(
+      `https://newsdata.io/api/1/latest?apikey=${NEWSDATA_KEY}&q=${encodeURIComponent(q)}&country=us&language=en`
+    );
+  }
+
+  if (THENEWSAPI_KEY) {
+    urls.push(
+      `https://api.thenewsapi.com/v1/news/all?api_token=${THENEWSAPI_KEY}&search=${encodeURIComponent(q)}&language=en&locale=us&limit=30`
+    );
+  }
+
+  if (MEDIASTACK_KEY) {
+    urls.push(
+      `https://api.mediastack.com/v1/news?access_key=${MEDIASTACK_KEY}&keywords=${encodeURIComponent(q)}&countries=us&languages=en&limit=30`
+    );
+  }
+
+  if (CURRENTS_KEY) {
+    urls.push(
+      `https://api.currentsapi.services/v1/search?apiKey=${CURRENTS_KEY}&keywords=${encodeURIComponent(q)}&language=en&country=US`
+    );
+  }
+
+  let all = [];
+
+  const responses = await Promise.all(urls.map(url => safeFetch(url)));
+
+  responses.forEach(list => {
+    all = all.concat(list);
+  });
+
+  let normalized = all
+    .map(normalizeArticle)
+    .filter(article => article.title)
+    .filter(article => !isBlocked(article));
+
+  const seen = new Set();
+
+  normalized = normalized.filter(article => {
+    const key = article.title.toLowerCase().trim();
+
+    if (seen.has(key)) return false;
+
+    seen.add(key);
+    return true;
+  });
+
+  normalized = normalized
+    .map(article => ({
+      ...article,
+      score: scoreArticle(article)
+    }))
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 30);
+
+  if (!normalized.length) {
+    normalized = fallbackArticles;
+  }
+
+  return {
+    statusCode: 200,
+    headers: {
+      "Content-Type": "application/json",
+      "Access-Control-Allow-Origin": "*",
+      "Cache-Control": "public, max-age=120"
+    },
+    body: JSON.stringify({
+      success: true,
+      total: normalized.length,
+      results: normalized
+    })
+  };
+};
