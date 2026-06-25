@@ -388,31 +388,36 @@ box.innerHTML = audio.map(x => `     <div class="audio-card">       <h3>${x[0]}<
 /* ================= CATEGORY STRICT PAGE ================= */
 
 function renderCategoryPage() {
-const root = document.getElementById("categoryArticles");
-if (!root) return;
+  const root = document.getElementById("categoryArticles");
+  if (!root) return;
 
-const topic = getParam("topic") || "us";
-const readable = titleCase(topic);
-const title = document.getElementById("categoryTitle");
+  const topic = getParam("topic") || "us";
+  const readable = titleCase(topic);
+  const title = document.getElementById("categoryTitle");
 
-if (title) title.textContent = readable;
+  if (title) title.textContent = readable;
 
-const articles = strictTopicArticles(topic);
+  const articles = strictTopicArticles(topic);
 
-root.innerHTML = ` <section class="category-header"> <p>GLOBAL INTEL TIMES</p> <h1>${readable}</h1> <span>Only ${readable} related news appears on this page.</span> </section>
+  let html = "";
+  html += '<section class="category-header">';
+  html += '<p>GLOBAL INTEL TIMES</p>';
+  html += '<h1>' + readable + '</h1>';
+  html += '<span>Only ' + readable + ' related news appears on this page.</span>';
+  html += '</section>';
 
-```
-${
-  articles.length
-    ? `<div class="article-grid">${articles.map(card).join("")}</div>`
-    : `<div class="empty-topic">
-        <h2>No ${readable} news found right now.</h2>
-        <p>This page is strictly filtered, so unrelated articles will not appear here.</p>
-      </div>`
-}
-```
+  if (articles.length) {
+    html += '<div class="article-grid">';
+    html += articles.map(card).join("");
+    html += '</div>';
+  } else {
+    html += '<div class="empty-topic">';
+    html += '<h2>No ' + readable + ' news found right now.</h2>';
+    html += '<p>This page is strictly filtered, so unrelated articles will not appear here.</p>';
+    html += '</div>';
+  }
 
-`;
+  root.innerHTML = html;
 }
 
 function strictTopicArticles(topic) {
