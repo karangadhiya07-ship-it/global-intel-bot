@@ -1,5 +1,5 @@
-const API_ENDPOINT = "/.netlify/functions/news";
 const DEFAULT_TOPIC = "usa breaking news politics economy ai stock market";
+const MAX_HOME_ARTICLES = 30;
 
 const breakingTicker = document.getElementById("breakingTicker");
 const newsFeed = document.getElementById("newsFeed");
@@ -14,17 +14,13 @@ let seenTitles = new Set();
 let isLoading = false;
 let marketIndex = 0;
 
-const MAX_HOME_ARTICLES = 30;
-
 const fallbackImages = [
   "https://images.unsplash.com/photo-1529107386315-e1a2ed48a620?w=1200",
   "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=1200",
   "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=1200",
   "https://images.unsplash.com/photo-1541872705-1f73c6400ec9?w=1200",
   "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=1200",
-  "https://images.unsplash.com/photo-1518546305927-5a555bb7020d?w=1200",
-  "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=1200",
-  "https://images.unsplash.com/photo-1495020689067-958852a7765e?w=1200"
+  "https://images.unsplash.com/photo-1518546305927-5a555bb7020d?w=1200"
 ];
 
 const FALLBACK_ARTICLES = [
@@ -86,6 +82,7 @@ const marketItems = [
   { symbol: "GOLD", change: "+0.41%", trend: "up" },
   { symbol: "SILVER", change: "-0.22%", trend: "down" }
 ];
+
 if (todayDate) {
   todayDate.textContent = new Date().toLocaleDateString("en-US", {
     weekday: "long",
@@ -114,46 +111,10 @@ function detectSection(title) {
 
   if (t.includes("bitcoin") || t.includes("crypto") || t.includes("ethereum")) return "Crypto";
   if (t.includes("gold") || t.includes("silver")) return "Markets";
-
-  if (
-    t.includes("stock") ||
-    t.includes("market") ||
-    t.includes("economy") ||
-    t.includes("fed") ||
-    t.includes("nasdaq") ||
-    t.includes("inflation") ||
-    t.includes("wall street")
-  ) {
-    return "Business";
-  }
-
-  if (
-    t.includes("ai") ||
-    t.includes("openai") ||
-    t.includes("technology") ||
-    t.includes("nvidia") ||
-    t.includes("microsoft") ||
-    t.includes("apple") ||
-    t.includes("google") ||
-    t.includes("amazon") ||
-    t.includes("meta")
-  ) {
-    return "Technology";
-  }
-
+  if (t.includes("stock") || t.includes("market") || t.includes("economy") || t.includes("fed") || t.includes("nasdaq") || t.includes("inflation") || t.includes("wall street")) return "Business";
+  if (t.includes("ai") || t.includes("openai") || t.includes("technology") || t.includes("nvidia") || t.includes("microsoft") || t.includes("apple") || t.includes("google") || t.includes("amazon") || t.includes("meta")) return "Technology";
   if (t.includes("weather") || t.includes("storm") || t.includes("rain")) return "Weather";
-
-  if (
-    t.includes("trump") ||
-    t.includes("biden") ||
-    t.includes("election") ||
-    t.includes("white house") ||
-    t.includes("congress") ||
-    t.includes("senate")
-  ) {
-    return "Politics";
-  }
-
+  if (t.includes("trump") || t.includes("biden") || t.includes("election") || t.includes("white house") || t.includes("congress") || t.includes("senate")) return "Politics";
   if (t.includes("new york") || t.includes("nyc") || t.includes("u.s.") || t.includes("us ")) return "U.S.";
 
   return "News";
@@ -166,16 +127,13 @@ function isBadArticle(title, description) {
 
 function getValidImage(item) {
   const img = item.image || "";
-
   if (
     img.startsWith("http") &&
     !img.toLowerCase().includes("logo") &&
     !img.toLowerCase().includes("placeholder") &&
     !img.toLowerCase().includes("default") &&
     !img.toLowerCase().includes("benzinga")
-  ) {
-    return img;
-  }
+  ) return img;
 
   return "";
 }
@@ -198,6 +156,8 @@ function trackArticleClick(title) {
   localStorage.setItem("articleClicks", JSON.stringify(clicks));
 }
 
+window.trackArticleClick = trackArticleClick;
+
 function createArticleCard(item) {
   const id = allNews.indexOf(item);
   const img = getValidImage(item);
@@ -206,11 +166,7 @@ function createArticleCard(item) {
   return `
     <article class="news-card clickable-card ${!img ? "no-image-card" : ""}">
       <a href="${articleUrl(id)}" onclick="trackArticleClick('${safeTitle}')">
-        ${
-          img
-            ? `<img loading="lazy" decoding="async" src="${img}" onerror="this.remove()" alt="${item.title}">`
-            : ""
-        }
+        ${img ? `<img loading="lazy" decoding="async" src="${img}" onerror="this.remove()" alt="${item.title}">` : ""}
         <span class="section-label">${item.section || "NEWS"}</span>
         <h2>${item.title}</h2>
         <p>${shortText(item.description || "", 185)}</p>
@@ -229,25 +185,19 @@ function renderLeads() {
 
 function renderBelowNews() {
   if (!newsFeed) return;
-
-  newsFeed.innerHTML = allNews
-    .slice(3, MAX_HOME_ARTICLES)
-    .map(createArticleCard)
-    .join("");
-
+  newsFeed.innerHTML = allNews.slice(3, MAX_HOME_ARTICLES).map(createArticleCard).join("");
   localStorage.setItem("articles", JSON.stringify(allNews));
 }
 
 function updateTicker() {
   if (!breakingTicker) return;
-
   breakingTicker.textContent = allNews.length
     ? "LIVE • " + allNews.slice(0, 3).map(x => x.title).join(" • ")
     : "LIVE • Loading latest updates...";
 }
+
 function updateMostRead() {
   if (!mostReadList) return;
-
   mostReadList.innerHTML = allNews
     .slice(0, 8)
     .map((item, i) => `<li><a href="${articleUrl(i)}">${item.title}</a></li>`)
@@ -297,9 +247,7 @@ function updateTrendAnalysis() {
 function latestUpdatesWidget() {
   const box = document.getElementById("latestUpdatesBox");
   if (!box) return;
-
-  box.innerHTML = allNews
-    .slice(0, 5)
+  box.innerHTML = allNews.slice(0, 5)
     .map((item, i) => `<a class="latest-update-link" href="${articleUrl(i)}">${item.title}</a>`)
     .join("");
 }
@@ -309,15 +257,10 @@ function updateTopMarket() {
   if (!box) return;
 
   const item = marketItems[marketIndex % marketItems.length];
-
   box.className = "market-mini top-trend-box " + item.trend;
   box.innerHTML = `${item.symbol} ${item.change} ${item.trend === "up" ? "↑" : "↓"}`;
   box.style.cursor = "pointer";
-
-  box.onclick = function () {
-    window.location.href = `./market.html?symbol=${item.symbol}`;
-  };
-
+  box.onclick = () => window.location.href = `./market.html?symbol=${item.symbol}`;
   marketIndex++;
 }
 
@@ -328,7 +271,6 @@ function updateHomeSchema() {
   const schema = document.createElement("script");
   schema.type = "application/ld+json";
   schema.id = "homeItemListSchema";
-
   schema.textContent = JSON.stringify({
     "@context": "https://schema.org",
     "@type": "ItemList",
@@ -341,7 +283,6 @@ function updateHomeSchema() {
       name: item.title
     }))
   });
-
   document.head.appendChild(schema);
 }
 
@@ -351,7 +292,6 @@ function fillToThirty() {
 
   [...allNews, ...FALLBACK_ARTICLES].forEach(item => {
     const key = String(item.title || "").toLowerCase().trim();
-
     if (!titles.has(key)) {
       titles.add(key);
       unique.push(item);
@@ -363,9 +303,7 @@ function fillToThirty() {
 
 function renderPage() {
   fillToThirty();
-
   allNews = allNews.slice(0, MAX_HOME_ARTICLES);
-
   localStorage.setItem("articles", JSON.stringify(allNews));
   localStorage.setItem("cachedNews", JSON.stringify(allNews));
 
@@ -384,9 +322,24 @@ function useFallbackNews() {
   renderPage();
 }
 
+async function fetchNewsFromEndpoint(endpoint, topic, signal) {
+  const response = await fetch(`${endpoint}?q=${encodeURIComponent(topic || DEFAULT_TOPIC)}`, { signal });
+
+  if (!response.ok) {
+    throw new Error("News API failed: " + response.status);
+  }
+
+  const contentType = response.headers.get("content-type") || "";
+
+  if (!contentType.includes("application/json")) {
+    throw new Error("News API did not return JSON");
+  }
+
+  return await response.json();
+}
+
 async function fetchNews(topic) {
   if (isLoading || !newsFeed) return;
-
   isLoading = true;
 
   const cached = localStorage.getItem("cachedNews");
@@ -404,18 +357,19 @@ async function fetchNews(topic) {
   } else {
     newsFeed.innerHTML = `<div class="loading">Loading live news...</div>`;
   }
-    try {
+
+  try {
     const controller = new AbortController();
+    setTimeout(() => controller.abort(), 4000);
 
-    setTimeout(() => {
-      controller.abort();
-    }, 3000);
+    let data;
 
-    const response = await fetch(`${API_ENDPOINT}?q=${encodeURIComponent(topic || DEFAULT_TOPIC)}`, {
-      signal: controller.signal
-    });
+    try {
+      data = await fetchNewsFromEndpoint("/api/news", topic, controller.signal);
+    } catch (e) {
+      data = await fetchNewsFromEndpoint("/.netlify/functions/news", topic, controller.signal);
+    }
 
-    const data = await response.json();
     const results = Array.isArray(data.results) ? data.results : [];
     const fresh = [];
 
@@ -443,20 +397,14 @@ async function fetchNews(topic) {
 
     allNews = fresh.slice(0, MAX_HOME_ARTICLES);
 
-    if (allNews.length) {
-      renderPage();
-    } else {
-      useFallbackNews();
-    }
+    if (allNews.length) renderPage();
+    else useFallbackNews();
 
   } catch (error) {
     console.warn("Live news failed. Showing fallback news.", error);
 
-    if (!allNews.length) {
-      useFallbackNews();
-    } else {
-      renderPage();
-    }
+    if (!allNews.length) useFallbackNews();
+    else renderPage();
   }
 
   isLoading = false;
@@ -476,8 +424,13 @@ async function searchNews(topic = DEFAULT_TOPIC) {
 
 function setupCategoryButtons() {
   document.querySelectorAll(".topicBtn").forEach(btn => {
-    btn.onclick = function () {
-      searchNews(btn.dataset.topic || DEFAULT_TOPIC);
+    btn.onclick = () => searchNews(btn.dataset.topic || DEFAULT_TOPIC);
+  });
+
+  document.querySelectorAll(".mega-col a").forEach(link => {
+    link.onclick = () => {
+      const topic = link.innerText.trim();
+      if (topic) searchNews(topic);
     };
   });
 }
@@ -485,27 +438,23 @@ function setupCategoryButtons() {
 function setupCookieBanner() {
   const banner = document.getElementById("cookieBanner");
   if (!banner) return;
-
   banner.style.display = localStorage.getItem("cookiesAccepted") === "yes" ? "none" : "flex";
 }
 
 function acceptCookies() {
   localStorage.setItem("cookiesAccepted", "yes");
-
   const banner = document.getElementById("cookieBanner");
   if (banner) banner.style.display = "none";
 }
 
 window.acceptCookies = acceptCookies;
-window.trackArticleClick = trackArticleClick;
 
 function setupNewsletter() {
   const input = document.querySelector(".newsletter-input");
   const btn = document.querySelector(".newsletter-btn");
-
   if (!input || !btn) return;
 
-  btn.onclick = function () {
+  btn.onclick = () => {
     const email = input.value.trim();
 
     if (!email || !email.includes("@")) {
@@ -514,7 +463,6 @@ function setupNewsletter() {
     }
 
     const saved = JSON.parse(localStorage.getItem("newsletterEmails") || "[]");
-
     if (!saved.includes(email)) {
       saved.push(email);
       localStorage.setItem("newsletterEmails", JSON.stringify(saved));
@@ -528,7 +476,6 @@ function setupNewsletter() {
 function updateVisitorCount() {
   const today = new Date().toDateString();
   const key = "visitorCount_" + today;
-
   const count = Number(localStorage.getItem(key) || 0) + 1;
   localStorage.setItem(key, count);
 
@@ -570,7 +517,6 @@ function renderArticlePage() {
   }
 
   updateArticleSEO(article);
-
   const img = getValidImage(article);
 
   articleBox.innerHTML = `
@@ -581,177 +527,82 @@ function renderArticlePage() {
     ${img ? `<img class="article-main-img" src="${img}" alt="${article.title}" onerror="this.remove()">` : ""}
     <p class="article-intro">${article.description}</p>
     <p>Global Intel Times is tracking this developing story as part of our USA-focused news coverage.</p>
-    ${
-      article.link && article.link !== "#"
-        ? `<a href="${article.link}" target="_blank" rel="noopener nofollow" class="source-link">Original Source</a>`
-        : ""
-    }
+    ${article.link && article.link !== "#"
+      ? `<a href="${article.link}" target="_blank" rel="noopener nofollow" class="source-link">Original Source</a>`
+      : ""}
   `;
 }
 
-/* ===========================
-   GLOBAL INTEL TIMES
-   MEGA MENU SYSTEM
-=========================== */
+function setupMegaMenu() {
+  const megaItems = document.querySelectorAll(".mega-item");
+  const megaWrap = document.getElementById("megaMenuWrap");
+  const nav = document.querySelector(".mega-nav");
 
-const megaItems = document.querySelectorAll(".mega-item");
-const megaWrap = document.getElementById("megaMenuWrap");
+  if (!megaWrap || !nav || !megaItems.length) return;
 
-let closeTimer = null;
+  let closeTimer = null;
 
-function closeMenus() {
-    document.querySelectorAll(".mega-menu").forEach(menu => {
-        menu.classList.remove("active");
-    });
-
+  function closeMenus() {
+    document.querySelectorAll(".mega-menu").forEach(menu => menu.classList.remove("active"));
     megaWrap.classList.remove("active");
-}
+  }
 
-function openMenu(name) {
-
+  function openMenu(name) {
     clearTimeout(closeTimer);
-
     closeMenus();
 
     megaWrap.classList.add("active");
 
     const target = document.getElementById("mega-" + name);
+    if (target) target.classList.add("active");
+  }
 
-    if (target) {
-        target.classList.add("active");
-    }
+  megaItems.forEach(item => {
+    item.addEventListener("mouseenter", () => openMenu(item.dataset.menu));
 
-}
-
-megaItems.forEach(item => {
-
-    item.addEventListener("mouseenter", () => {
-
-        const menu = item.dataset.menu;
-
-        openMenu(menu);
-
+    item.addEventListener("click", e => {
+      if (window.innerWidth < 900) {
+        e.preventDefault();
+        openMenu(item.dataset.menu);
+      }
     });
+  });
 
-});
+  megaWrap.addEventListener("mouseenter", () => clearTimeout(closeTimer));
 
-megaWrap.addEventListener("mouseenter", () => {
+  megaWrap.addEventListener("mouseleave", () => {
+    closeTimer = setTimeout(closeMenus, 120);
+  });
 
-    clearTimeout(closeTimer);
+  nav.addEventListener("mouseleave", () => {
+    closeTimer = setTimeout(closeMenus, 120);
+  });
 
-});
+  nav.addEventListener("mouseenter", () => clearTimeout(closeTimer));
 
-megaWrap.addEventListener("mouseleave", () => {
-
-    closeTimer = setTimeout(() => {
-
-        closeMenus();
-
-    }, 120);
-
-});
-
-document.querySelector(".mega-nav").addEventListener("mouseleave", () => {
-
-    closeTimer = setTimeout(() => {
-
-        closeMenus();
-
-    },120);
-
-});
-
-document.querySelector(".mega-nav").addEventListener("mouseenter", () => {
-
-    clearTimeout(closeTimer);
-
-});
-
-document.addEventListener("click",(e)=>{
-
-    if(
-        !e.target.closest(".mega-nav") &&
-        !e.target.closest(".mega-menu-wrap")
-    ){
-
-        closeMenus();
-
+  document.addEventListener("click", e => {
+    if (!e.target.closest(".mega-nav") && !e.target.closest(".mega-menu-wrap")) {
+      closeMenus();
     }
+  });
 
-});
+  document.addEventListener("keydown", e => {
+    if (e.key === "Escape") closeMenus();
+  });
 
-/* ===========================
-   MOBILE ACCORDION
-=========================== */
+  const navTop = nav.offsetTop;
 
-if(window.innerWidth<900){
-
-    megaItems.forEach(item=>{
-
-        item.addEventListener("click",(e)=>{
-
-            e.preventDefault();
-
-            const menu=item.dataset.menu;
-
-            const target=document.getElementById("mega-"+menu);
-
-            if(target.classList.contains("active")){
-
-                closeMenus();
-
-            }else{
-
-                openMenu(menu);
-
-            }
-
-        });
-
-    });
-
+  window.addEventListener("scroll", () => {
+    if (window.scrollY > navTop) nav.classList.add("sticky-nav");
+    else nav.classList.remove("sticky-nav");
+  });
 }
-
-/* ===========================
-   ESC CLOSE
-=========================== */
-
-document.addEventListener("keydown",(e)=>{
-
-    if(e.key==="Escape"){
-
-        closeMenus();
-
-    }
-
-});
-
-/* ===========================
-   STICKY NAV
-=========================== */
-
-const nav=document.querySelector(".mega-nav");
-
-const navTop=nav.offsetTop;
-
-window.addEventListener("scroll",()=>{
-
-    if(window.scrollY>navTop){
-
-        nav.classList.add("sticky-nav");
-
-    }else{
-
-        nav.classList.remove("sticky-nav");
-
-    }
-
-});
 
 setupCookieBanner();
 setupNewsletter();
 updateVisitorCount();
 setupCategoryButtons();
+setupMegaMenu();
 
 setInterval(updateTopMarket, 5000);
 updateTopMarket();
