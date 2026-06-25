@@ -608,3 +608,18 @@ return t.split(". ").map(p => `<p>${p}${p.endsWith(".") ? "" : "."}</p>`).join("
 document.addEventListener("DOMContentLoaded", () => {
 setTimeout(renderArticlePage, 500);
 });
+function initTopMarketClick() {
+  const box = document.getElementById("topTrendBox");
+  if (!box) return;
+
+  box.style.cursor = "pointer";
+  box.title = "Open Market Dashboard";
+
+  box.addEventListener("click", function () {
+    window.location.href = "market.html";
+  });
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+  initTopMarketClick();
+});
