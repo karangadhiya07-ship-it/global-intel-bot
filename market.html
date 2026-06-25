@@ -3,408 +3,1211 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
   <title>Market Data | Global Intel Times</title>
+  <meta name="description" content="Live market data, stock charts, market analysis, company news and watchlist from Global Intel Times." />
+
   <link rel="stylesheet" href="style.css" />
 
   <style>
-    .market-tools{display:flex;gap:10px;flex-wrap:wrap;margin:15px 0;align-items:flex-start}
-    .market-tools button{padding:11px 14px;border:1px solid #111;background:#fff;font-weight:700;cursor:pointer}
-    .symbol-search-box{position:relative;width:320px}
-    #symbolSearch{width:100%;padding:12px 14px;border:1px solid #111;font-weight:700;font-size:15px}
-    .symbol-suggestions{position:absolute;top:48px;left:0;right:0;background:#fff;border:1px solid #111;z-index:9999;display:none;max-height:320px;overflow-y:auto;box-shadow:0 8px 20px rgba(0,0,0,.15)}
-    .symbol-suggestions div{padding:12px;cursor:pointer;border-bottom:1px solid #eee;font-family:Arial,sans-serif}
-    .symbol-suggestions div:hover,.symbol-suggestions .active{background:#111;color:#fff}
-    .symbol-suggestions small{color:#666}
-    .symbol-suggestions div:hover small,.symbol-suggestions .active small{color:#ddd}
-    .market-grid{display:grid;grid-template-columns:1fr 320px;gap:20px}
-    .chart-box{height:560px;width:100%;border:1px solid #ddd;overflow:hidden;background:#fff}
-    #tradingview_chart{height:100%!important;width:100%!important}
-    #tradingview_chart iframe{height:100%!important;width:100%!important}
-    .stat-card{border:1px solid #ddd;padding:15px;margin-bottom:10px}
-    .stat-card span{display:block;color:#666;font-size:13px}
-    .stat-card strong{font-size:22px}
-    .market-section{margin-top:25px;border-top:2px solid #111;padding-top:15px}
-    .market-list-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-    .mini-card{border:1px solid #ddd;padding:12px;background:#fff}
-    .mini-card button{margin-top:8px;padding:7px 10px;border:1px solid #111;background:#fff;cursor:pointer}
-    .up{color:green}.down{color:#b00020}
-    .ad-slot{border:2px dashed #bbb;height:120px;display:flex;align-items:center;justify-content:center;margin:20px 0;color:#777}
-    .dark-mode{background:#0f1115;color:#eee}
-    .dark-mode .masthead,.dark-mode .nav,.dark-mode .stat-card,.dark-mode .mini-card,.dark-mode .chart-box,.dark-mode table,.dark-mode .symbol-suggestions{background:#151821;color:#eee;border-color:#333}
-    .dark-mode #symbolSearch,.dark-mode .market-tools button{background:#151821;color:#eee;border-color:#555}
-    @media(max-width:850px){.market-grid{grid-template-columns:1fr}.chart-box{height:420px}.market-list-grid{grid-template-columns:1fr}.symbol-search-box{width:100%}}
+    :root {
+      --bg: #ffffff;
+      --text: #111111;
+      --muted: #666666;
+      --border: #dddddd;
+      --soft: #f7f7f7;
+      --green: #0a8f3c;
+      --red: #c1121f;
+      --blue: #0b5fff;
+    }
+
+    body.dark-mode {
+      --bg: #0f1115;
+      --text: #f1f1f1;
+      --muted: #aaaaaa;
+      --border: #333333;
+      --soft: #171a22;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    .market-page {
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 22px 18px;
+    }
+
+    .market-header {
+      border-bottom: 3px double var(--text);
+      padding-bottom: 18px;
+      margin-bottom: 20px;
+    }
+
+    .market-title-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: flex-start;
+      flex-wrap: wrap;
+    }
+
+    .market-title-row h1 {
+      font-size: clamp(36px, 5vw, 64px);
+      line-height: 1;
+      letter-spacing: -1.5px;
+    }
+
+    .market-subtitle {
+      font-family: Arial, sans-serif;
+      color: var(--muted);
+      margin-top: 10px;
+      font-size: 14px;
+    }
+
+    .live-price-card {
+      min-width: 260px;
+      border: 1px solid var(--border);
+      padding: 14px;
+      background: var(--soft);
+      font-family: Arial, sans-serif;
+    }
+
+    .live-price-card small {
+      display: block;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+
+    .live-price {
+      font-size: 30px;
+      font-weight: 900;
+    }
+
+    .live-change {
+      margin-top: 4px;
+      font-size: 15px;
+      font-weight: 800;
+    }
+
+    .up {
+      color: var(--green);
+    }
+
+    .down {
+      color: var(--red);
+    }
+
+    .market-tools {
+      margin-top: 18px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: flex-start;
+    }
+
+    .search-wrap {
+      position: relative;
+      width: min(420px, 100%);
+      font-family: Arial, sans-serif;
+    }
+
+    #marketSearch {
+      width: 100%;
+      padding: 13px 14px;
+      border: 1px solid var(--text);
+      background: var(--bg);
+      color: var(--text);
+      font-weight: 800;
+      font-size: 15px;
+    }
+
+    .search-results {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 48px;
+      display: none;
+      background: var(--bg);
+      border: 1px solid var(--text);
+      z-index: 9999;
+      max-height: 340px;
+      overflow-y: auto;
+      box-shadow: 0 10px 25px rgba(0,0,0,.16);
+    }
+
+    .search-results div {
+      padding: 12px;
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+    }
+
+    .search-results div:hover,
+    .search-results div.active {
+      background: var(--text);
+      color: var(--bg);
+    }
+
+    .search-results small {
+      color: var(--muted);
+    }
+
+    .search-results div:hover small,
+    .search-results div.active small {
+      color: #ddd;
+    }
+
+    .market-tools button {
+      padding: 13px 14px;
+      border: 1px solid var(--text);
+      background: var(--bg);
+      color: var(--text);
+      font-weight: 800;
+      cursor: pointer;
+      font-family: Arial, sans-serif;
+    }
+
+    .market-tools button:hover {
+      background: var(--text);
+      color: var(--bg);
+    }
+
+    .market-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 330px;
+      gap: 22px;
+      align-items: start;
+    }
+
+    .chart-panel {
+      border: 1px solid var(--border);
+      background: var(--bg);
+      padding: 16px;
+      min-height: 520px;
+    }
+
+    .chart-header {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 16px;
+      font-family: Arial, sans-serif;
+    }
+
+    .chart-header h2 {
+      font-size: 18px;
+    }
+
+    .chart-status {
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .chart-box {
+      height: 430px;
+      width: 100%;
+      position: relative;
+    }
+
+    .chart-skeleton {
+      height: 430px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(90deg, var(--soft), var(--bg), var(--soft));
+      border: 1px solid var(--border);
+      font-family: Arial, sans-serif;
+      color: var(--muted);
+    }
+
+    .stats-grid {
+      display: grid;
+      gap: 12px;
+    }
+
+    .stat-card {
+      border: 1px solid var(--border);
+      padding: 15px;
+      background: var(--bg);
+    }
+
+    .stat-card span {
+      display: block;
+      font-family: Arial, sans-serif;
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+
+    .stat-card strong {
+      font-size: 22px;
+    }
+        .market-section {
+      margin-top: 26px;
+      padding-top: 18px;
+      border-top: 2px solid var(--text);
+    }
+
+    .market-section h2 {
+      font-size: 30px;
+      margin-bottom: 12px;
+      letter-spacing: -0.5px;
+    }
+
+    .analysis-card {
+      border: 1px solid var(--border);
+      padding: 18px;
+      background: var(--bg);
+      font-size: 17px;
+      line-height: 1.8;
+    }
+
+    .company-card {
+      display: flex;
+      gap: 14px;
+      align-items: center;
+      border: 1px solid var(--border);
+      padding: 16px;
+      background: var(--soft);
+      margin-bottom: 18px;
+    }
+
+    .company-card img {
+      width: 54px;
+      height: 54px;
+      object-fit: contain;
+      background: #fff;
+      border: 1px solid var(--border);
+      padding: 6px;
+    }
+
+    .company-card h3 {
+      font-size: 20px;
+      margin-bottom: 3px;
+    }
+
+    .company-card p {
+      font-family: Arial, sans-serif;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .mini-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+
+    .mini-card {
+      border: 1px solid var(--border);
+      padding: 14px;
+      background: var(--bg);
+      font-family: Arial, sans-serif;
+    }
+
+    .mini-card b {
+      font-size: 16px;
+    }
+
+    .mini-card p {
+      color: var(--muted);
+      margin-top: 6px;
+      font-size: 13px;
+    }
+
+    .mini-card button {
+      margin-top: 10px;
+      padding: 8px 10px;
+      border: 1px solid var(--text);
+      background: var(--bg);
+      color: var(--text);
+      cursor: pointer;
+      font-weight: 800;
+    }
+
+    .mini-card button:hover {
+      background: var(--text);
+      color: var(--bg);
+    }
+
+    .news-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+
+    .market-news-card {
+      border: 1px solid var(--border);
+      background: var(--bg);
+      overflow: hidden;
+    }
+
+    .market-news-card img {
+      width: 100%;
+      height: 130px;
+      object-fit: cover;
+      background: var(--soft);
+    }
+
+    .market-news-card div {
+      padding: 12px;
+    }
+
+    .market-news-card h3 {
+      font-size: 17px;
+      line-height: 1.25;
+      margin-bottom: 8px;
+    }
+
+    .market-news-card p {
+      font-family: Arial, sans-serif;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .market-news-card small {
+      display: block;
+      margin-top: 8px;
+      font-family: Arial, sans-serif;
+      color: var(--muted);
+    }
+
+    .related-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: Arial, sans-serif;
+    }
+
+    .related-table th,
+    .related-table td {
+      border: 1px solid var(--border);
+      padding: 12px;
+      text-align: left;
+    }
+
+    .related-table th {
+      background: var(--soft);
+    }
+
+    .ad-slot {
+      border: 2px dashed var(--border);
+      height: 120px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: var(--muted);
+      font-family: Arial, sans-serif;
+      margin: 24px 0;
+    }
+
+    .error-box {
+      padding: 16px;
+      border: 1px solid var(--red);
+      color: var(--red);
+      background: rgba(193,18,31,.06);
+      font-family: Arial, sans-serif;
+    }
+
+    @media(max-width: 900px) {
+      .market-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .mini-grid,
+      .news-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .chart-box,
+      .chart-skeleton {
+        height: 340px;
+      }
+    }
   </style>
 </head>
 
 <body>
 
-<div class="top-strip">
-  <div id="todayDate">Loading date...</div>
-  <div class="market-mini">LIVE MARKETS</div>
-</div>
+  <div class="top-strip">
+    <div id="todayDate">Loading date...</div>
+    <div class="market-mini">LIVE MARKETS</div>
+  </div>
 
-<header class="masthead">
-  <a href="index.html"><h1>Global Intel Times</h1></a>
-  <p>USA News • Markets • AI • Politics • World Affairs</p>
-</header>
+  <header class="masthead">
+    <a href="index.html">
+      <h1>Global Intel Times</h1>
+    </a>
+    <p>USA News • Markets • AI • Politics • World Affairs</p>
+  </header>
 
-<nav class="nav">
-  <a href="index.html">Home</a>
-  <a href="market.html?symbol=AAPL">AAPL</a>
-  <a href="market.html?symbol=MSFT">MSFT</a>
-  <a href="market.html?symbol=NVDA">NVDA</a>
-  <a href="market.html?symbol=BTC">BTC</a>
-  <a href="market.html?symbol=GOLD">GOLD</a>
-</nav>
+  <nav class="nav">
+    <a href="index.html">Home</a>
+    <a href="market.html?symbol=AAPL">AAPL</a>
+    <a href="market.html?symbol=MSFT">MSFT</a>
+    <a href="market.html?symbol=NVDA">NVDA</a>
+    <a href="market.html?symbol=AMZN">AMZN</a>
+    <a href="market.html?symbol=META">META</a>
+    <a href="market.html?symbol=GOOGL">GOOGL</a>
+    <a href="market.html?symbol=TSLA">TSLA</a>
+    <a href="market.html?symbol=BTC">BTC</a>
+    <a href="market.html?symbol=GOLD">GOLD</a>
+  </nav>
 
-<main class="market-page">
+  <main class="market-page">
 
-  <section class="market-header">
-    <h1 id="marketTitle">Market</h1>
-    <p id="marketSubtitle">Live market chart and analysis</p>
+    <section class="market-header">
+      <div class="market-title-row">
+        <div>
+          <h1 id="marketTitle">Market</h1>
+          <p id="marketSubtitle" class="market-subtitle">Live market data and analysis</p>
+        </div>
 
-    <div class="market-tools">
-      <div class="symbol-search-box">
-        <input
-          id="symbolSearch"
-          type="text"
-          placeholder="Search Apple, Nvidia, Bitcoin..."
-          autocomplete="off"
-          oninput="showSymbolSuggestions()"
-          onkeydown="handleSymbolEnter(event)"
-        />
-        <div id="symbolSuggestions" class="symbol-suggestions"></div>
+        <div class="live-price-card">
+          <small>Live Price</small>
+          <div id="livePrice" class="live-price">Loading...</div>
+          <div id="liveChange" class="live-change">Loading...</div>
+        </div>
       </div>
 
-      <button onclick="addWatchlist()">+ Add Watchlist</button>
-      <button onclick="toggleDark()">Dark Mode</button>
-    </div>
-  </section>
+      <div class="market-tools">
+        <div class="search-wrap">
+          <input
+            id="marketSearch"
+            type="text"
+            placeholder="Search Apple, Nvidia, Tesla, Bitcoin..."
+            autocomplete="off"
+            oninput="showSearchResults()"
+            onkeydown="handleSearchKeys(event)"
+          />
+          <div id="searchResults" class="search-results"></div>
+        </div>
 
-  <section class="market-grid">
-    <div class="chart-box">
-      <div id="tradingview_chart"></div>
-    </div>
+        <button onclick="addWatchlist()">+ Add Watchlist</button>
+        <button onclick="toggleDarkMode()">Dark Mode</button>
+      </div>
+    </section>
 
-    <aside>
-      <div class="stat-card"><span>Market Cap</span><strong id="marketCap">Loading...</strong></div>
-      <div class="stat-card"><span>P/E Ratio</span><strong id="peRatio">Loading...</strong></div>
-      <div class="stat-card"><span>52 Week Range</span><strong id="weekRange">Dynamic</strong></div>
-      <div class="stat-card"><span>Analyst Signal</span><strong id="analystSignal">Loading...</strong></div>
-      <div class="stat-card"><span>EPS</span><strong id="eps">Loading...</strong></div>
-      <div class="stat-card"><span>Dividend</span><strong id="dividend">Loading...</strong></div>
-    </aside>
-  </section>
+    <section class="market-grid">
+      <div class="chart-panel">
+        <div class="chart-header">
+          <h2 id="chartTitle">Price Chart</h2>
+          <span id="chartStatus" class="chart-status">Loading 90-day price history...</span>
+        </div>
 
-  <div class="ad-slot">Advertisement</div>
+        <div class="chart-box">
+          <canvas id="priceChart"></canvas>
+          <div id="chartSkeleton" class="chart-skeleton">Loading chart...</div>
+        </div>
+      </div>
 
-  <section class="market-section">
-    <h2>Market Analysis</h2>
-    <p id="marketAnalysis">Loading market analysis...</p>
-  </section>
+      <aside class="stats-grid">
+        <div class="stat-card">
+          <span>Market Cap</span>
+          <strong id="marketCap">Loading...</strong>
+        </div>
 
-  <section class="market-section">
-    <h2>Your Watchlist</h2>
-    <div id="watchlistBox" class="market-list-grid"></div>
-  </section>
+        <div class="stat-card">
+          <span>P/E Ratio</span>
+          <strong id="peRatio">Loading...</strong>
+        </div>
 
-  <section class="market-section">
-    <h2>Top Gainers</h2>
-    <div id="gainersBox" class="market-list-grid"></div>
-  </section>
+        <div class="stat-card">
+          <span>52 Week High</span>
+          <strong id="weekHigh">Loading...</strong>
+        </div>
 
-  <section class="market-section">
-    <h2>Top Losers</h2>
-    <div id="losersBox" class="market-list-grid"></div>
-  </section>
+        <div class="stat-card">
+          <span>52 Week Low</span>
+          <strong id="weekLow">Loading...</strong>
+        </div>
 
-  <section class="market-section">
-    <h2>Related Market News</h2>
-    <div id="relatedNewsBox" class="market-list-grid"></div>
-  </section>
+        <div class="stat-card">
+          <span>EPS</span>
+          <strong id="eps">Loading...</strong>
+        </div>
 
-  <section class="market-section">
-    <h2>Related Companies</h2>
-    <table class="related-table">
-      <thead>
-        <tr><th>Symbol</th><th>Company / Asset</th><th>Sector</th></tr>
-      </thead>
-      <tbody id="relatedCompanies"></tbody>
-    </table>
-  </section>
+        <div class="stat-card">
+          <span>Analyst Signal</span>
+          <strong id="signal">Loading...</strong>
+        </div>
+      </aside>
+    </section>
 
-</main>
+    <div class="ad-slot">Advertisement</div>
+        <section class="market-section">
+      <div id="companyProfile" class="company-card">
+        <div>
+          <h3>Loading company profile...</h3>
+          <p>Please wait...</p>
+        </div>
+      </div>
 
-<footer class="footer">
-  <a href="about.html">About</a>
-  <a href="contact.html">Contact</a>
-  <a href="privacy.html">Privacy</a>
-  <p>© 2026 Global Intel Times. All rights reserved.</p>
-</footer>
+      <h2>Market Analysis</h2>
+      <div id="marketAnalysis" class="analysis-card">
+        Loading analysis...
+      </div>
+    </section>
 
-<script src="https://s3.tradingview.com/tv.js"></script>
+    <section class="market-section">
+      <h2>Your Watchlist</h2>
+      <div id="watchlistBox" class="mini-grid"></div>
+    </section>
 
-<script>
-const params = new URLSearchParams(window.location.search);
-const rawSymbol = (params.get("symbol") || "AAPL").toUpperCase();
+    <section class="market-section">
+      <h2>Top Gainers</h2>
+      <div id="gainersBox" class="mini-grid"></div>
+    </section>
 
-const searchableSymbols = [
-  { symbol:"AAPL", name:"Apple Inc.", tv:"NASDAQ:AAPL" },
-  { symbol:"MSFT", name:"Microsoft Corporation", tv:"NASDAQ:MSFT" },
-  { symbol:"NVDA", name:"Nvidia Corporation", tv:"NASDAQ:NVDA" },
-  { symbol:"AMZN", name:"Amazon.com Inc.", tv:"NASDAQ:AMZN" },
-  { symbol:"META", name:"Meta Platforms", tv:"NASDAQ:META" },
-  { symbol:"GOOGL", name:"Alphabet / Google", tv:"NASDAQ:GOOGL" },
-  { symbol:"TSLA", name:"Tesla Inc.", tv:"NASDAQ:TSLA" },
-  { symbol:"AMD", name:"Advanced Micro Devices", tv:"NASDAQ:AMD" },
-  { symbol:"AVGO", name:"Broadcom Inc.", tv:"NASDAQ:AVGO" },
-  { symbol:"NFLX", name:"Netflix Inc.", tv:"NASDAQ:NFLX" },
-  { symbol:"COIN", name:"Coinbase Global", tv:"NASDAQ:COIN" },
-  { symbol:"BTC", name:"Bitcoin", tv:"BINANCE:BTCUSDT" },
-  { symbol:"ETH", name:"Ethereum", tv:"BINANCE:ETHUSDT" },
-  { symbol:"SOL", name:"Solana", tv:"BINANCE:SOLUSDT" },
-  { symbol:"GOLD", name:"Gold Commodity", tv:"TVC:GOLD" },
-  { symbol:"SILVER", name:"Silver Commodity", tv:"TVC:SILVER" },
-  { symbol:"OIL", name:"Crude Oil", tv:"TVC:USOIL" },
-  { symbol:"DXY", name:"US Dollar Index", tv:"TVC:DXY" },
-  { symbol:"SPY", name:"S&P 500 ETF", tv:"AMEX:SPY" },
-  { symbol:"QQQ", name:"Nasdaq 100 ETF", tv:"NASDAQ:QQQ" }
-];
+    <section class="market-section">
+      <h2>Top Losers</h2>
+      <div id="losersBox" class="mini-grid"></div>
+    </section>
 
-document.getElementById("todayDate").textContent = new Date().toLocaleDateString("en-US", {
-  weekday:"long",
-  year:"numeric",
-  month:"long",
-  day:"numeric"
-});
+    <section class="market-section">
+      <h2>Related Market News</h2>
+      <div id="marketNewsBox" class="news-grid"></div>
+    </section>
 
-const marketData = {
-  AAPL:{tv:"NASDAQ:AAPL",name:"Apple Inc.",cap:"$3T+",pe:"High 20s",eps:"6.40+",dividend:"Yes",signal:"Moderate Buy",sector:"Technology",analysis:"Apple remains one of the most closely watched technology stocks. Investors are focused on iPhone demand, services revenue, AI strategy and capital returns.",related:[["MSFT","Microsoft","Technology"],["GOOGL","Alphabet","Technology"],["AMZN","Amazon","Cloud / Retail"]]},
-  MSFT:{tv:"NASDAQ:MSFT",name:"Microsoft Corporation",cap:"$3T+",pe:"High 30s",eps:"11+",dividend:"Yes",signal:"Buy",sector:"AI / Cloud",analysis:"Microsoft continues to benefit from cloud growth and AI demand. Azure, enterprise software and Copilot adoption remain major themes.",related:[["AAPL","Apple","Technology"],["NVDA","Nvidia","AI Chips"],["GOOGL","Alphabet","Cloud"]]},
-  NVDA:{tv:"NASDAQ:NVDA",name:"Nvidia Corporation",cap:"$3T+",pe:"Growth Premium",eps:"Strong",dividend:"Low",signal:"Strong Buy",sector:"AI Chips",analysis:"Nvidia remains central to the AI infrastructure boom. Investors watch data center demand, margins and chip supply.",related:[["MSFT","Microsoft","AI Cloud"],["AMD","AMD","Semiconductors"],["AVGO","Broadcom","Chips"]]},
-  AMZN:{tv:"NASDAQ:AMZN",name:"Amazon.com Inc.",cap:"$2T+",pe:"Growth",eps:"Growing",dividend:"No",signal:"Buy",sector:"Cloud / Retail",analysis:"Amazon is watched for AWS growth, advertising revenue, retail margins and AI spending.",related:[["MSFT","Microsoft","Cloud"],["GOOGL","Alphabet","Cloud"],["META","Meta","Ads"]]},
-  META:{tv:"NASDAQ:META",name:"Meta Platforms Inc.",cap:"$1T+",pe:"Mid 20s",eps:"Strong",dividend:"Yes",signal:"Buy",sector:"Social / AI",analysis:"Meta remains focused on advertising strength, AI tools and user engagement.",related:[["GOOGL","Alphabet","Ads"],["AMZN","Amazon","Ads"],["SNAP","Snap","Social"]]},
-  GOOGL:{tv:"NASDAQ:GOOGL",name:"Alphabet Inc.",cap:"$2T+",pe:"Mid 20s",eps:"Strong",dividend:"Yes",signal:"Buy",sector:"Search / AI",analysis:"Alphabet investors watch AI search, YouTube, cloud growth and regulatory pressure.",related:[["MSFT","Microsoft","AI"],["META","Meta","Ads"],["AMZN","Amazon","Cloud"]]},
-  TSLA:{tv:"NASDAQ:TSLA",name:"Tesla Inc.",cap:"Large Cap",pe:"High Growth",eps:"Volatile",dividend:"No",signal:"Hold",sector:"EV",analysis:"Tesla remains volatile as investors monitor EV demand, margins, autonomous driving and competition.",related:[["RIVN","Rivian","EV"],["GM","General Motors","Auto"],["F","Ford","Auto"]]},
-  BTC:{tv:"BINANCE:BTCUSDT",name:"Bitcoin",cap:"Crypto Leader",pe:"N/A",eps:"N/A",dividend:"No",signal:"Volatile",sector:"Crypto",analysis:"Bitcoin remains the most important crypto asset. Traders watch ETF demand, liquidity, regulation and macro risk sentiment.",related:[["ETH","Ethereum","Crypto"],["SOL","Solana","Crypto"],["COIN","Coinbase","Crypto Equity"]]},
-  GOLD:{tv:"TVC:GOLD",name:"Gold",cap:"Global Commodity",pe:"N/A",eps:"N/A",dividend:"N/A",signal:"Defensive",sector:"Commodity",analysis:"Gold is watched as a hedge against inflation, currency risk and geopolitical uncertainty.",related:[["SILVER","Silver","Commodity"],["GLD","Gold ETF","ETF"],["GDX","Gold Miners","ETF"]]},
-  SILVER:{tv:"TVC:SILVER",name:"Silver",cap:"Global Commodity",pe:"N/A",eps:"N/A",dividend:"N/A",signal:"Neutral",sector:"Commodity",analysis:"Silver moves with precious metals demand and industrial demand. Investors watch the dollar, rates and manufacturing trends.",related:[["GOLD","Gold","Commodity"],["SLV","Silver ETF","ETF"],["COPPER","Copper","Commodity"]]}
-};
+    <section class="market-section">
+      <h2>Related Companies</h2>
+      <table class="related-table">
+        <thead>
+          <tr>
+            <th>Symbol</th>
+            <th>Company / Asset</th>
+            <th>Sector</th>
+          </tr>
+        </thead>
+        <tbody id="relatedCompanies"></tbody>
+      </table>
+    </section>
 
-const searchFound = searchableSymbols.find(x => x.symbol === rawSymbol);
+  </main>
 
-const current = marketData[rawSymbol] || {
-  tv: searchFound ? searchFound.tv : "NASDAQ:AAPL",
-  name: searchFound ? searchFound.name : "Apple Inc.",
-  cap:"Dynamic",
-  pe:"Dynamic",
-  eps:"Dynamic",
-  dividend:"Dynamic",
-  signal:"Watch",
-  sector:"Market Asset",
-  analysis:`${rawSymbol} is being tracked by Global Intel Times market desk. Investors should watch price action, volume, sector performance and broader market sentiment.`,
-  related:[["AAPL","Apple","Technology"],["MSFT","Microsoft","Technology"],["NVDA","Nvidia","AI Chips"]]
-};
+  <footer class="footer">
+    <a href="about.html">About</a>
+    <a href="contact.html">Contact</a>
+    <a href="privacy.html">Privacy</a>
+    <p>© 2026 Global Intel Times. All rights reserved.</p>
+  </footer>
 
-document.getElementById("symbolSearch").value = `${rawSymbol} — ${current.name}`;
-document.title = `${rawSymbol} Market Data | Global Intel Times`;
-document.getElementById("marketTitle").textContent = `${rawSymbol} — ${current.name}`;
-document.getElementById("marketSubtitle").textContent = `${current.sector} live chart, analysis and related assets.`;
-document.getElementById("marketCap").textContent = current.cap;
-document.getElementById("peRatio").textContent = current.pe;
-document.getElementById("eps").textContent = current.eps;
-document.getElementById("dividend").textContent = current.dividend;
-document.getElementById("analystSignal").textContent = current.signal;
-document.getElementById("marketAnalysis").textContent = current.analysis;
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-document.getElementById("relatedCompanies").innerHTML = current.related.map(row => `
-<tr>
-  <td><a href="market.html?symbol=${row[0]}">${row[0]}</a></td>
-  <td>${row[1]}</td>
-  <td>${row[2]}</td>
-</tr>`).join("");
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const currentSymbol = (params.get("symbol") || "AAPL").toUpperCase();
 
-function loadTradingViewChart(){
-  const chartBox = document.getElementById("tradingview_chart");
-  chartBox.innerHTML = "";
+    const searchList = [
+      { symbol: "AAPL", name: "Apple Inc.", sector: "Technology" },
+      { symbol: "MSFT", name: "Microsoft Corporation", sector: "Technology" },
+      { symbol: "NVDA", name: "Nvidia Corporation", sector: "AI Chips" },
+      { symbol: "AMZN", name: "Amazon.com Inc.", sector: "Cloud / Retail" },
+      { symbol: "META", name: "Meta Platforms", sector: "Social Media / AI" },
+      { symbol: "GOOGL", name: "Alphabet Inc.", sector: "Search / AI" },
+      { symbol: "TSLA", name: "Tesla Inc.", sector: "Electric Vehicles" },
+      { symbol: "AMD", name: "Advanced Micro Devices", sector: "Semiconductors" },
+      { symbol: "AVGO", name: "Broadcom Inc.", sector: "Semiconductors" },
+      { symbol: "NFLX", name: "Netflix Inc.", sector: "Streaming" },
+      { symbol: "COIN", name: "Coinbase Global", sector: "Crypto Equity" },
+      { symbol: "JPM", name: "JPMorgan Chase", sector: "Banking" },
+      { symbol: "V", name: "Visa Inc.", sector: "Payments" },
+      { symbol: "MA", name: "Mastercard", sector: "Payments" },
+      { symbol: "WMT", name: "Walmart", sector: "Retail" },
+      { symbol: "XOM", name: "Exxon Mobil", sector: "Energy" }
+    ];
 
-  new TradingView.widget({
-    autosize: true,
-    symbol: current.tv || "NASDAQ:AAPL",
-    interval: "D",
-    timezone: "Etc/UTC",
-    theme: localStorage.getItem("darkMode") === "yes" ? "dark" : "light",
-    style: "1",
-    locale: "en",
-    enable_publishing: false,
-    hide_side_toolbar: false,
-    details: true,
-    hotlist: true,
-    calendar: false,
-    allow_symbol_change: true,
-    container_id: "tradingview_chart"
-  });
-}
+    const relatedMap = {
+      AAPL: [["MSFT","Microsoft","Technology"],["GOOGL","Alphabet","Technology"],["AMZN","Amazon","Cloud / Retail"]],
+      MSFT: [["AAPL","Apple","Technology"],["NVDA","Nvidia","AI Chips"],["GOOGL","Alphabet","Cloud"]],
+      NVDA: [["MSFT","Microsoft","AI Cloud"],["AMD","AMD","Semiconductors"],["AVGO","Broadcom","Chips"]],
+      AMZN: [["MSFT","Microsoft","Cloud"],["GOOGL","Alphabet","Cloud"],["META","Meta","Ads"]],
+      META: [["GOOGL","Alphabet","Ads"],["AMZN","Amazon","Ads"],["SNAP","Snap","Social"]],
+      GOOGL: [["MSFT","Microsoft","AI"],["META","Meta","Ads"],["AMZN","Amazon","Cloud"]],
+      TSLA: [["RIVN","Rivian","EV"],["GM","General Motors","Auto"],["F","Ford","Auto"]],
+      AMD: [["NVDA","Nvidia","AI Chips"],["AVGO","Broadcom","Semiconductors"],["INTC","Intel","Semiconductors"]],
+      AVGO: [["NVDA","Nvidia","AI Chips"],["AMD","AMD","Semiconductors"],["QCOM","Qualcomm","Semiconductors"]]
+    };
 
-setTimeout(loadTradingViewChart, 300);
+    let priceChart = null;
+    let activeIndex = -1;
 
-let activeSuggestionIndex = -1;
+    document.getElementById("todayDate").textContent = new Date().toLocaleDateString("en-US", {
+      weekday: "long",
+      year: "numeric",
+      month: "long",
+      day: "numeric"
+    });
 
-function showSymbolSuggestions(){
-  const input = document.getElementById("symbolSearch");
-  const box = document.getElementById("symbolSuggestions");
-  const q = input.value.toLowerCase().replace(rawSymbol.toLowerCase(),"").trim();
+    document.getElementById("marketSearch").value = currentSymbol;
+        function money(value) {
+      if (value === null || value === undefined || value === "N/A") return "N/A";
 
-  activeSuggestionIndex = -1;
+      const num = Number(value);
 
-  if(!q){
-    box.style.display = "none";
-    box.innerHTML = "";
-    return;
-  }
+      if (Number.isNaN(num)) return value;
 
-  const matches = searchableSymbols.filter(item =>
-    item.symbol.toLowerCase().includes(q) ||
-    item.name.toLowerCase().includes(q)
-  ).slice(0, 10);
+      if (Math.abs(num) >= 1000000000000) return "$" + (num / 1000000000000).toFixed(2) + "T";
+      if (Math.abs(num) >= 1000000000) return "$" + (num / 1000000000).toFixed(2) + "B";
+      if (Math.abs(num) >= 1000000) return "$" + (num / 1000000).toFixed(2) + "M";
 
-  if(!matches.length){
-    box.style.display = "block";
-    box.innerHTML = `<div>No result found</div>`;
-    return;
-  }
-
-  box.style.display = "block";
-  box.innerHTML = matches.map(item => `
-    <div onclick="openSymbol('${item.symbol}')">
-      <b>${item.symbol}</b><br>
-      <small>${item.name}</small>
-    </div>
-  `).join("");
-}
-
-function handleSymbolEnter(event){
-  const box = document.getElementById("symbolSuggestions");
-  const items = box.querySelectorAll("div");
-
-  if(event.key === "ArrowDown"){
-    event.preventDefault();
-    activeSuggestionIndex = Math.min(activeSuggestionIndex + 1, items.length - 1);
-    updateActiveSuggestion(items);
-    return;
-  }
-
-  if(event.key === "ArrowUp"){
-    event.preventDefault();
-    activeSuggestionIndex = Math.max(activeSuggestionIndex - 1, 0);
-    updateActiveSuggestion(items);
-    return;
-  }
-
-  if(event.key === "Enter"){
-    event.preventDefault();
-
-    if(activeSuggestionIndex >= 0 && items[activeSuggestionIndex]){
-      items[activeSuggestionIndex].click();
-      return;
+      return "$" + num.toFixed(2);
     }
 
-    const value = document.getElementById("symbolSearch").value.toLowerCase().trim();
+    function number(value) {
+      if (value === null || value === undefined || value === "N/A") return "N/A";
 
-    const found = searchableSymbols.find(item =>
-      item.symbol.toLowerCase() === value ||
-      item.name.toLowerCase().includes(value)
-    );
+      const num = Number(value);
 
-    if(found) openSymbol(found.symbol);
-  }
-}
+      if (Number.isNaN(num)) return value;
 
-function updateActiveSuggestion(items){
-  items.forEach(x => x.classList.remove("active"));
-  if(items[activeSuggestionIndex]) items[activeSuggestionIndex].classList.add("active");
-}
+      return num.toFixed(2);
+    }
 
-function openSymbol(symbol){
-  window.location.href = `market.html?symbol=${symbol}`;
-}
+    function percent(value) {
+      if (value === null || value === undefined || value === "N/A") return "N/A";
 
-function addWatchlist(){
-  let list = JSON.parse(localStorage.getItem("watchlist") || "[]");
+      const num = Number(value);
 
-  if(!list.includes(rawSymbol)){
-    list.push(rawSymbol);
-    localStorage.setItem("watchlist", JSON.stringify(list));
-    alert(rawSymbol + " added to Watchlist");
-  }else{
-    alert(rawSymbol + " already in Watchlist");
-  }
+      if (Number.isNaN(num)) return value;
 
-  renderWatchlist();
-}
+      return num.toFixed(2) + "%";
+    }
 
-function removeWatch(symbol){
-  let list = JSON.parse(localStorage.getItem("watchlist") || "[]");
-  list = list.filter(x => x !== symbol);
-  localStorage.setItem("watchlist", JSON.stringify(list));
-  renderWatchlist();
-}
+    function openSymbol(symbol) {
+      window.location.href = `market.html?symbol=${symbol}`;
+    }
 
-function renderWatchlist(){
-  const box = document.getElementById("watchlistBox");
-  const list = JSON.parse(localStorage.getItem("watchlist") || "[]");
+    function showSearchResults() {
+      const input = document.getElementById("marketSearch");
+      const box = document.getElementById("searchResults");
 
-  if(!list.length){
-    box.innerHTML = "<p>No stocks in watchlist.</p>";
-    return;
-  }
+      const q = input.value.toLowerCase().trim();
 
-  box.innerHTML = list.map(symbol => `
-    <div class="mini-card">
-      <b>${symbol}</b><br>
-      <button onclick="window.location='market.html?symbol=${symbol}'">Open</button>
-      <button onclick="removeWatch('${symbol}')">Remove</button>
-    </div>
-  `).join("");
-}
+      activeIndex = -1;
 
-function toggleDark(){
-  document.body.classList.toggle("dark-mode");
-  localStorage.setItem("darkMode", document.body.classList.contains("dark-mode") ? "yes" : "no");
-  setTimeout(() => location.reload(), 300);
-}
+      if (!q) {
+        box.style.display = "none";
+        box.innerHTML = "";
+        return;
+      }
 
-if(localStorage.getItem("darkMode") === "yes") document.body.classList.add("dark-mode");
+      const matches = searchList.filter(item =>
+        item.symbol.toLowerCase().includes(q) ||
+        item.name.toLowerCase().includes(q) ||
+        item.sector.toLowerCase().includes(q)
+      ).slice(0, 10);
 
-const gainers = [["NVDA","+2.31%"],["AAPL","+1.24%"],["META","+1.09%"],["MSFT","+0.82%"],["GOOGL","+0.55%"]];
-const losers = [["TSLA","-1.76%"],["AMZN","-0.44%"],["SILVER","-0.22%"]];
+      if (!matches.length) {
+        box.style.display = "block";
+        box.innerHTML = `<div>No results found</div>`;
+        return;
+      }
 
-document.getElementById("gainersBox").innerHTML = gainers.map(x => `<a class="mini-card" href="market.html?symbol=${x[0]}"><b>${x[0]}</b><br><span class="up">${x[1]}</span></a>`).join("");
-document.getElementById("losersBox").innerHTML = losers.map(x => `<a class="mini-card" href="market.html?symbol=${x[0]}"><b>${x[0]}</b><br><span class="down">${x[1]}</span></a>`).join("");
+      box.style.display = "block";
+      box.innerHTML = matches.map(item => `
+        <div onclick="openSymbol('${item.symbol}')">
+          <b>${item.symbol}</b><br>
+          <small>${item.name} • ${item.sector}</small>
+        </div>
+      `).join("");
+    }
 
-const relatedNews = [
-  `${rawSymbol} investors watch latest market signals`,
-  `${rawSymbol} remains active as traders track Wall Street`,
-  `Analysts review ${rawSymbol} outlook amid changing economy`,
-  `${rawSymbol} chart shows key levels for investors`,
-  `Market volatility keeps ${rawSymbol} in focus`
-];
+    function handleSearchKeys(event) {
+      const box = document.getElementById("searchResults");
+      const items = box.querySelectorAll("div");
 
-document.getElementById("relatedNewsBox").innerHTML = relatedNews.map(t => `
-  <div class="mini-card">
-    <b>${t}</b>
-    <p>Global Intel Times market desk is tracking this developing market story.</p>
-  </div>
-`).join("");
+      if (event.key === "ArrowDown") {
+        event.preventDefault();
 
-document.addEventListener("click", function(e){
-  if(!e.target.closest(".symbol-search-box")){
-    document.getElementById("symbolSuggestions").style.display = "none";
-  }
-});
+        activeIndex = Math.min(activeIndex + 1, items.length - 1);
 
-renderWatchlist();
-</script>
+        updateActiveItem(items);
+        return;
+      }
+
+      if (event.key === "ArrowUp") {
+        event.preventDefault();
+
+        activeIndex = Math.max(activeIndex - 1, 0);
+
+        updateActiveItem(items);
+        return;
+      }
+
+      if (event.key === "Enter") {
+        event.preventDefault();
+
+        if (activeIndex >= 0 && items[activeIndex]) {
+          items[activeIndex].click();
+          return;
+        }
+
+        const value = document.getElementById("marketSearch").value.trim().toUpperCase();
+
+        const found = searchList.find(item =>
+          item.symbol === value ||
+          item.name.toUpperCase().includes(value)
+        );
+
+        if (found) {
+          openSymbol(found.symbol);
+        } else if (value) {
+          openSymbol(value);
+        }
+      }
+    }
+
+    function updateActiveItem(items) {
+      items.forEach(item => item.classList.remove("active"));
+
+      if (items[activeIndex]) {
+        items[activeIndex].classList.add("active");
+      }
+    }
+
+    async function loadMarketData() {
+      try {
+        const response = await fetch(`/api/market?symbol=${encodeURIComponent(currentSymbol)}`);
+        const data = await response.json();
+
+        if (!data.success) {
+          showFallbackMarket();
+          return;
+        }
+
+        renderMarketData(data);
+
+      } catch (error) {
+        console.error(error);
+        showFallbackMarket();
+      }
+    }
+
+    async function loadHistoryData() {
+      try {
+        const response = await fetch(`/api/history?symbol=${encodeURIComponent(currentSymbol)}`);
+        const data = await response.json();
+
+        if (!data.success || !Array.isArray(data.candles) || !data.candles.length) {
+          renderFallbackChart();
+          return;
+        }
+
+        renderChart(data.candles);
+
+      } catch (error) {
+        console.error(error);
+        renderFallbackChart();
+      }
+    }
+
+    function renderMarketData(data) {
+      const quote = data.quote || {};
+      const profile = data.profile || {};
+      const metrics = data.metrics || {};
+
+      const name = profile.name || currentSymbol;
+
+      const changeClass = Number(quote.percent) >= 0 ? "up" : "down";
+      const changeSymbol = Number(quote.percent) >= 0 ? "+" : "";
+
+      document.title = `${currentSymbol} Market Data | Global Intel Times`;
+
+      document.getElementById("marketTitle").textContent = `${currentSymbol} — ${name}`;
+      document.getElementById("marketSubtitle").textContent = `${profile.industry || "Market asset"} • ${profile.exchange || "US Market"}`;
+      document.getElementById("livePrice").textContent = quote.price ? money(quote.price) : "N/A";
+      document.getElementById("liveChange").className = `live-change ${changeClass}`;
+      document.getElementById("liveChange").textContent = `${changeSymbol}${number(quote.change)} (${changeSymbol}${percent(quote.percent)})`;
+
+      document.getElementById("marketCap").textContent = profile.marketCapitalization ? "$" + Number(profile.marketCapitalization).toFixed(2) + "B" : "N/A";
+      document.getElementById("peRatio").textContent = number(metrics.peRatio);
+      document.getElementById("weekHigh").textContent = money(metrics.week52High);
+      document.getElementById("weekLow").textContent = money(metrics.week52Low);
+      document.getElementById("eps").textContent = number(metrics.eps);
+      document.getElementById("signal").textContent = data.signal || "Neutral";
+
+      renderCompanyProfile(profile);
+      renderAnalysis(data);
+      renderRelatedCompanies();
+      renderMarketNews(data.news || []);
+    }
+        function renderCompanyProfile(profile) {
+      const box = document.getElementById("companyProfile");
+
+      const logo = profile.logo
+        ? `<img src="${profile.logo}" alt="${profile.name || currentSymbol}" onerror="this.remove()">`
+        : "";
+
+      box.innerHTML = `
+        ${logo}
+        <div>
+          <h3>${profile.name || currentSymbol}</h3>
+          <p>${profile.industry || "Market Asset"} • ${profile.exchange || "US Market"}</p>
+          ${
+            profile.weburl
+              ? `<p><a href="${profile.weburl}" target="_blank" rel="noopener nofollow">${profile.weburl}</a></p>`
+              : ""
+          }
+        </div>
+      `;
+    }
+
+    function renderAnalysis(data) {
+      const quote = data.quote || {};
+      const profile = data.profile || {};
+      const metrics = data.metrics || {};
+
+      const price = quote.price ? money(quote.price) : "N/A";
+      const percentMove = quote.percent ? Number(quote.percent).toFixed(2) + "%" : "N/A";
+      const signal = data.signal || "Neutral";
+      const pe = metrics.peRatio || "N/A";
+      const high = metrics.week52High || "N/A";
+      const low = metrics.week52Low || "N/A";
+
+      document.getElementById("marketAnalysis").innerHTML = `
+        <p>
+          <b>${currentSymbol}</b> is trading near <b>${price}</b> with a daily move of
+          <b>${percentMove}</b>. The current market signal is <b>${signal}</b>.
+        </p>
+        <p>
+          Investors are watching valuation, earnings momentum, sector strength, volume,
+          and broader U.S. market conditions. The reported P/E ratio is <b>${pe}</b>,
+          while the 52-week range is approximately <b>${low}</b> to <b>${high}</b>.
+        </p>
+        <p>
+          For <b>${profile.name || currentSymbol}</b>, the key focus areas include price trend,
+          earnings expectations, macroeconomic pressure, interest-rate expectations,
+          and investor sentiment.
+        </p>
+      `;
+    }
+
+    function renderRelatedCompanies() {
+      const rows = relatedMap[currentSymbol] || [
+        ["AAPL", "Apple", "Technology"],
+        ["MSFT", "Microsoft", "Technology"],
+        ["NVDA", "Nvidia", "AI Chips"]
+      ];
+
+      document.getElementById("relatedCompanies").innerHTML = rows.map(row => `
+        <tr>
+          <td><a href="market.html?symbol=${row[0]}">${row[0]}</a></td>
+          <td>${row[1]}</td>
+          <td>${row[2]}</td>
+        </tr>
+      `).join("");
+    }
+
+    function renderMarketNews(news) {
+      const box = document.getElementById("marketNewsBox");
+
+      if (!news.length) {
+        box.innerHTML = [
+          `${currentSymbol} investors watch latest market signals`,
+          `${currentSymbol} remains active as traders track Wall Street`,
+          `Analysts review ${currentSymbol} outlook amid changing economy`
+        ].map(title => `
+          <div class="market-news-card">
+            <div>
+              <h3>${title}</h3>
+              <p>Global Intel Times market desk is tracking this developing market story.</p>
+              <small>Global Intel Times</small>
+            </div>
+          </div>
+        `).join("");
+
+        return;
+      }
+
+      box.innerHTML = news.map(item => `
+        <a class="market-news-card" href="${item.url}" target="_blank" rel="noopener nofollow">
+          ${item.image ? `<img src="${item.image}" alt="${item.title}" onerror="this.remove()">` : ""}
+          <div>
+            <h3>${item.title || "Market news update"}</h3>
+            <p>${item.summary ? item.summary.slice(0, 120) + "..." : "Latest market news update."}</p>
+            <small>${item.source || "Market News"}</small>
+          </div>
+        </a>
+      `).join("");
+    }
+
+    function showFallbackMarket() {
+      document.getElementById("marketTitle").textContent = `${currentSymbol} Market Data`;
+      document.getElementById("marketSubtitle").textContent = "Fallback market profile";
+      document.getElementById("livePrice").textContent = "N/A";
+      document.getElementById("liveChange").textContent = "API unavailable";
+
+      document.getElementById("marketCap").textContent = "N/A";
+      document.getElementById("peRatio").textContent = "N/A";
+      document.getElementById("weekHigh").textContent = "N/A";
+      document.getElementById("weekLow").textContent = "N/A";
+      document.getElementById("eps").textContent = "N/A";
+      document.getElementById("signal").textContent = "Watch";
+
+      document.getElementById("companyProfile").innerHTML = `
+        <div>
+          <h3>${currentSymbol}</h3>
+          <p>Market data temporarily unavailable.</p>
+        </div>
+      `;
+
+      document.getElementById("marketAnalysis").innerHTML = `
+        <p>
+          Live market data is temporarily unavailable for <b>${currentSymbol}</b>.
+          The page is still available, but price, valuation, and news data may need a fresh API response.
+        </p>
+      `;
+
+      renderRelatedCompanies();
+      renderMarketNews([]);
+    }
+
+    function renderChart(candles) {
+      const skeleton = document.getElementById("chartSkeleton");
+      const ctx = document.getElementById("priceChart");
+
+      skeleton.style.display = "none";
+      ctx.style.display = "block";
+
+      const labels = candles.map(x => x.date);
+      const closes = candles.map(x => x.close);
+
+      if (priceChart) {
+        priceChart.destroy();
+      }
+
+      priceChart = new Chart(ctx, {
+        type: "line",
+        data: {
+          labels,
+          datasets: [
+            {
+              label: currentSymbol + " Close Price",
+              data: closes,
+              borderWidth: 2,
+              tension: 0.25,
+              pointRadius: 0
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          interaction: {
+            intersect: false,
+            mode: "index"
+          },
+          plugins: {
+            legend: {
+              display: true
+            },
+            tooltip: {
+              callbacks: {
+                label: function(context) {
+                  return "$" + Number(context.raw).toFixed(2);
+                }
+              }
+            }
+          },
+          scales: {
+            x: {
+              ticks: {
+                maxTicksLimit: 8
+              }
+            },
+            y: {
+              ticks: {
+                callback: function(value) {
+                  return "$" + value;
+                }
+              }
+            }
+          }
+        }
+      });
+
+      document.getElementById("chartStatus").textContent = "90-day price history";
+      document.getElementById("chartTitle").textContent = `${currentSymbol} Price Chart`;
+    }
+        function renderFallbackChart() {
+      const skeleton = document.getElementById("chartSkeleton");
+      const ctx = document.getElementById("priceChart");
+
+      skeleton.style.display = "none";
+      ctx.style.display = "block";
+
+      const labels = [
+        "Day 1", "Day 10", "Day 20", "Day 30", "Day 40",
+        "Day 50", "Day 60", "Day 70", "Day 80", "Day 90"
+      ];
+
+      const base = 100 + Math.random() * 50;
+
+      const values = labels.map((_, i) =>
+        Number((base + Math.sin(i / 2) * 8 + i * 1.4).toFixed(2))
+      );
+
+      if (priceChart) {
+        priceChart.destroy();
+      }
+
+      priceChart = new Chart(ctx, {
+        type: "line",
+        data: {
+          labels,
+          datasets: [
+            {
+              label: currentSymbol + " demo trend",
+              data: values,
+              borderWidth: 2,
+              tension: 0.25,
+              pointRadius: 0
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          interaction: {
+            intersect: false,
+            mode: "index"
+          },
+          plugins: {
+            legend: {
+              display: true
+            }
+          },
+          scales: {
+            x: {
+              ticks: {
+                maxTicksLimit: 8
+              }
+            },
+            y: {
+              ticks: {
+                callback: function(value) {
+                  return "$" + value;
+                }
+              }
+            }
+          }
+        }
+      });
+
+      document.getElementById("chartStatus").textContent = "Demo chart shown because live history is unavailable";
+      document.getElementById("chartTitle").textContent = `${currentSymbol} Price Chart`;
+    }
+
+    function addWatchlist() {
+      let list = JSON.parse(localStorage.getItem("watchlist") || "[]");
+
+      if (!list.includes(currentSymbol)) {
+        list.push(currentSymbol);
+        localStorage.setItem("watchlist", JSON.stringify(list));
+        alert(currentSymbol + " added to Watchlist");
+      } else {
+        alert(currentSymbol + " already in Watchlist");
+      }
+
+      renderWatchlist();
+    }
+
+    function removeWatch(symbol) {
+      let list = JSON.parse(localStorage.getItem("watchlist") || "[]");
+      list = list.filter(item => item !== symbol);
+      localStorage.setItem("watchlist", JSON.stringify(list));
+      renderWatchlist();
+    }
+
+    function renderWatchlist() {
+      const box = document.getElementById("watchlistBox");
+      const list = JSON.parse(localStorage.getItem("watchlist") || "[]");
+
+      if (!list.length) {
+        box.innerHTML = "<p>No symbols in watchlist.</p>";
+        return;
+      }
+
+      box.innerHTML = list.map(symbol => `
+        <div class="mini-card">
+          <b>${symbol}</b>
+          <p>Saved market symbol</p>
+          <button onclick="openSymbol('${symbol}')">Open</button>
+          <button onclick="removeWatch('${symbol}')">Remove</button>
+        </div>
+      `).join("");
+    }
+
+    function renderMovers() {
+      const gainers = [
+        ["NVDA", "+2.31%"],
+        ["AAPL", "+1.24%"],
+        ["META", "+1.09%"],
+        ["MSFT", "+0.82%"],
+        ["GOOGL", "+0.55%"],
+        ["JPM", "+0.44%"]
+      ];
+
+      const losers = [
+        ["TSLA", "-1.76%"],
+        ["AMZN", "-0.44%"],
+        ["NFLX", "-0.38%"],
+        ["SILVER", "-0.22%"],
+        ["COIN", "-0.18%"]
+      ];
+
+      document.getElementById("gainersBox").innerHTML = gainers.map(item => `
+        <div class="mini-card" onclick="openSymbol('${item[0]}')" style="cursor:pointer">
+          <b>${item[0]}</b>
+          <p class="up">${item[1]}</p>
+        </div>
+      `).join("");
+
+      document.getElementById("losersBox").innerHTML = losers.map(item => `
+        <div class="mini-card" onclick="openSymbol('${item[0]}')" style="cursor:pointer">
+          <b>${item[0]}</b>
+          <p class="down">${item[1]}</p>
+        </div>
+      `).join("");
+    }
+
+    function toggleDarkMode() {
+      document.body.classList.toggle("dark-mode");
+
+      localStorage.setItem(
+        "darkMode",
+        document.body.classList.contains("dark-mode") ? "yes" : "no"
+      );
+
+      if (priceChart) {
+        priceChart.destroy();
+        priceChart = null;
+      }
+
+      loadHistoryData();
+    }
+
+    function setupDarkMode() {
+      if (localStorage.getItem("darkMode") === "yes") {
+        document.body.classList.add("dark-mode");
+      }
+    }
+
+    document.addEventListener("click", function(event) {
+      if (!event.target.closest(".search-wrap")) {
+        document.getElementById("searchResults").style.display = "none";
+      }
+    });
+
+    setupDarkMode();
+    renderWatchlist();
+    renderMovers();
+    loadMarketData();
+    loadHistoryData();
+  </script>
 
 </body>
 </html>
