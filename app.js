@@ -307,27 +307,40 @@ if (!nav.contains(e.target) && !wrap.contains(e.target)) closeMegaPanel();
 }
 
 function openMegaPanel(menuName) {
-const wrap = document.getElementById("megaMenuWrap");
-const menu = TOP_MENU[menuName];
-if (!wrap || !menu) return;
+  const wrap = document.getElementById("megaMenuWrap");
+  const menu = TOP_MENU[menuName];
 
-wrap.innerHTML = ` <div class="nyt-panel"> <div class="nyt-panel-title"> <h2>${menuName}</h2> <p>${menu.desc}</p> </div>
+  if (!wrap || !menu) return;
 
-```
-  ${menu.cols.map(col => `
-    <div class="nyt-panel-col">
-      <h4>${col[0]}</h4>
-      ${col.slice(1).map(item => `
-        <a href="category.html?topic=${slugify(item)}">${item}</a>
-      `).join("")}
-    </div>
-  `).join("")}
-</div>
-```
+  let html = `
+    <div class="nyt-panel">
+      <div class="nyt-panel-title">
+        <h2>${menuName}</h2>
+        <p>${menu.desc}</p>
+      </div>
+  `;
 
-`;
+  menu.cols.forEach(col => {
+    html += `
+      <div class="nyt-panel-col">
+        <h4>${col[0]}</h4>
+    `;
 
-wrap.classList.add("active");
+    for (let i = 1; i < col.length; i++) {
+      html += `
+        <a href="category.html?topic=${slugify(col[i])}">
+          ${col[i]}
+        </a>
+      `;
+    }
+
+    html += `</div>`;
+  });
+
+  html += `</div>`;
+
+  wrap.innerHTML = html;
+  wrap.classList.add("active");
 }
 
 function closeMegaPanel() {
