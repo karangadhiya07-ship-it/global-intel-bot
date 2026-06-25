@@ -1,167 +1,173 @@
+```js
 export async function onRequestGet(context) {
   const { request, env } = context;
 
   const url = new URL(request.url);
-  const query = url.searchParams.get("q") || "usa breaking news";
-  const topic = url.searchParams.get("topic") || query;
+  const topic = url.searchParams.get("topic") || url.searchParams.get("q") || "usa breaking news";
 
   const NEWS_API_KEY = env.NEWS_API_KEY || "";
   const GNEWS_API_KEY = env.GNEWS_API_KEY || "";
 
-  const topics = buildTopicPool(topic);
-
   let articles = [];
+
+  const topics = buildTopicPool(topic);
 
   try {
     if (GNEWS_API_KEY) {
       const gnews = await fetchGNews(topics, GNEWS_API_KEY);
       articles.push(...gnews);
     }
+  } catch (err) {
+    console.log("GNews error:", err.message);
+  }
 
+  try {
     if (NEWS_API_KEY) {
       const newsapi = await fetchNewsAPI(topics, NEWS_API_KEY);
       articles.push(...newsapi);
     }
   } catch (err) {
-    console.log("News API error:", err.message);
+    console.log("NewsAPI error:", err.message);
   }
 
   articles = normalizeArticles(articles);
   articles = filterBadArticles(articles);
   articles = removeDuplicates(articles);
+  articles = sortLatest(articles);
 
-  if (articles.length < 30) {
-    articles.push(...fallbackArticles(topic));
+  const liveCount = articles.length;
+
+  if (articles.length === 0) {
+    articles = fallbackArticles(topic);
   }
 
-  articles = removeDuplicates(articles).slice(0, 80);
+  articles = articles.slice(0, 100);
 
   return json({
     status: "ok",
-    source: "Global Intel Times News Engine",
-    count: articles.length,
+    source: "Global Intel Times News Engine V2",
     topic,
+    count: articles.length,
+    liveCount,
+    fallbackUsed: liveCount === 0,
+    debug: {
+      hasNewsAPI: Boolean(NEWS_API_KEY),
+      hasGNewsAPI: Boolean(GNEWS_API_KEY),
+      firstApiSource: articles[0]?.apiSource || "none"
+    },
     articles
   });
 }
 
-/* ================= SOURCES ================= */
+/* ================= GNEWS ================= */
 
 async function fetchGNews(topics, key) {
   const all = [];
 
-  for (const topic of topics.slice(0, 8)) {
-    const url =
-      "https://gnews.io/api/v4/search?q=" +
-      encodeURIComponent(topic) +
-      "&lang=en&country=us&max=10&apikey=" +
-      key;
+  for (const topic of topics.slice(0, 6)) {
+    const api =
+      "https://gnews.io/api/v4/search" +
+      "?q=" + encodeURIComponent(topic) +
+      "&lang=en" +
+      "&country=us" +
+      "&max=10" +
+      "&apikey=" + key;
 
-    const res = await fetch(url);
-    if (!res.ok) continue;
+    const res = await fetch(api);
+    if (!res.ok) {
+      console.log("GNews failed:", res.status, topic);
+      continue;
+    }
 
     const data = await res.json();
     const items = data.articles || [];
 
-    all.push(
-      ...items.map(item => ({
+    for (const item of items) {
+      all.push({
         title: item.title,
-        description: item.description,
-        content: item.content,
-        url: item.url,
+        summary: item.description,
+        content: item.content || item.description,
         image: item.image,
+        source: item.source?.name || "GNews",
+        sourceUrl: item.url,
         publishedAt: item.publishedAt,
-        source: item.source?.name,
         apiSource: "GNews"
-      }))
-    );
+      });
+    }
   }
 
   return all;
 }
+
+/* ================= NEWS API ================= */
 
 async function fetchNewsAPI(topics, key) {
   const all = [];
 
-  for (const topic of topics.slice(0, 6)) {
-    const url =
-      "https://newsapi.org/v2/everything?q=" +
-      encodeURIComponent(topic) +
-      "&language=en&sortBy=publishedAt&pageSize=10&apiKey=" +
-      key;
+  for (const topic of topics.slice(0, 5)) {
+    const api =
+      "https://newsapi.org/v2/everything" +
+      "?q=" + encodeURIComponent(topic) +
+      "&language=en" +
+      "&sortBy=publishedAt" +
+      "&pageSize=10" +
+      "&apiKey=" + key;
 
-    const res = await fetch(url);
-    if (!res.ok) continue;
+    const res = await fetch(api);
+    if (!res.ok) {
+      console.log("NewsAPI failed:", res.status, topic);
+      continue;
+    }
 
     const data = await res.json();
     const items = data.articles || [];
 
-    all.push(
-      ...items.map(item => ({
+    for (const item of items) {
+      all.push({
         title: item.title,
-        description: item.description,
-        content: item.content,
-        url: item.url,
+        summary: item.description,
+        content: item.content || item.description,
         image: item.urlToImage,
+        source: item.source?.name || "NewsAPI",
+        sourceUrl: item.url,
         publishedAt: item.publishedAt,
-        source: item.source?.name,
         apiSource: "NewsAPI"
-      }))
-    );
+      });
+    }
   }
 
   return all;
 }
 
-/* ================= TOPIC ENGINE ================= */
+/* ================= TOPIC POOL ================= */
 
 function buildTopicPool(topic) {
-  const base = [
-    topic,
+  const clean = String(topic || "").replace(/-/g, " ");
+
+  const pool = [
+    clean,
     "usa breaking news",
-    "u.s. politics",
+    "us politics",
     "white house",
     "congress",
     "supreme court",
     "new york news",
     "california news",
-    "texas news",
-    "florida news",
     "world news",
-    "middle east news",
-    "russia ukraine war",
-    "china news",
     "business news",
     "stock market news",
     "wall street",
-    "economy news",
-    "inflation news",
     "technology news",
     "artificial intelligence news",
-    "openai news",
-    "cybersecurity news",
     "bitcoin news",
-    "crypto news",
     "weather alerts usa",
-    "climate change news",
+    "sports news",
     "health news",
     "science news",
-    "sports news",
-    "nba news",
-    "nfl news",
-    "mlb news",
-    "soccer news",
-    "formula 1 news",
-    "tennis news",
-    "culture news",
-    "movie news",
-    "music news",
-    "lifestyle news",
-    "travel news",
-    "food news"
+    "culture news"
   ];
 
-  return [...new Set(base)];
+  return [...new Set(pool.filter(Boolean))];
 }
 
 /* ================= NORMALIZE ================= */
@@ -169,27 +175,31 @@ function buildTopicPool(topic) {
 function normalizeArticles(items) {
   return items
     .map((item, index) => {
-      const title = cleanText(item.title || "");
-      const summary = cleanText(item.description || item.content || "");
+      const title = cleanText(item.title);
+      const summary = cleanText(item.summary || item.content);
       const category = detectCategory(title + " " + summary);
 
       return {
-        id: slugify(title || "news-" + index),
+        id: slugify(title || "article-" + index),
         title,
-        summary,
-        content: cleanText(item.content || item.description || summary),
+        summary: summary || "Latest update from Global Intel Times.",
+        content: cleanText(item.content || summary),
         category,
         section: titleCase(category),
         image: item.image || fallbackImage(category),
-        source: item.source || item.apiSource || "News Source",
-        sourceUrl: item.url || "#",
+        source: item.source || "News Source",
+        sourceUrl: item.sourceUrl || "#",
         publishedAt: item.publishedAt || new Date().toISOString(),
-        readingTime: readingTime(summary),
+        readingTime: readingTime(item.content || summary),
         trendingScore: scoreArticle(title, summary),
-        apiSource: item.apiSource || "Fallback"
+        apiSource: item.apiSource || "Live"
       };
     })
-    .filter(a => a.title && a.title.length > 15);
+    .filter(a => {
+      if (!a.title || a.title.length < 18) return false;
+      if (a.title.toLowerCase().includes("[removed]")) return false;
+      return true;
+    });
 }
 
 /* ================= FILTERS ================= */
@@ -198,10 +208,10 @@ function filterBadArticles(articles) {
   const blocked = [
     "casino",
     "betting",
-    "odds",
     "sportsbook",
-    "promo code",
+    "odds",
     "coupon",
+    "promo code",
     "discount code",
     "sponsored",
     "affiliate",
@@ -209,8 +219,8 @@ function filterBadArticles(articles) {
     "porn",
     "gambling",
     "lottery",
-    "buy now",
-    "deal of the day"
+    "deal of the day",
+    "buy now"
   ];
 
   return articles.filter(article => {
@@ -224,22 +234,26 @@ function removeDuplicates(articles) {
 
   return articles.filter(article => {
     const key = slugify(article.title).slice(0, 90);
-    if (seen.has(key)) return false;
+    if (!key || seen.has(key)) return false;
     seen.add(key);
     return true;
   });
 }
 
+function sortLatest(articles) {
+  return articles.sort((a, b) => new Date(b.publishedAt) - new Date(a.publishedAt));
+}
+
 /* ================= CATEGORY ================= */
 
 function detectCategory(text) {
-  const t = text.toLowerCase();
+  const t = String(text || "").toLowerCase();
 
   if (has(t, ["new york", "nyc", "manhattan", "brooklyn"])) return "new-york";
   if (has(t, ["trump", "biden", "white house", "congress", "senate", "election"])) return "politics";
   if (has(t, ["stock", "nasdaq", "dow", "s&p", "wall street", "market"])) return "markets";
   if (has(t, ["bitcoin", "crypto", "ethereum", "btc"])) return "bitcoin";
-  if (has(t, ["artificial intelligence", "openai", "chatgpt", "ai"])) return "artificial-intelligence";
+  if (has(t, ["artificial intelligence", "openai", "chatgpt", " ai "])) return "artificial-intelligence";
   if (has(t, ["technology", "cybersecurity", "software", "startup"])) return "technology";
   if (has(t, ["weather", "storm", "heat", "flood", "hurricane", "climate"])) return "weather";
   if (has(t, ["nba", "nfl", "mlb", "soccer", "tennis", "formula 1", "world cup"])) return "sports";
@@ -253,50 +267,47 @@ function detectCategory(text) {
 }
 
 function has(text, words) {
-  return words.some(w => text.includes(w));
+  return words.some(word => text.includes(word));
 }
 
-/* ================= FALLBACK ================= */
+/* ================= FALLBACK ONLY IF LIVE FAILS ================= */
 
 function fallbackArticles(topic) {
   const base = [
-    ["New York Renters Face a Competitive Housing Market", "new-york"],
-    ["White House Faces Pressure Over Spending Talks", "politics"],
-    ["Wall Street Watches AI Stocks as Investors Reassess Growth", "markets"],
-    ["Bitcoin Traders Watch Key Levels After Volatile Week", "bitcoin"],
-    ["Artificial Intelligence Rules Push Companies to Review Risk", "artificial-intelligence"],
-    ["Extreme Weather Alerts Expand Across Major U.S. Cities", "weather"],
-    ["Global Economy Faces Mixed Signals From Trade and Inflation", "world"],
-    ["Cybersecurity Teams Warn Small Businesses About Attacks", "technology"],
-    ["NBA Offseason Moves Reset Expectations for Contenders", "sports"],
-    ["Scientists Track Climate Signals Across the Atlantic", "science"],
-    ["Hospitals Expand Digital Tools to Improve Patient Care", "health"],
-    ["Culture Weekend: Movies, Music and Theater Openings", "culture"],
-    ["Business Leaders Prepare for New Economic Data", "business"]
+    ["U.S. Officials Monitor Breaking Developments Across Major Cities", "us"],
+    ["White House Faces Pressure as Congress Debates New Spending Plan", "politics"],
+    ["Wall Street Watches Technology Shares as Market Momentum Shifts", "markets"],
+    ["Bitcoin Traders Watch Key Levels After Crypto Market Volatility", "bitcoin"],
+    ["Artificial Intelligence Companies Prepare for New Compliance Rules", "artificial-intelligence"],
+    ["Extreme Weather Alerts Expand Across Major U.S. Regions", "weather"],
+    ["Global Leaders Weigh Diplomacy as Regional Tensions Continue", "world"],
+    ["Cybersecurity Experts Warn Companies About Rising Online Threats", "technology"],
+    ["Sports Fans Track Live Scores Across Major U.S. Leagues", "sports"],
+    ["Health Systems Expand Digital Tools to Improve Patient Care", "health"],
+    ["Scientists Track New Climate Signals Across the Atlantic", "science"],
+    ["Culture Weekend Brings New Movies, Music and Theater Openings", "culture"],
+    ["Business Leaders Prepare for Fresh Economic Data", "business"]
   ];
 
-  const out = [];
+  return base.map((item, index) => {
+    const category = item[1];
 
-  for (let i = 0; i < 60; i++) {
-    const item = base[i % base.length];
-    out.push({
-      id: slugify(item[0] + "-" + i),
+    return {
+      id: slugify(item[0] + "-" + index),
       title: item[0],
-      summary: "Latest updates, context and analysis from Global Intel Times.",
-      content: "This developing story includes background, analysis and related updates.",
-      category: item[1],
-      section: titleCase(item[1]),
-      image: fallbackImage(item[1]),
+      summary: "Fallback story shown only when live news APIs return no usable articles.",
+      content: "This page is using fallback content because all live news providers failed or returned no usable articles.",
+      category,
+      section: titleCase(category),
+      image: fallbackImage(category),
       source: "Global Intel Times",
       sourceUrl: "#",
-      publishedAt: new Date(Date.now() - i * 3600000).toISOString(),
+      publishedAt: new Date(Date.now() - index * 3600000).toISOString(),
       readingTime: 3,
-      trendingScore: 70 - (i % 20),
+      trendingScore: 50,
       apiSource: "Fallback"
-    });
-  }
-
-  return out;
+    };
+  });
 }
 
 function fallbackImage(category) {
@@ -364,7 +375,8 @@ function json(data) {
     headers: {
       "content-type": "application/json",
       "access-control-allow-origin": "*",
-      "cache-control": "public, max-age=300"
+      "cache-control": "public, max-age=180"
     }
   });
 }
+```
