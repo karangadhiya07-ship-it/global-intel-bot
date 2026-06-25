@@ -1,1566 +1,599 @@
-
-/* =========================================================
-   GLOBAL INTEL TIMES — app.js v2
-   HTML + CSS + Vanilla JS
-   Works on GitHub Pages + Vercel API fallback
-========================================================= */
+/* GLOBAL INTEL TIMES — COMPLETE app.js */
 
 "use strict";
 
 /* ================= CONFIG ================= */
 
-const SITE = {
-  name: "Global Intel Times",
-  url: window.location.origin,
-  apiBase: "/api",
-  defaultImage:
-    "https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=1200&q=80",
-  fallbackImage:
-    "https://images.unsplash.com/photo-1495020689067-958852a7765e?auto=format&fit=crop&w=1200&q=80"
+const SITE_NAME = "Global Intel Times";
+const API_URL = "/api/news";
+
+const DEFAULT_IMG =
+"https://images.unsplash.com/photo-1495020689067-958852a7765e?w=1200";
+
+const TOP_MENU = {
+"U.S.": {
+desc: "U.S. news, politics, courts, education, weather and local coverage.",
+cols: [
+["Sections", "U.S.", "Politics", "New York", "California", "Education", "Health", "Science"],
+["More", "Climate", "Weather", "Sports", "Business", "Tech", "Crime", "Immigration"],
+["Top Stories", "Donald Trump", "Supreme Court", "Congress", "White House", "Abortion"],
+["Newsletters", "The Morning", "The Evening", "U.S. Briefing"],
+["Podcasts", "The Daily", "Politics Podcast", "See all podcasts"]
+]
+},
+
+"World": {
+desc: "Global news, war, diplomacy, climate and international affairs.",
+cols: [
+["Sections", "World", "Africa", "Americas", "Asia", "Australia", "Canada", "Europe"],
+["More", "Middle East", "Russia Ukraine War", "China", "Climate", "Weather"],
+["Top Stories", "Middle East Crisis", "Global Economy", "Europe News", "China Relations"],
+["Newsletters", "The World", "Global Update", "Canada Letter"],
+["Podcasts", "World Briefing", "Global Dispatch"]
+]
+},
+
+"Business": {
+desc: "Business, economy, markets, finance, technology and money.",
+cols: [
+["Sections", "Business", "Tech", "Economy", "Media", "Finance and Markets"],
+["More", "DealBook", "Personal Tech", "Energy Transition", "Your Money", "Real Estate"],
+["Top Stories", "Stock Market", "Artificial Intelligence", "Bitcoin", "Crypto", "Banking"],
+["Newsletters", "DealBook", "On Tech", "Markets Briefing"],
+["Podcasts", "Hard Fork", "Business Daily"]
+]
+},
+
+"Arts": {
+desc: "Movies, music, books, theater, visual arts and culture.",
+cols: [
+["Sections", "Today’s Arts", "Book Review", "Best Sellers", "Movies", "Music"],
+["More", "Television", "Theater", "Pop Culture", "T Magazine", "Visual Arts"],
+["Recommendations", "Best Movies", "Critic’s Picks", "What to Read", "What to Watch"],
+["Newsletters", "Books", "Watching"],
+["Podcasts", "Book Review", "Culture Podcast"]
+]
+},
+
+"Lifestyle": {
+desc: "Travel, health, food, style, relationships and daily life.",
+cols: [
+["Sections", "Lifestyle", "Food", "Well", "Love", "Travel", "Style", "Real Estate"],
+["Columns", "36 Hours", "Ask Well", "Modern Love", "Where to Eat"],
+["Topics", "Health", "Fitness", "Relationships", "Home", "Money"],
+["Newsletters", "The Weekender", "Well"],
+["Podcasts", "Modern Love"]
+]
+},
+
+"Opinion": {
+desc: "Editorials, guest essays, opinion columns and analysis.",
+cols: [
+["Sections", "Opinion", "Guest Essays", "Editorials", "Op-Docs", "Letters"],
+["Topics", "Politics", "World", "Business", "Tech", "Climate", "Health"],
+["Columnists", "Politics Opinion", "Business Opinion", "World Opinion", "Tech Opinion"],
+["Featured", "Debate", "Editorial Board"],
+["Podcasts", "The Opinions", "Opinion Audio"]
+]
+},
+
+"Video": {
+desc: "Videos, explainers, documentaries and visual investigations.",
+cols: [
+["Playlists", "Today’s Videos", "U.S. Video", "Politics Video", "World Video"],
+["More", "Science Video", "Business Video", "Culture Video", "Books Video"],
+["World", "Africa", "Americas", "Asia", "South Asia"],
+["Top Stories", "Donald Trump", "Middle East Crisis", "Visual Investigations"],
+["More Video", "Opinion Video", "See all videos"]
+]
+},
+
+"Audio": {
+desc: "Audio journalism, podcasts and daily briefings.",
+cols: [
+["Listen", "The Headlines", "The Daily", "Hard Fork", "The Ezra Klein Show"],
+["Shows", "The Opinions", "Serial Productions", "Book Review Podcast", "Modern Love"],
+["Featured", "Reporter Reads", "The Interview", "Markets Audio"],
+["Newsletters", "Audio", "Serial"],
+["More", "Politics Audio", "Culture Audio"]
+]
+},
+
+"Games": {
+desc: "Daily puzzles, word games and logic challenges.",
+cols: [
+["Play", "Wordle", "Connections", "Sudoku", "Mini Crossword", "Spelling Bee"],
+["More", "Strands", "Pips", "Tiles", "Letter Boxed", "Crossword"],
+["Community", "Spelling Bee Forum", "Wordplay Column", "Wordle Review"],
+["Newsletters", "Gameplay", "Easy Mode"],
+["Archive", "Puzzle Archive", "Daily Challenge"]
+]
+},
+
+"Cooking": {
+desc: "Recipes, cooking ideas, healthy food and dinner inspiration.",
+cols: [
+["Recipes", "Recipes", "Breakfast", "Dinner", "Healthy", "Dessert"],
+["More", "Easy", "Vegetarian", "Vegan", "Chicken", "Pasta"],
+["Editors’ Picks", "Easy Salmon Recipes", "Grilling Recipes", "Newest Recipes"],
+["Newsletters", "Cooking Newsletter", "The Veggie"],
+["Guides", "Meal Plan", "Kitchen Tips"]
+]
+},
+
+"Wirecutter": {
+desc: "Product reviews, recommendations and buying guides.",
+cols: [
+["Reviews", "Kitchen", "Tech", "Sleep", "Appliances", "Home and Garden"],
+["More", "Travel", "Gifts", "Deals", "Baby and Kid", "Health and Fitness"],
+["The Best", "Air Purifier", "Electric Toothbrush", "Office Chair", "Robot Vacuum"],
+["Newsletters", "The Recommendation", "Clean Everything"],
+["Guides", "Best Picks", "Shopping Guides"]
+]
+},
+
+"The Athletic": {
+desc: "Sports coverage, leagues, live scores and analysis.",
+cols: [
+["Leagues", "NFL", "NBA", "MLB", "NHL", "Premier League", "College Football"],
+["More", "Tennis", "Formula 1", "WNBA", "NCAA Men’s", "NCAA Women’s"],
+["Top Stories", "World Cup", "Live Scores", "Standings", "Fantasy"],
+["Newsletters", "The Pulse", "World Cup Briefing"],
+["Play", "Connections Sports", "Power Rankings"]
+]
+}
 };
 
-const BLOCKED_WORDS = [
-  "casino",
-  "betting",
-  "odds",
-  "coupon",
-  "promo code",
-  "sponsored",
-  "gambling",
-  "lottery",
-  "adult",
-  "fake",
-  "deal",
-  "buy now"
-];
-
-const TOPICS = [
-  "us",
-  "world",
-  "politics",
-  "business",
-  "markets",
-  "technology",
-  "artificial-intelligence",
-  "new-york",
-  "weather",
-  "sports",
-  "video",
-  "audio",
-  "games",
-  "cooking",
-  "wirecutter",
-  "lifestyle",
-  "health",
-  "science",
-  "culture",
-  "opinion"
-];
-
-/* ================= FALLBACK DATA ================= */
-
-const FALLBACK_ARTICLES = [
-  {
-    id: "us-election-security",
-    title: "Election Officials Prepare New Security Measures Across the U.S.",
-    category: "politics",
-    section: "U.S.",
-    author: "Global Intel Desk",
-    image: "https://images.unsplash.com/photo-1541872705-1f73c6400ec9?auto=format&fit=crop&w=1200&q=80",
-    summary: "State and local officials are preparing new voting security measures ahead of a busy political calendar.",
-    content:
-      "Election officials across the United States are reviewing cybersecurity, staffing, polling access and public communication systems as political activity increases. Officials say the focus is on transparency, voter confidence and faster response to misinformation.",
-    source: "#",
-    publishedAt: new Date().toISOString()
-  },
-  {
-    id: "wall-street-ai-rally",
-    title: "Wall Street Watches AI Stocks as Investors Reassess Growth",
-    category: "markets",
-    section: "Markets",
-    author: "Markets Desk",
-    image: "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?auto=format&fit=crop&w=1200&q=80",
-    summary: "Technology shares remain in focus as investors evaluate AI demand, earnings and valuation risks.",
-    content:
-      "Major market indexes are being influenced by large technology companies tied to artificial intelligence. Analysts are watching earnings guidance, cloud spending, chip demand and broader investor sentiment.",
-    source: "#",
-    publishedAt: new Date().toISOString()
-  },
-  {
-    id: "extreme-weather-us",
-    title: "Extreme Weather Alerts Expand Across Major U.S. Cities",
-    category: "weather",
-    section: "Weather",
-    author: "Weather Desk",
-    image: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1200&q=80",
-    summary: "Weather agencies are monitoring heat, storms and flood risks across multiple regions.",
-    content:
-      "Several U.S. regions are preparing for changing weather conditions. Emergency agencies are advising residents to follow local alerts, monitor travel conditions and prepare for possible disruptions.",
-    source: "#",
-    publishedAt: new Date().toISOString()
-  },
-  {
-    id: "ai-regulation-business",
-    title: "Businesses Prepare for New AI Rules and Compliance Pressure",
-    category: "artificial-intelligence",
-    section: "AI",
-    author: "Tech Desk",
-    image: "https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=1200&q=80",
-    summary: "Companies using AI tools are reviewing data safety, transparency and compliance systems.",
-    content:
-      "Artificial intelligence adoption continues to grow across finance, media, retail and healthcare. Business leaders are now balancing speed, productivity and risk management.",
-    source: "#",
-    publishedAt: new Date().toISOString()
-  },
-  {
-    id: "new-york-rent-guide",
-    title: "New York Renters Face a Competitive Summer Housing Market",
-    category: "new-york",
-    section: "New York",
-    author: "NY Desk",
-    image: "https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?auto=format&fit=crop&w=1200&q=80",
-    summary: "Apartments in popular neighborhoods remain competitive as demand continues across New York City.",
-    content:
-      "New York renters are comparing prices, commute times and neighborhood access as the market remains competitive. Brokers say preparation and fast decision-making are important.",
-    source: "#",
-    publishedAt: new Date().toISOString()
-  },
-  {
-    id: "world-economy-watch",
-    title: "Global Economy Faces Mixed Signals From Trade and Inflation",
-    category: "world",
-    section: "World",
-    author: "World Desk",
-    image: "https://images.unsplash.com/photo-1521295121783-8a321d551ad2?auto=format&fit=crop&w=1200&q=80",
-    summary: "Economists are watching inflation, trade tensions and consumer demand across major economies.",
-    content:
-      "Global markets are responding to mixed economic data. Investors and policymakers are watching trade, currency movement and central bank decisions.",
-    source: "#",
-    publishedAt: new Date().toISOString()
-  },
-  {
-    id: "sports-live-score-roundup",
-    title: "Live Scores and Fixtures: U.S. Sports Weekend Preview",
-    category: "sports",
-    section: "Sports",
-    author: "Sports Desk",
-    image: "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?auto=format&fit=crop&w=1200&q=80",
-    summary: "A packed sports schedule includes basketball, baseball, tennis and soccer fixtures.",
-    content:
-      "Sports fans are watching league tables, fixtures and player updates as major competitions continue across the U.S. and international calendars.",
-    source: "#",
-    publishedAt: new Date().toISOString()
-  },
-  {
-    id: "tech-cybersecurity-risk",
-    title: "Cybersecurity Teams Warn of Rising Attacks on Small Businesses",
-    category: "technology",
-    section: "Technology",
-    author: "Tech Desk",
-    image: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=1200&q=80",
-    summary: "Security experts say small companies should improve backups, passwords and employee training.",
-    content:
-      "Cybersecurity threats are increasing for companies of all sizes. Experts recommend multi-factor authentication, stronger backups and better employee awareness.",
-    source: "#",
-    publishedAt: new Date().toISOString()
-  }
-];
-
-const SECTION_ORDER = [
-  "Top Stories",
-  "More To Read",
-  "Extreme Weather",
-  "Politics",
-  "World",
-  "Business",
-  "Markets",
-  "Technology",
-  "Artificial Intelligence",
-  "New York",
-  "Economy",
-  "Video",
-  "Sports",
-  "Live Scores",
-  "The Athletic",
-  "Wirecutter",
-  "Cooking",
-  "Lifestyle",
-  "Health",
-  "Science",
-  "Culture",
-  "Audio",
-  "Games",
-  "Opinion",
-  "Trending Analysis",
-  "Latest Updates"
-];
-
-/* ================= STATE ================= */
+/* ================= DATA ================= */
 
 let allArticles = [];
-let visibleArticles = [];
-let currentPage = 1;
-const PAGE_SIZE = 12;
+
+const FALLBACK_ARTICLES = [
+a("new-york", "New York City Renters Face Another Competitive Summer Market", "New York", "New York housing demand remains high as renters compare prices, neighborhoods and commute times."),
+a("politics", "White House Faces New Pressure as Congress Debates Spending Plan", "Politics", "Lawmakers are negotiating spending priorities as agencies prepare for policy changes."),
+a("business", "Wall Street Watches Tech Shares as Market Momentum Shifts", "Business", "Investors are tracking earnings, AI demand and interest-rate expectations."),
+a("artificial-intelligence", "Artificial Intelligence Rules Push Companies to Review Risk Systems", "Artificial Intelligence", "Businesses using AI tools are reviewing transparency, privacy and compliance standards."),
+a("weather", "Extreme Weather Alerts Expand Across Major U.S. Cities", "Weather", "Officials are monitoring storms, heat and flooding risks across several regions."),
+a("world", "Global Leaders Weigh New Diplomacy Efforts Amid Regional Tensions", "World", "International officials are watching trade, security and humanitarian issues."),
+a("stock-market", "Stock Market Opens Mixed as Investors Watch Inflation Data", "Stock Market", "Major indexes moved cautiously as traders waited for fresh economic numbers."),
+a("bitcoin", "Bitcoin Traders Watch Key Level After Crypto Market Volatility", "Bitcoin", "Crypto investors are monitoring liquidity, sentiment and institutional flows."),
+a("tech", "Cybersecurity Teams Warn Small Businesses About Rising Attacks", "Tech", "Experts recommend stronger backups, password controls and employee training."),
+a("health", "Hospitals Expand Digital Tools to Improve Patient Care", "Health", "Medical groups are testing technology to reduce wait times and improve communication."),
+a("science", "Scientists Track Climate Signals Across the Atlantic", "Science", "Researchers say ocean temperature changes may influence weather patterns."),
+a("sports", "World Cup Live Scores and Fixtures Draw U.S. Fan Attention", "Sports", "Fans are following standings, fixtures and team updates throughout the tournament."),
+a("nfl", "NFL Teams Prepare for Training Camp With Roster Questions", "NFL", "Coaches are evaluating depth charts, injuries and early-season strategy."),
+a("nba", "NBA Offseason Moves Reset Expectations for Contenders", "NBA", "Front offices continue to adjust rosters before the new season."),
+a("mlb", "MLB Playoff Race Tightens as Summer Schedule Intensifies", "MLB", "Teams are watching injuries, pitching depth and trade deadline decisions."),
+a("formula-1", "Formula 1 Teams Face Critical Setup Decisions Before Race Weekend", "Formula 1", "Engineers are comparing tire data, weather and track conditions."),
+a("tennis", "Tennis Stars Prepare for a Busy Grand Slam Stretch", "Tennis", "Players are balancing fitness, form and schedule pressure."),
+a("arts", "New Film Releases Lead a Busy Weekend for Arts Coverage", "Arts", "Critics are reviewing movies, music and theater openings."),
+a("movies", "Streaming Platforms Compete for Summer Movie Audiences", "Movies", "Studios are testing release windows and subscription strategies."),
+a("music", "Music Festivals Draw Crowds as Summer Tours Expand", "Music", "Artists are announcing new dates and festival appearances."),
+a("lifestyle", "Travelers Compare Costs as Summer Trips Get More Expensive", "Lifestyle", "Families are planning trips around flight prices and hotel availability."),
+a("food", "Healthy Dinner Ideas Gain Popularity With Busy Families", "Food", "Simple recipes and meal planning are driving cooking interest."),
+a("cooking", "Easy Dinner Recipes for a Fast Weeknight Meal", "Cooking", "Home cooks are looking for quick, affordable and healthy dinner options."),
+a("opinion", "Opinion: America’s Political Debate Needs More Local Reality", "Opinion", "Local issues are shaping national conversations in important ways."),
+a("video", "Video Explainer: Why Weather Risk Is Rising in U.S. Cities", "Video", "A visual report explains how heat, storms and infrastructure risk connect."),
+a("audio", "Daily Briefing: Markets, Politics and Technology in 10 Minutes", "Audio", "Today’s audio briefing covers the stories readers are following."),
+a("games", "Daily Games: Wordle, Connections and Mini Crossword", "Games", "Puzzle fans return for daily challenges and logic games."),
+a("wirecutter", "Best Budget Tech Picks for Students and Remote Workers", "Wirecutter", "Reviewers compare useful products for everyday work and study."),
+a("california", "California Cities Prepare New Rules for Housing and Transit", "California", "Officials are weighing new plans for mobility, zoning and climate resilience."),
+a("education", "Schools Expand Career Programs as Students Seek Practical Skills", "Education", "Districts are adding technology, business and health pathways.")
+];
+
+function a(topic, title, section, summary) {
+return {
+id: slugify(title),
+topic,
+category: topic,
+section,
+title,
+summary,
+content: summary + " This report will be updated with more details, analysis and background information.",
+author: "Global Intel Desk",
+image: DEFAULT_IMG,
+publishedAt: new Date().toISOString(),
+source: "#"
+};
+}
 
 /* ================= INIT ================= */
 
 document.addEventListener("DOMContentLoaded", async () => {
-  initTheme();
-  initMegaMenu();
-  initMobileMenu();
-  initSearch();
-  initScrollTop();
-  initMarketPage();
-  initArticlePage();
-  initCategoryPage();
+updateDate();
+updateTopTrend();
+initMegaNavigation();
 
-  await loadNews();
+await loadNews();
 
-  renderByPageType();
-  updateSEO();
+renderBreakingTicker();
+renderHomeCards();
+renderMoreNews();
+renderWell();
+renderAudio();
+renderCategoryPage();
+
+updateSEO();
 });
 
-/* ================= NEWS LOADING ================= */
+/* ================= LOAD NEWS ================= */
 
 async function loadNews() {
-  try {
-    const live = await fetchLiveNews();
-    allArticles = normalizeArticles(live);
-  } catch (err) {
-    allArticles = [];
-  }
-
-  if (!allArticles.length) {
-    allArticles = generateFallbackArticles(60);
-  }
-
-  allArticles = removeDuplicateArticles(filterBadArticles(allArticles));
-  visibleArticles = [...allArticles];
+try {
+const res = await fetch(API_URL, { cache: "no-store" });
+if (!res.ok) throw new Error("API failed");
+const data = await res.json();
+const live = Array.isArray(data) ? data : data.articles || [];
+allArticles = normalizeArticles(live);
+} catch {
+allArticles = [];
 }
 
-async function fetchLiveNews() {
-  const res = await fetch(`${SITE.apiBase}/news`, { cache: "no-store" });
-  if (!res.ok) throw new Error("API failed");
-  const data = await res.json();
-  return Array.isArray(data) ? data : data.articles || [];
+if (!allArticles.length) allArticles = [...FALLBACK_ARTICLES];
+
+allArticles = removeDuplicates(filterBadNews(allArticles));
+
+if (allArticles.length < 30) {
+allArticles = [...allArticles, ...FALLBACK_ARTICLES].slice(0, 60);
+}
 }
 
 function normalizeArticles(items) {
-  return items
-    .map((item, index) => ({
-      id: slugify(item.id || item.title || `article-${index}`),
-      title: cleanText(item.title || "Untitled Story"),
-      category: detectCategory(item),
-      section: detectSection(item),
-      author: item.author || item.source?.name || "Global Intel Desk",
-      image: item.image || item.urlToImage || item.thumbnail || SITE.defaultImage,
-      summary: cleanText(item.summary || item.description || ""),
-      content: cleanText(item.content || item.description || item.summary || ""),
-      source: item.url || item.source || "#",
-      publishedAt: item.publishedAt || item.date || new Date().toISOString()
-    }))
-    .filter(a => a.title && a.title.length > 12);
+return items.map((item, i) => {
+const title = clean(item.title || `News Update ${i + 1}`);
+const text = `${title} ${item.description || ""} ${item.summary || ""}`;
+const topic = detectTopic(text);
+
+```
+return {
+  id: slugify(item.id || title),
+  topic,
+  category: topic,
+  section: titleCase(topic),
+  title,
+  summary: clean(item.description || item.summary || item.content || "Latest update from Global Intel Times."),
+  content: clean(item.content || item.description || item.summary || ""),
+  author: item.author || item.source?.name || "Global Intel Desk",
+  image: item.urlToImage || item.image || item.thumbnail || DEFAULT_IMG,
+  publishedAt: item.publishedAt || new Date().toISOString(),
+  source: item.url || "#"
+};
+```
+
+});
 }
 
-function generateFallbackArticles(count = 60) {
-  const base = [...FALLBACK_ARTICLES];
-  const generated = [];
-
-  for (let i = 0; i < count; i++) {
-    const template = base[i % base.length];
-    generated.push({
-      ...template,
-      id: `${template.id}-${i + 1}`,
-      title: i < base.length ? template.title : `${template.title}: Full Report ${i + 1}`,
-      publishedAt: new Date(Date.now() - i * 3600000).toISOString()
-    });
-  }
-
-  return generated;
+function filterBadNews(list) {
+const bad = ["casino", "betting", "odds", "coupon", "promo", "sponsored", "adult", "gambling"];
+return list.filter(x => !bad.some(w => `${x.title} ${x.summary}`.toLowerCase().includes(w)));
 }
 
-/* ================= FILTERS ================= */
-
-function filterBadArticles(articles) {
-  return articles.filter(article => {
-    const text = `${article.title} ${article.summary}`.toLowerCase();
-    return !BLOCKED_WORDS.some(word => text.includes(word));
-  });
+function removeDuplicates(list) {
+const seen = new Set();
+return list.filter(x => {
+const key = slugify(x.title).slice(0, 80);
+if (seen.has(key)) return false;
+seen.add(key);
+return true;
+});
 }
 
-function removeDuplicateArticles(articles) {
-  const seen = new Set();
+/* ================= MEGA NAVIGATION ================= */
 
-  return articles.filter(article => {
-    const key = article.title.toLowerCase().replace(/[^\w]/g, "").slice(0, 80);
-    if (seen.has(key)) return false;
-    seen.add(key);
-    return true;
-  });
+function initMegaNavigation() {
+const nav = document.getElementById("megaNav");
+const wrap = document.getElementById("megaMenuWrap");
+if (!nav || !wrap) return;
+
+nav.innerHTML = Object.keys(TOP_MENU).map(name => `     <a class="mega-nav-link" href="category.html?topic=${slugify(name)}" data-menu="${name}">
+      ${name} <span>⌄</span>     </a>
+  `).join("");
+
+nav.querySelectorAll("[data-menu]").forEach(link => {
+link.addEventListener("mouseenter", () => openMegaPanel(link.dataset.menu));
+link.addEventListener("click", e => {
+if (window.innerWidth > 768) return;
+e.preventDefault();
+openMegaPanel(link.dataset.menu);
+});
+});
+
+wrap.addEventListener("mouseenter", () => wrap.classList.add("active"));
+wrap.addEventListener("mouseleave", closeMegaPanel);
+
+document.addEventListener("click", e => {
+if (!nav.contains(e.target) && !wrap.contains(e.target)) closeMegaPanel();
+});
 }
 
-function detectCategory(article) {
-  const text = `${article.title || ""} ${article.description || ""} ${article.summary || ""}`.toLowerCase();
+function openMegaPanel(menuName) {
+const wrap = document.getElementById("megaMenuWrap");
+const menu = TOP_MENU[menuName];
+if (!wrap || !menu) return;
 
-  if (text.includes("ai") || text.includes("artificial intelligence")) return "artificial-intelligence";
-  if (text.includes("bitcoin") || text.includes("crypto")) return "markets";
-  if (text.includes("stock") || text.includes("market") || text.includes("wall street")) return "markets";
-  if (text.includes("weather") || text.includes("storm") || text.includes("heat")) return "weather";
-  if (text.includes("new york") || text.includes("nyc")) return "new-york";
-  if (text.includes("nba") || text.includes("nfl") || text.includes("mlb") || text.includes("sports")) return "sports";
-  if (text.includes("election") || text.includes("white house") || text.includes("senate")) return "politics";
-  if (text.includes("tech") || text.includes("cyber")) return "technology";
-  if (text.includes("health")) return "health";
-  if (text.includes("science")) return "science";
-  if (text.includes("world") || text.includes("global")) return "world";
+wrap.innerHTML = ` <div class="nyt-panel"> <div class="nyt-panel-title"> <h2>${menuName}</h2> <p>${menu.desc}</p> </div>
 
-  return article.category || "us";
+```
+  ${menu.cols.map(col => `
+    <div class="nyt-panel-col">
+      <h4>${col[0]}</h4>
+      ${col.slice(1).map(item => `
+        <a href="category.html?topic=${slugify(item)}">${item}</a>
+      `).join("")}
+    </div>
+  `).join("")}
+</div>
+```
+
+`;
+
+wrap.classList.add("active");
 }
 
-function detectSection(article) {
-  const cat = detectCategory(article);
-  const map = {
-    us: "Top Stories",
-    politics: "Politics",
-    world: "World",
-    business: "Business",
-    markets: "Markets",
-    technology: "Technology",
-    "artificial-intelligence": "Artificial Intelligence",
-    "new-york": "New York",
-    weather: "Extreme Weather",
-    sports: "Sports",
-    video: "Video",
-    audio: "Audio",
-    games: "Games",
-    cooking: "Cooking",
-    wirecutter: "Wirecutter",
-    lifestyle: "Lifestyle",
-    health: "Health",
-    science: "Science",
-    culture: "Culture",
-    opinion: "Opinion"
-  };
-
-  return map[cat] || "Latest Updates";
+function closeMegaPanel() {
+const wrap = document.getElementById("megaMenuWrap");
+if (wrap) wrap.classList.remove("active");
 }
 
-/* ================= ROUTING ================= */
-
-function renderByPageType() {
-  const page = getCurrentPageName();
-
-  if (page.includes("category")) {
-    renderCategoryPage();
-  } else if (page.includes("article")) {
-    renderArticlePage();
-  } else if (page.includes("market")) {
-    renderMarketDashboard();
-  } else {
-    renderHomepage();
-  }
-}
-
-function getCurrentPageName() {
-  return location.pathname.split("/").pop() || "index.html";
-}
-
-/* ================= HOMEPAGE ================= */
-
-function renderHomepage() {
-  renderBreakingTicker();
-  renderHero();
-  renderEditorialSections();
-  renderSidebar();
-  renderNewsletter();
-  renderFooter();
-  initInfiniteScroll();
-}
+/* ================= HOME RENDER ================= */
 
 function renderBreakingTicker() {
-  const el = document.querySelector("#breakingTicker");
-  if (!el) return;
+const box = document.getElementById("breakingTicker");
+if (!box) return;
 
-  const items = allArticles.slice(0, 8);
-  el.innerHTML = `
-    <strong>Breaking</strong>
-    <div class="ticker-track">
-      ${items.map(a => `<a href="article.html?id=${a.id}">${escapeHTML(a.title)}</a>`).join("")}
-    </div>
-  `;
+box.innerHTML = allArticles.slice(0, 6)
+.map(x => `<a href="article.html?id=${x.id}">${x.title}</a>`)
+.join("  •  ");
 }
 
-function renderHero() {
-  const el = document.querySelector("#heroNews");
-  if (!el) return;
-
-  const main = allArticles[0];
-  const side = allArticles.slice(1, 5);
-
-  el.innerHTML = `
-    <article class="hero-main">
-      <a href="article.html?id=${main.id}">
-        <img src="${main.image}" alt="${escapeHTML(main.title)}" loading="eager" onerror="this.src='${SITE.fallbackImage}'">
-        <span class="label">${main.section}</span>
-        <h1>${escapeHTML(main.title)}</h1>
-        <p>${escapeHTML(main.summary || generateAISummary(main))}</p>
-      </a>
-    </article>
-
-    <div class="hero-side">
-      ${side.map(a => articleMiniCard(a)).join("")}
-    </div>
-  `;
+function renderHomeCards() {
+setHTML("leadLeft", smallCard(allArticles[1]));
+setHTML("leadMain", bigCard(allArticles[0]));
+setHTML("leadRight", sideList(allArticles.slice(2, 6)));
 }
 
-function renderEditorialSections() {
-  const container = document.querySelector("#newsSections");
-  if (!container) return;
-
-  container.innerHTML = "";
-
-  SECTION_ORDER.forEach(section => {
-    const articles = getArticlesForSection(section, 6);
-    if (!articles.length) return;
-
-    const sectionEl = document.createElement("section");
-    sectionEl.className = "editorial-section";
-    sectionEl.innerHTML = `
-      ${adBlock("section-top")}
-      <div class="section-head">
-        <h2>${section}</h2>
-        <a href="category.html?topic=${slugify(section)}">View all</a>
-      </div>
-      <div class="article-grid">
-        ${articles.map(articleCard).join("")}
-      </div>
-    `;
-    container.appendChild(sectionEl);
-  });
+function renderMoreNews() {
+const box = document.getElementById("moreNewsGrid");
+if (!box) return;
+box.innerHTML = allArticles.slice(6, 30).map(card).join("");
 }
 
-function getArticlesForSection(section, limit = 6) {
-  return allArticles
-    .filter(a => a.section === section || a.category === slugify(section))
-    .slice(0, limit);
+function renderWell() {
+const box = document.querySelector(".well-grid");
+if (!box) return;
+box.innerHTML = topicArticles("health").concat(topicArticles("lifestyle")).slice(0, 4).map(card).join("");
 }
 
-/* ================= CATEGORY PAGE ================= */
+function renderAudio() {
+const box = document.querySelector(".audio-grid");
+if (!box) return;
 
-function initCategoryPage() {
-  const search = document.querySelector("#categorySearch");
-  if (!search) return;
+const audio = [
+["The Daily Briefing", "Markets, politics and world news in 10 minutes."],
+["Hard Fork", "Technology, AI and culture explained."],
+["Markets Audio", "Daily business and finance updates."],
+["Culture Podcast", "Books, movies, music and ideas."]
+];
 
-  search.addEventListener("input", () => {
-    renderCategoryPage(search.value.trim());
-  });
+box.innerHTML = audio.map(x => `     <div class="audio-card">       <h3>${x[0]}</h3>       <p>${x[1]}</p>       <button>▶ Listen</button>     </div>
+  `).join("");
 }
 
-function renderCategoryPage(keyword = "") {
-  const container = document.querySelector("#categoryArticles");
-  const title = document.querySelector("#categoryTitle");
-  if (!container) return;
+/* ================= CATEGORY STRICT PAGE ================= */
 
-  const topic = getQueryParam("topic") || "us";
-  const topicTitle = titleCase(topic.replace(/-/g, " "));
+function renderCategoryPage() {
+const root = document.getElementById("categoryArticles");
+if (!root) return;
 
-  if (title) title.textContent = topicTitle;
+const topic = getParam("topic") || "us";
+const readable = titleCase(topic);
+const title = document.getElementById("categoryTitle");
 
-  let articles = allArticles.filter(a => {
-    const categoryMatch =
-      a.category === topic ||
-      slugify(a.section) === topic ||
-      a.title.toLowerCase().includes(topic.replace(/-/g, " "));
+if (title) title.textContent = readable;
 
-    const searchMatch =
-      !keyword ||
-      a.title.toLowerCase().includes(keyword.toLowerCase()) ||
-      a.summary.toLowerCase().includes(keyword.toLowerCase());
+const articles = strictTopicArticles(topic);
 
-    return categoryMatch && searchMatch;
-  });
+root.innerHTML = ` <section class="category-header"> <p>GLOBAL INTEL TIMES</p> <h1>${readable}</h1> <span>Only ${readable} related news appears on this page.</span> </section>
 
-  if (!articles.length) {
-    articles = allArticles.filter(a => a.category === "us").slice(0, 12);
-  }
+```
+${
+  articles.length
+    ? `<div class="article-grid">${articles.map(card).join("")}</div>`
+    : `<div class="empty-topic">
+        <h2>No ${readable} news found right now.</h2>
+        <p>This page is strictly filtered, so unrelated articles will not appear here.</p>
+      </div>`
+}
+```
 
-  container.innerHTML = articles.map(articleCard).join("");
+`;
 }
 
-/* ================= ARTICLE PAGE ================= */
+function strictTopicArticles(topic) {
+const t = cleanTopic(topic);
 
-function initArticlePage() {
-  const shareBtns = document.querySelectorAll("[data-share]");
-  shareBtns.forEach(btn => {
-    btn.addEventListener("click", () => shareArticle(btn.dataset.share));
-  });
+return allArticles.filter(article => {
+const articleTopic = cleanTopic(article.topic || article.category || article.section);
+const text = cleanTopic(`${article.title} ${article.summary} ${article.content} ${article.section}`);
+
+```
+return articleTopic === t || text.includes(t);
+```
+
+});
 }
+
+function topicArticles(topic) {
+return allArticles.filter(x => cleanTopic(x.topic) === cleanTopic(topic));
+}
+
+/* ================= ARTICLE PAGE SUPPORT ================= */
 
 function renderArticlePage() {
-  const root = document.querySelector("#articleRoot");
-  if (!root) return;
+const root = document.getElementById("articleRoot");
+if (!root) return;
 
-  const id = getQueryParam("id");
-  const article = allArticles.find(a => a.id === id) || allArticles[0];
-  const related = getRelatedArticles(article, 4);
+const id = getParam("id");
+const article = allArticles.find(x => x.id === id) || allArticles[0];
 
-  root.innerHTML = `
-    <nav class="breadcrumb">
-      <a href="index.html">Home</a> / 
-      <a href="category.html?topic=${article.category}">${titleCase(article.category)}</a>
-    </nav>
-
-    <article class="article-layout">
-      <main class="article-main">
-        <span class="label">${article.section}</span>
-        <h1>${escapeHTML(article.title)}</h1>
-        <p class="article-summary">${escapeHTML(article.summary || generateAISummary(article))}</p>
-
-        <div class="article-meta">
-          By ${escapeHTML(article.author)} · 
-          ${formatDate(article.publishedAt)} · 
-          ${readingTime(article.content)} min read
-        </div>
-
-        <img class="article-hero-img" src="${article.image}" alt="${escapeHTML(article.title)}" onerror="this.src='${SITE.fallbackImage}'">
-
-        ${adBlock("article-top")}
-
-        <div class="article-body">
-          ${formatArticleBody(article.content)}
-        </div>
-
-        ${adBlock("article-middle")}
-
-        <div class="share-row">
-          <button data-share="copy">Copy Link</button>
-          <button data-share="twitter">X</button>
-          <button data-share="facebook">Facebook</button>
-          <button data-share="whatsapp">WhatsApp</button>
-        </div>
-
-        <p class="source-link">
-          Source: <a href="${article.source}" target="_blank" rel="nofollow noopener">Original Source</a>
-        </p>
-
-        <section class="related">
-          <h2>Related Articles</h2>
-          <div class="article-grid">
-            ${related.map(articleCard).join("")}
-          </div>
-        </section>
-      </main>
-
-      <aside class="article-sidebar">
-        ${sidebarHTML()}
-      </aside>
-    </article>
-
-    <script type="application/ld+json">
-      ${JSON.stringify(articleSchema(article))}
-    </script>
-  `;
-
-  initArticlePage();
-}
-
-/* ================= MARKET DASHBOARD ================= */
-
-function initMarketPage() {
-  const input = document.querySelector("#marketSearch");
-  if (!input) return;
-
-  input.addEventListener("keydown", e => {
-    if (e.key === "Enter") {
-      const symbol = input.value.trim().toUpperCase();
-      updateTradingView(symbol || "AAPL");
-    }
-  });
-}
-
-function renderMarketDashboard() {
-  const root = document.querySelector("#marketRoot");
-  if (!root) return;
-
-  root.innerHTML = `
-    <section class="market-dashboard">
-      <h1>Markets</h1>
-
-      <div class="market-search-box">
-        <input id="marketSearch" placeholder="Search AAPL, MSFT, BTC, ETH, GOLD..." />
-        <button onclick="updateTradingView(document.querySelector('#marketSearch').value)">Search</button>
-      </div>
-
-      <div id="tradingViewBox" class="tradingview-box"></div>
-
-      <div class="market-analysis-grid">
-        ${marketAnalysisCard("AI Analysis", "Neutral to bullish momentum with active institutional interest.")}
-        ${marketAnalysisCard("Support", "Key support is near the latest consolidation zone.")}
-        ${marketAnalysisCard("Resistance", "Resistance may appear near previous swing highs.")}
-        ${marketAnalysisCard("Trend", "Trend strength depends on volume confirmation.")}
-        ${marketAnalysisCard("Volume", "Volume is being watched for breakout confirmation.")}
-        ${marketAnalysisCard("Sentiment", "Market sentiment is mixed but improving.")}
-      </div>
-
-      <section>
-        <h2>Latest Market News</h2>
-        <div class="article-grid">
-          ${allArticles.filter(a => a.category === "markets").slice(0, 6).map(articleCard).join("")}
-        </div>
-      </section>
-    </section>
-  `;
-
-  updateTradingView("AAPL");
-  initMarketPage();
-}
-
-function updateTradingView(symbol = "AAPL") {
-  const box = document.querySelector("#tradingViewBox");
-  if (!box) return;
-
-  const cleanSymbol = normalizeMarketSymbol(symbol);
-
-  box.innerHTML = `
-    <iframe
-      title="TradingView Chart"
-      src="https://s.tradingview.com/widgetembed/?symbol=${cleanSymbol}&interval=D&theme=light&style=1&timezone=America%2FNew_York"
-      width="100%"
-      height="520"
-      frameborder="0"
-      allowtransparency="true"
-      scrolling="no">
-    </iframe>
-  `;
-}
-
-function normalizeMarketSymbol(symbol) {
-  const s = String(symbol || "AAPL").toUpperCase().trim();
-
-  const map = {
-    BTC: "BINANCE:BTCUSDT",
-    ETH: "BINANCE:ETHUSDT",
-    GOLD: "TVC:GOLD",
-    SILVER: "TVC:SILVER",
-    AAPL: "NASDAQ:AAPL",
-    MSFT: "NASDAQ:MSFT",
-    NVDA: "NASDAQ:NVDA",
-    TSLA: "NASDAQ:TSLA",
-    META: "NASDAQ:META",
-    GOOGL: "NASDAQ:GOOGL"
-  };
-
-  return map[s] || `NASDAQ:${s}`;
-}
-
-function marketAnalysisCard(title, text) {
-  return `
-    <div class="market-card">
-      <h3>${title}</h3>
-      <p>${text}</p>
-    </div>
-  `;
-}
-
-/* ================= SEARCH ================= */
-
-function initSearch() {
-  const inputs = document.querySelectorAll("[data-site-search]");
-  inputs.forEach(input => {
-    input.addEventListener("input", () => showSearchSuggestions(input));
-    input.addEventListener("keydown", e => {
-      if (e.key === "Enter") {
-        const q = input.value.trim();
-        if (q) location.href = `search.html?q=${encodeURIComponent(q)}`;
-      }
-    });
-  });
-
-  renderSearchPage();
-}
-
-function showSearchSuggestions(input) {
-  const box = document.querySelector("#searchSuggestions");
-  if (!box) return;
-
-  const q = input.value.toLowerCase().trim();
-  if (!q) {
-    box.innerHTML = "";
-    return;
-  }
-
-  const results = allArticles
-    .filter(a => a.title.toLowerCase().includes(q))
-    .slice(0, 6);
-
-  box.innerHTML = results
-    .map(a => `<a href="article.html?id=${a.id}">${escapeHTML(a.title)}</a>`)
-    .join("");
-}
-
-function renderSearchPage() {
-  const root = document.querySelector("#searchResults");
-  if (!root) return;
-
-  const q = getQueryParam("q") || "";
-  const results = allArticles.filter(a =>
-    `${a.title} ${a.summary} ${a.category}`.toLowerCase().includes(q.toLowerCase())
-  );
-
-  root.innerHTML = `
-    <h1>Search results for "${escapeHTML(q)}"</h1>
-    <div class="article-grid">
-      ${(results.length ? results : allArticles.slice(0, 12)).map(articleCard).join("")}
-    </div>
+root.innerHTML = `     <article class="article-page">       <p class="breadcrumb"><a href="index.html">Home</a> / ${article.section}</p>       <h1>${article.title}</h1>       <p>${article.summary}</p>       <div class="article-meta">By ${article.author} • ${formatDate(article.publishedAt)} • ${readingTime(article.content)} min read</div>       <img src="${article.image}" alt="${article.title}" onerror="this.src='${DEFAULT_IMG}'">       <div class="article-body">${paragraphs(article.content)}</div>       <p><a href="${article.source}" target="_blank" rel="nofollow noopener">Source link</a></p>     </article>
   `;
 }
 
 /* ================= CARDS ================= */
 
-function articleCard(article) {
-  return `
-    <article class="article-card">
-      <a href="article.html?id=${article.id}">
-        <img src="${article.image}" alt="${escapeHTML(article.title)}" loading="lazy" onerror="this.src='${SITE.fallbackImage}'">
-        <span class="label">${article.section}</span>
-        <h3>${escapeHTML(article.title)}</h3>
-        <p>${escapeHTML(article.summary || generateAISummary(article))}</p>
-        <time>${formatDate(article.publishedAt)}</time>
-      </a>
-    </article>
+function card(x) {
+if (!x) return "";
+return `     <article class="news-card">       <a href="article.html?id=${x.id}">         <img src="${x.image}" alt="${x.title}" loading="lazy" onerror="this.src='${DEFAULT_IMG}'">         <span>${x.section}</span>         <h3>${x.title}</h3>         <p>${x.summary}</p>       </a>     </article>
   `;
 }
 
-function articleMiniCard(article) {
-  return `
-    <article class="mini-card">
-      <a href="article.html?id=${article.id}">
-        <span>${article.section}</span>
-        <h3>${escapeHTML(article.title)}</h3>
-      </a>
-    </article>
+function bigCard(x) {
+if (!x) return "";
+return `     <article class="lead-card main-lead">       <a href="article.html?id=${x.id}">         <img src="${x.image}" alt="${x.title}" loading="lazy" onerror="this.src='${DEFAULT_IMG}'">         <span>${x.section}</span>         <h2>${x.title}</h2>         <p>${x.summary}</p>       </a>     </article>
   `;
 }
 
-/* ================= SIDEBAR ================= */
-
-function renderSidebar() {
-  const sidebar = document.querySelector("#sidebar");
-  if (!sidebar) return;
-  sidebar.innerHTML = sidebarHTML();
-}
-
-function sidebarHTML() {
-  return `
-    ${adBlock("sidebar-top")}
-
-    <section class="sidebar-box">
-      <h3>Trending</h3>
-      ${allArticles.slice(0, 5).map(sidebarItem).join("")}
-    </section>
-
-    <section class="sidebar-box">
-      <h3>Most Read</h3>
-      ${getMostRead().map(sidebarItem).join("")}
-    </section>
-
-    <section class="sidebar-box">
-      <h3>Market Watch</h3>
-      <ul class="market-list">
-        <li>Dow Futures <strong>Live</strong></li>
-        <li>Nasdaq <strong>Watching</strong></li>
-        <li>Bitcoin <strong>Volatile</strong></li>
-        <li>Gold <strong>Steady</strong></li>
-      </ul>
-    </section>
-
-    <section class="sidebar-box">
-      <h3>Trending Analytics</h3>
-      ${analyticsHTML()}
-    </section>
-
-    ${adBlock("sidebar-bottom")}
+function smallCard(x) {
+if (!x) return "";
+return `     <article class="lead-card">       <a href="article.html?id=${x.id}">         <span>${x.section}</span>         <h2>${x.title}</h2>         <p>${x.summary}</p>       </a>     </article>
   `;
 }
 
-function sidebarItem(article) {
-  return `
-    <a class="sidebar-item" href="article.html?id=${article.id}">
-      ${escapeHTML(article.title)}
-    </a>
+function sideList(list) {
+return `    <div class="side-list">
+      ${list.map(x =>` <a href="article.html?id=${x.id}"> <span>${x.section}</span> <b>${x.title}</b> </a>
+`).join("")}     </div>
   `;
 }
 
-function getMostRead() {
-  return [...allArticles]
-    .map(a => ({ ...a, score: trendingScore(a) }))
-    .sort((a, b) => b.score - a.score)
-    .slice(0, 6);
+/* ================= HELPERS ================= */
+
+function detectTopic(text) {
+const s = cleanTopic(text);
+
+const map = {
+"new-york": ["new york", "nyc", "manhattan", "brooklyn"],
+"politics": ["politics", "white house", "congress", "senate", "election", "trump"],
+"business": ["business", "company", "economy", "bank", "finance"],
+"stock-market": ["stock", "wall street", "nasdaq", "dow", "s&p"],
+"bitcoin": ["bitcoin", "crypto", "btc", "ethereum"],
+"artificial-intelligence": ["artificial intelligence", " ai ", "openai", "chatgpt"],
+"weather": ["weather", "storm", "heat", "rain", "flood", "climate"],
+"world": ["world", "global", "europe", "asia", "middle east", "war"],
+"tech": ["technology", "tech", "cyber", "software"],
+"sports": ["sports", "world cup", "soccer", "football"],
+"health": ["health", "hospital", "doctor", "medical"],
+"science": ["science", "space", "research"],
+"arts": ["arts", "movie", "music", "book", "theater"],
+"lifestyle": ["lifestyle", "travel", "style", "love", "food"],
+"opinion": ["opinion", "editorial", "essay"],
+"video": ["video", "watch"],
+"audio": ["audio", "podcast", "listen"],
+"games": ["game", "wordle", "sudoku", "crossword"],
+"cooking": ["cooking", "recipe", "dinner", "breakfast"],
+"wirecutter": ["wirecutter", "review", "best picks", "shopping"],
+"california": ["california", "los angeles", "san francisco"],
+"education": ["education", "school", "college", "student"],
+"nfl": ["nfl"],
+"nba": ["nba"],
+"mlb": ["mlb"],
+"formula-1": ["formula 1", "f1"],
+"tennis": ["tennis"]
+};
+
+for (const [topic, words] of Object.entries(map)) {
+if (words.some(w => s.includes(w))) return topic;
 }
 
-/* ================= ANALYTICS ================= */
-
-function trendingScore(article) {
-  let score = 50;
-  const text = `${article.title} ${article.summary}`.toLowerCase();
-
-  ["breaking", "live", "market", "ai", "weather", "election", "new york"].forEach(word => {
-    if (text.includes(word)) score += 10;
-  });
-
-  const hoursOld = (Date.now() - new Date(article.publishedAt).getTime()) / 3600000;
-  score += Math.max(0, 24 - hoursOld);
-
-  return Math.round(score);
+return "us";
 }
 
-function analyticsHTML() {
-  const scores = {
-    "AI Score": 87,
-    "Market Score": 82,
-    "Crypto Score": 76,
-    "Politics Score": 79,
-    "Weather Score": 84,
-    "Technology Score": 88
-  };
+function updateDate() {
+const box = document.getElementById("todayDate");
+if (!box) return;
 
-  return Object.entries(scores)
-    .map(([name, value]) => `
-      <div class="score-row">
-        <span>${name}</span>
-        <strong>${value}</strong>
-      </div>
-    `)
-    .join("");
+box.textContent = new Intl.DateTimeFormat("en-US", {
+weekday: "long",
+month: "long",
+day: "numeric",
+year: "numeric"
+}).format(new Date());
 }
 
-/* ================= MEGA MENU ================= */
+function updateTopTrend() {
+const box = document.getElementById("topTrendBox");
+if (!box) return;
 
-function initMegaMenu() {
-  document.querySelectorAll("[data-mega]").forEach(item => {
-    item.addEventListener("mouseenter", () => openMegaMenu(item.dataset.mega));
-    item.addEventListener("focus", () => openMegaMenu(item.dataset.mega));
-  });
+const items = ["AAPL +1.24% ↑", "Nasdaq -0.43% ↓", "Dow +0.35% ↑", "BTC +2.18% ↑", "S&P 500 -0.11% ↓"];
+let i = 0;
 
-  const menu = document.querySelector("#megaMenu");
-  if (menu) {
-    menu.addEventListener("mouseleave", closeMegaMenu);
-  }
+setInterval(() => {
+box.textContent = items[i % items.length];
+i++;
+}, 3000);
 }
 
-function openMegaMenu(topic) {
-  const menu = document.querySelector("#megaMenu");
-  if (!menu) return;
-
-  const related = allArticles.filter(a => a.category === topic).slice(0, 5);
-
-  menu.innerHTML = `
-    <div class="mega-grid">
-      ${[1, 2, 3, 4, 5].map(col => `
-        <div>
-          <h4>${titleCase(topic)} ${col}</h4>
-          <a href="category.html?topic=${topic}">Latest</a>
-          <a href="category.html?topic=${topic}">Analysis</a>
-          <a href="category.html?topic=${topic}">Opinion</a>
-          <a href="category.html?topic=${topic}">Newsletter</a>
-          <a href="category.html?topic=${topic}">Podcasts</a>
-        </div>
-      `).join("")}
-    </div>
-
-    <div class="mega-featured">
-      ${related.map(a => `<a href="article.html?id=${a.id}">${escapeHTML(a.title)}</a>`).join("")}
-    </div>
-  `;
-
-  menu.classList.add("active");
+function updateSEO() {
+const topic = getParam("topic");
+if (topic) {
+document.title = `${titleCase(topic)} News | ${SITE_NAME}`;
+}
 }
 
-function closeMegaMenu() {
-  const menu = document.querySelector("#megaMenu");
-  if (menu) menu.classList.remove("active");
-}
-
-function initMobileMenu() {
-  const btn = document.querySelector("#mobileMenuBtn");
-  const nav = document.querySelector("#mainNav");
-  if (!btn || !nav) return;
-
-  btn.addEventListener("click", () => {
-    nav.classList.toggle("active");
-  });
-}
-
-/* ================= INFINITE SCROLL ================= */
-
-function initInfiniteScroll() {
-  window.addEventListener("scroll", () => {
-    const nearBottom = window.innerHeight + window.scrollY >= document.body.offsetHeight - 700;
-    if (nearBottom) loadMoreArticles();
-  });
-}
-
-function loadMoreArticles() {
-  const container = document.querySelector("#infiniteNews");
-  if (!container) return;
-
-  const start = currentPage * PAGE_SIZE;
-  const next = visibleArticles.slice(start, start + PAGE_SIZE);
-  if (!next.length) return;
-
-  container.insertAdjacentHTML("beforeend", next.map(articleCard).join(""));
-  currentPage++;
-}
-
-/* ================= NEWSLETTER / FOOTER ================= */
-
-function renderNewsletter() {
-  const el = document.querySelector("#newsletter");
-  if (!el) return;
-
-  el.innerHTML = `
-    <section class="newsletter-box">
-      <h2>Daily Intelligence Briefing</h2>
-      <p>Top U.S., market, technology and world stories delivered every morning.</p>
-      <form onsubmit="event.preventDefault(); alert('Thank you for subscribing!')">
-        <input type="email" placeholder="Email address" required>
-        <button>Subscribe</button>
-      </form>
-    </section>
-  `;
-}
-
-function renderFooter() {
-  const footer = document.querySelector("#footer");
-  if (!footer) return;
-
-  footer.innerHTML = `
-    <div class="footer-grid">
-      <div>
-        <h3>${SITE.name}</h3>
-        <p>Independent digital news for U.S. readers.</p>
-      </div>
-      <div>
-        <h4>Sections</h4>
-        ${TOPICS.slice(0, 8).map(t => `<a href="category.html?topic=${t}">${titleCase(t)}</a>`).join("")}
-      </div>
-      <div>
-        <h4>Company</h4>
-        <a href="#">About</a>
-        <a href="#">Contact</a>
-        <a href="#">Advertise</a>
-        <a href="#">Privacy Policy</a>
-      </div>
-    </div>
-  `;
-}
-
-/* ================= ADS ================= */
-
-function adBlock(position = "") {
-  return `
-    <div class="ad-box" data-ad-position="${position}">
-      Advertisement
-    </div>
-  `;
-}
-
-/* ================= THEME ================= */
-
-function initTheme() {
-  const saved = localStorage.getItem("git-theme");
-  if (saved === "dark") document.body.classList.add("dark");
-
-  const btn = document.querySelector("#themeToggle");
-  if (!btn) return;
-
-  btn.addEventListener("click", () => {
-    document.body.classList.toggle("dark");
-    localStorage.setItem("git-theme", document.body.classList.contains("dark") ? "dark" : "light");
-  });
-}
-
-/* ================= SHARE ================= */
-
-function shareArticle(type) {
-  const url = location.href;
-  const title = document.title;
-
-  if (type === "copy") {
-    navigator.clipboard.writeText(url);
-    alert("Link copied");
-  }
-
-  if (type === "twitter") {
-    window.open(`https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(title)}`);
-  }
-
-  if (type === "facebook") {
-    window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`);
-  }
-
-  if (type === "whatsapp") {
-    window.open(`https://wa.me/?text=${encodeURIComponent(title + " " + url)}`);
-  }
-}
-
-/* ================= UTILITIES ================= */
-
-function getQueryParam(name) {
-  return new URLSearchParams(location.search).get(name);
+function setHTML(id, html) {
+const el = document.getElementById(id);
+if (el) el.innerHTML = html;
 }
 
 function slugify(text) {
-  return String(text)
-    .toLowerCase()
-    .trim()
-    .replace(/&/g, "and")
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/(^-|-$)/g, "");
+return String(text)
+.toLowerCase()
+.replace(/&/g, "and")
+.replace(/[^a-z0-9]+/g, "-")
+.replace(/(^-|-$)/g, "");
+}
+
+function cleanTopic(text) {
+return String(text || "")
+.toLowerCase()
+.replace(/-/g, " ")
+.replace(/\s+/g, " ")
+.trim();
 }
 
 function titleCase(text) {
-  return String(text)
-    .replace(/-/g, " ")
-    .replace(/\b\w/g, char => char.toUpperCase());
+return String(text || "")
+.replace(/-/g, " ")
+.replace(/\b\w/g, c => c.toUpperCase());
 }
 
-function cleanText(text) {
-  return String(text || "")
-    .replace(/\[\+\d+ chars\]/g, "")
-    .replace(/\s+/g, " ")
-    .trim();
+function clean(text) {
+return String(text || "").replace(/\s+/g, " ").trim();
 }
 
-function escapeHTML(text) {
-  return String(text || "")
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#039;");
+function getParam(name) {
+return new URLSearchParams(location.search).get(name);
 }
 
 function formatDate(date) {
-  return new Intl.DateTimeFormat("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric"
-  }).format(new Date(date));
+return new Date(date).toLocaleDateString("en-US", {
+month: "short",
+day: "numeric",
+year: "numeric"
+});
 }
 
 function readingTime(text) {
-  const words = String(text || "").split(/\s+/).length;
-  return Math.max(1, Math.ceil(words / 220));
+return Math.max(1, Math.ceil(String(text || "").split(/\s+/).length / 220));
 }
 
-function generateAISummary(article) {
-  const text = article.summary || article.content || article.title;
-  return cleanText(text).split(".").slice(0, 2).join(".") + ".";
+function paragraphs(text) {
+const t = text || "This story is developing and will be updated.";
+return t.split(". ").map(p => `<p>${p}${p.endsWith(".") ? "" : "."}</p>`).join("");
 }
 
-function formatArticleBody(content) {
-  const text = content || "This developing story will be updated as more information becomes available.";
-  const paragraphs = text.split(". ").filter(Boolean);
-
-  return paragraphs
-    .map(p => `<p>${escapeHTML(p.trim())}${p.endsWith(".") ? "" : "."}</p>`)
-    .join("");
-}
-
-function getRelatedArticles(article, limit = 4) {
-  return allArticles
-    .filter(a => a.id !== article.id && a.category === article.category)
-    .slice(0, limit);
-}
-
-function initScrollTop() {
-  const btn = document.querySelector("#scrollTop");
-  if (!btn) return;
-
-  window.addEventListener("scroll", () => {
-    btn.classList.toggle("show", window.scrollY > 600);
-  });
-
-  btn.addEventListener("click", () => window.scrollTo({ top: 0, behavior: "smooth" }));
-}
-
-/* ================= SEO ================= */
-
-function updateSEO() {
-  const page = getCurrentPageName();
-
-  let title = SITE.name;
-  let desc = "Global Intel Times delivers U.S., world, markets, technology, weather and culture news.";
-
-  if (page.includes("category")) {
-    const topic = getQueryParam("topic") || "news";
-    title = `${titleCase(topic)} News - ${SITE.name}`;
-    desc = `Latest ${titleCase(topic)} news, analysis and updates.`;
-  }
-
-  if (page.includes("article")) {
-    const id = getQueryParam("id");
-    const article = allArticles.find(a => a.id === id);
-    if (article) {
-      title = `${article.title} - ${SITE.name}`;
-      desc = article.summary;
-    }
-  }
-
-  document.title = title;
-  setMeta("description", desc);
-  setMeta("og:title", title);
-  setMeta("og:description", desc);
-  setMeta("twitter:title", title);
-  setMeta("twitter:description", desc);
-}
-
-function setMeta(name, content) {
-  let tag =
-    document.querySelector(`meta[name="${name}"]`) ||
-    document.querySelector(`meta[property="${name}"]`);
-
-  if (!tag) {
-    tag = document.createElement("meta");
-    if (name.startsWith("og:")) tag.setAttribute("property", name);
-    else tag.setAttribute("name", name);
-    document.head.appendChild(tag);
-  }
-
-  tag.setAttribute("content", content);
-}
-
-function articleSchema(article) {
-  return {
-    "@context": "https://schema.org",
-    "@type": "NewsArticle",
-    headline: article.title,
-    image: [article.image],
-    datePublished: article.publishedAt,
-    author: {
-      "@type": "Person",
-      name: article.author
-    },
-    publisher: {
-      "@type": "Organization",
-      name: SITE.name
-    }
-  };
-}
-
-/* ================= GLOBAL EXPORTS ================= */
-
-window.updateTradingView = updateTradingView;
-window.loadMoreArticles = loadMoreArticles;
-/* =====================================================
-   GLOBAL INTEL TIMES — NYT STYLE MEGA MENU + STRICT PAGES
-===================================================== */
-
-const GIT_MEGA_MENUS = {
-  "U.S.": {
-    description: "U.S. news, politics, courts, education and local coverage.",
-    columns: [
-      {
-        title: "Sections",
-        items: ["U.S.", "Politics", "New York", "California", "Education", "Health", "Science"]
-      },
-      {
-        title: "More",
-        items: ["Climate", "Weather", "Sports", "Business", "Tech", "Crime", "Immigration"]
-      },
-      {
-        title: "Top Stories",
-        items: ["Donald Trump", "Supreme Court", "Congress", "Immigration", "Abortion", "White House"]
-      },
-      {
-        title: "Newsletters",
-        items: ["The Morning", "The Evening", "U.S. Briefing"]
-      },
-      {
-        title: "Podcasts",
-        items: ["The Daily", "Politics Podcast", "See all podcasts"]
-      }
-    ]
-  },
-
-  "World": {
-    description: "Global news, diplomacy, war, climate and international affairs.",
-    columns: [
-      {
-        title: "Sections",
-        items: ["World", "Africa", "Americas", "Asia", "Australia", "Canada", "Europe"]
-      },
-      {
-        title: "More",
-        items: ["Middle East", "Science", "Climate", "Weather", "Health", "Obituaries"]
-      },
-      {
-        title: "Top Stories",
-        items: ["Middle East Crisis", "Russia Ukraine War", "China", "Global Profile", "Europe News"]
-      },
-      {
-        title: "Newsletters",
-        items: ["The World", "Global Update", "Canada Letter"]
-      },
-      {
-        title: "Podcasts",
-        items: ["World Briefing", "Global Dispatch"]
-      }
-    ]
-  },
-
-  "Business": {
-    description: "Markets, economy, technology, finance and business news.",
-    columns: [
-      {
-        title: "Sections",
-        items: ["Business", "Tech", "Economy", "Media", "Finance and Markets"]
-      },
-      {
-        title: "More",
-        items: ["DealBook", "Personal Tech", "Energy Transition", "Your Money", "Real Estate"]
-      },
-      {
-        title: "Top Stories",
-        items: ["U.S. Economy", "Stock Market", "Artificial Intelligence", "Bitcoin", "Crypto"]
-      },
-      {
-        title: "Newsletters",
-        items: ["DealBook", "On Tech", "Markets Briefing"]
-      },
-      {
-        title: "Podcasts",
-        items: ["Hard Fork", "Business Daily"]
-      }
-    ]
-  },
-
-  "Arts": {
-    description: "Movies, music, books, theater and culture coverage.",
-    columns: [
-      {
-        title: "Sections",
-        items: ["Today’s Arts", "Book Review", "Best Sellers", "Dance", "Movies", "Music"]
-      },
-      {
-        title: "More",
-        items: ["Television", "Theater", "Pop Culture", "T Magazine", "Visual Arts"]
-      },
-      {
-        title: "Recommendations",
-        items: ["Best Movies", "Critic’s Picks", "What to Read", "What to Watch", "What to Listen To"]
-      },
-      {
-        title: "Newsletters",
-        items: ["Books", "Watching"]
-      },
-      {
-        title: "Podcasts",
-        items: ["Book Review", "Culture Podcast"]
-      }
-    ]
-  },
-
-  "Lifestyle": {
-    description: "Travel, health, food, style, family and daily life.",
-    columns: [
-      {
-        title: "Sections",
-        items: ["Lifestyle", "Food", "Well", "Love", "Travel", "Style", "Real Estate"]
-      },
-      {
-        title: "Columns",
-        items: ["36 Hours", "Ask Well", "Modern Love", "Where to Eat", "Social Q’s"]
-      },
-      {
-        title: "Topics",
-        items: ["Health", "Fitness", "Relationships", "Money", "Home"]
-      },
-      {
-        title: "Newsletters",
-        items: ["The Weekender", "Well"]
-      },
-      {
-        title: "Podcasts",
-        items: ["Modern Love"]
-      }
-    ]
-  },
-
-  "Opinion": {
-    description: "Editorials, guest essays, columns and analysis.",
-    columns: [
-      {
-        title: "Sections",
-        items: ["Opinion", "Guest Essays", "Editorials", "Op-Docs", "Videos", "Letters"]
-      },
-      {
-        title: "Topics",
-        items: ["Politics", "World", "Business", "Tech", "Climate", "Health", "Culture"]
-      },
-      {
-        title: "Columnists",
-        items: ["Politics Opinion", "Business Opinion", "World Opinion", "Tech Opinion"]
-      },
-      {
-        title: "Featured",
-        items: ["Reader Center", "Debate", "Editorial Board"]
-      },
-      {
-        title: "Podcasts",
-        items: ["The Opinions", "Opinion Audio"]
-      }
-    ]
-  },
-
-  "Video": {
-    description: "News videos, explainers, documentaries and visual reporting.",
-    columns: [
-      {
-        title: "Playlists",
-        items: ["Today’s Videos", "U.S.", "Politics", "Immigration", "NY Region"]
-      },
-      {
-        title: "More",
-        items: ["Science", "Business", "Culture", "Books", "Wellness"]
-      },
-      {
-        title: "World",
-        items: ["World", "Africa", "Americas", "Asia", "South Asia"]
-      },
-      {
-        title: "Top Stories",
-        items: ["Donald Trump", "Middle East Crisis", "Russia Ukraine Crisis", "Visual Investigations"]
-      },
-      {
-        title: "More Video",
-        items: ["Opinion Video", "See all videos"]
-      }
-    ]
-  },
-
-  "Audio": {
-    description: "Podcasts and audio journalism.",
-    columns: [
-      {
-        title: "Listen",
-        items: ["The Headlines", "The Daily", "Hard Fork", "The Ezra Klein Show", "Interesting Times"]
-      },
-      {
-        title: "Shows",
-        items: ["The Opinions", "Serial Productions", "The Book Review Podcast", "Modern Love"]
-      },
-      {
-        title: "Featured",
-        items: ["Reporter Reads", "Cannonball", "The Interview", "See all audio"]
-      },
-      {
-        title: "Newsletters",
-        items: ["Audio", "Serial"]
-      },
-      {
-        title: "More",
-        items: ["Markets Audio", "Politics Audio", "Culture Audio"]
-      }
-    ]
-  },
-
-  "Games": {
-    description: "Word games, puzzles, crosswords and logic games.",
-    columns: [
-      {
-        title: "Games",
-        items: ["Wordle", "Connections", "Sudoku", "Mini Crossword", "Spelling Bee"]
-      },
-      {
-        title: "More",
-        items: ["Strands", "Pips", "Tiles", "Letter Boxed", "Crossword"]
-      },
-      {
-        title: "Community",
-        items: ["Spelling Bee Forum", "Wordplay Column", "Wordle Review"]
-      },
-      {
-        title: "Newsletters",
-        items: ["Gameplay", "Easy Mode"]
-      },
-      {
-        title: "Play",
-        items: ["Puzzle Archive", "Daily Challenge"]
-      }
-    ]
-  },
-
-  "Cooking": {
-    description: "Recipes, cooking advice and food inspiration.",
-    columns: [
-      {
-        title: "Cooking",
-        items: ["Recipes", "Breakfast", "Dinner", "Healthy", "Dessert"]
-      },
-      {
-        title: "More",
-        items: ["Easy", "Vegetarian", "Vegan", "Chicken", "Pasta"]
-      },
-      {
-        title: "Editors’ Picks",
-        items: ["Easy Salmon Recipes", "Grilling Recipes", "Newest Recipes", "Slow Cooker Recipes"]
-      },
-      {
-        title: "Newsletters",
-        items: ["Cooking Newsletter", "The Veggie"]
-      },
-      {
-        title: "Guides",
-        items: ["Meal Plan", "Kitchen Tips"]
-      }
-    ]
-  },
-
-  "Wirecutter": {
-    description: "Product reviews, recommendations and buying guides.",
-    columns: [
-      {
-        title: "Reviews",
-        items: ["Kitchen", "Tech", "Sleep", "Appliances", "Home and Garden", "Moving"]
-      },
-      {
-        title: "More",
-        items: ["Travel", "Gifts", "Deals", "Baby and Kid", "Health and Fitness"]
-      },
-      {
-        title: "The Best",
-        items: ["Air Purifier", "Electric Toothbrush", "Office Chair", "Robot Vacuum"]
-      },
-      {
-        title: "Newsletters",
-        items: ["The Recommendation", "Clean Everything"]
-      },
-      {
-        title: "Guides",
-        items: ["Best Picks", "Shopping Guides"]
-      }
-    ]
-  },
-
-  "The Athletic": {
-    description: "Sports coverage, leagues, teams and live analysis.",
-    columns: [
-      {
-        title: "Leagues",
-        items: ["NFL", "NBA", "NHL", "Premier League", "MLB", "College Football"]
-      },
-      {
-        title: "More",
-        items: ["NCAA Men’s", "NCAA Women’s", "Tennis", "F1", "WNBA"]
-      },
-      {
-        title: "Top Stories",
-        items: ["Today’s Headlines", "2026 Men’s World Cup", "Live Scores", "Standings"]
-      },
-      {
-        title: "Newsletters",
-        items: ["The Pulse", "World Cup Briefing"]
-      },
-      {
-        title: "Play",
-        items: ["Connections Sports", "Fantasy"]
-      }
-    ]
-  }
-};
-
-function initNYTMegaMenu() {
-  const nav = document.querySelector("#mainNav");
-  if (!nav) return;
-
-  nav.innerHTML = Object.keys(GIT_MEGA_MENUS)
-    .map(menu => `
-      <div class="nyt-nav-item">
-        <a class="nyt-nav-link" href="category.html?topic=${slugify(menu)}">
-          ${menu} <span>⌄</span>
-        </a>
-
-        <div class="nyt-mega-panel">
-          <div class="nyt-mega-inner">
-            <div class="nyt-mega-intro">
-              <h2>${menu}</h2>
-              <p>${GIT_MEGA_MENUS[menu].description}</p>
-            </div>
-
-            ${GIT_MEGA_MENUS[menu].columns.map(col => `
-              <div class="nyt-mega-col">
-                <h4>${col.title}</h4>
-                ${col.items.map(item => `
-                  <a href="category.html?topic=${slugify(item)}">
-                    ${item}
-                  </a>
-                `).join("")}
-              </div>
-            `).join("")}
-          </div>
-        </div>
-      </div>
-    `).join("");
-}
-
-function getStrictTopicArticles(topic) {
-  const cleanTopic = String(topic || "us").toLowerCase().replace(/-/g, " ");
-
-  return allArticles.filter(article => {
-    const title = String(article.title || "").toLowerCase();
-    const summary = String(article.summary || "").toLowerCase();
-    const content = String(article.content || "").toLowerCase();
-    const category = String(article.category || "").toLowerCase().replace(/-/g, " ");
-    const section = String(article.section || "").toLowerCase().replace(/-/g, " ");
-
-    return (
-      category === cleanTopic ||
-      section === cleanTopic ||
-      title.includes(cleanTopic) ||
-      summary.includes(cleanTopic) ||
-      content.includes(cleanTopic)
-    );
-  });
-}
-
-function renderStrictTopicPage() {
-  const root = document.querySelector("#categoryArticles");
-  if (!root) return;
-
-  const titleBox = document.querySelector("#categoryTitle");
-  const topic = getQueryParam("topic") || "us";
-  const readable = titleCase(topic);
-
-  const articles = getStrictTopicArticles(topic);
-
-  if (titleBox) titleBox.textContent = readable;
-
-  document.title = `${readable} News - Global Intel Times`;
-
-  root.innerHTML = `
-    <section class="strict-category-head">
-      <p class="eyebrow">GLOBAL INTEL TIMES</p>
-      <h1>${readable}</h1>
-      <p>Latest ${readable} news, analysis, updates and explainers.</p>
-    </section>
-
-    ${
-      articles.length
-        ? `<div class="article-grid">${articles.map(articleCard).join("")}</div>`
-        : `<div class="empty-topic">
-             <h2>No ${readable} news found right now.</h2>
-             <p>This page only shows ${readable} related articles. No unrelated news will appear here.</p>
-           </div>`
-    }
-  `;
-}
-
+/* run article page after data loads */
 document.addEventListener("DOMContentLoaded", () => {
-  initNYTMegaMenu();
-
-  if (location.pathname.includes("category.html")) {
-    setTimeout(renderStrictTopicPage, 300);
-  }
+setTimeout(renderArticlePage, 500);
 });
