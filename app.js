@@ -589,6 +589,165 @@ function renderArticlePage() {
   `;
 }
 
+/* ===========================
+   GLOBAL INTEL TIMES
+   MEGA MENU SYSTEM
+=========================== */
+
+const megaItems = document.querySelectorAll(".mega-item");
+const megaWrap = document.getElementById("megaMenuWrap");
+
+let closeTimer = null;
+
+function closeMenus() {
+    document.querySelectorAll(".mega-menu").forEach(menu => {
+        menu.classList.remove("active");
+    });
+
+    megaWrap.classList.remove("active");
+}
+
+function openMenu(name) {
+
+    clearTimeout(closeTimer);
+
+    closeMenus();
+
+    megaWrap.classList.add("active");
+
+    const target = document.getElementById("mega-" + name);
+
+    if (target) {
+        target.classList.add("active");
+    }
+
+}
+
+megaItems.forEach(item => {
+
+    item.addEventListener("mouseenter", () => {
+
+        const menu = item.dataset.menu;
+
+        openMenu(menu);
+
+    });
+
+});
+
+megaWrap.addEventListener("mouseenter", () => {
+
+    clearTimeout(closeTimer);
+
+});
+
+megaWrap.addEventListener("mouseleave", () => {
+
+    closeTimer = setTimeout(() => {
+
+        closeMenus();
+
+    }, 120);
+
+});
+
+document.querySelector(".mega-nav").addEventListener("mouseleave", () => {
+
+    closeTimer = setTimeout(() => {
+
+        closeMenus();
+
+    },120);
+
+});
+
+document.querySelector(".mega-nav").addEventListener("mouseenter", () => {
+
+    clearTimeout(closeTimer);
+
+});
+
+document.addEventListener("click",(e)=>{
+
+    if(
+        !e.target.closest(".mega-nav") &&
+        !e.target.closest(".mega-menu-wrap")
+    ){
+
+        closeMenus();
+
+    }
+
+});
+
+/* ===========================
+   MOBILE ACCORDION
+=========================== */
+
+if(window.innerWidth<900){
+
+    megaItems.forEach(item=>{
+
+        item.addEventListener("click",(e)=>{
+
+            e.preventDefault();
+
+            const menu=item.dataset.menu;
+
+            const target=document.getElementById("mega-"+menu);
+
+            if(target.classList.contains("active")){
+
+                closeMenus();
+
+            }else{
+
+                openMenu(menu);
+
+            }
+
+        });
+
+    });
+
+}
+
+/* ===========================
+   ESC CLOSE
+=========================== */
+
+document.addEventListener("keydown",(e)=>{
+
+    if(e.key==="Escape"){
+
+        closeMenus();
+
+    }
+
+});
+
+/* ===========================
+   STICKY NAV
+=========================== */
+
+const nav=document.querySelector(".mega-nav");
+
+const navTop=nav.offsetTop;
+
+window.addEventListener("scroll",()=>{
+
+    if(window.scrollY>navTop){
+
+        nav.classList.add("sticky-nav");
+
+    }else{
+
+        nav.classList.remove("sticky-nav");
+
+    }
+
+});
+
 setupCookieBanner();
 setupNewsletter();
 updateVisitorCount();
