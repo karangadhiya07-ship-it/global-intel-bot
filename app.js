@@ -1,4 +1,4 @@
-```javascript
+
 /* =========================================================
    GLOBAL INTEL TIMES — app.js v2
    HTML + CSS + Vanilla JS
@@ -1153,4 +1153,3 @@ function articleSchema(article) {
 
 window.updateTradingView = updateTradingView;
 window.loadMoreArticles = loadMoreArticles;
-```
