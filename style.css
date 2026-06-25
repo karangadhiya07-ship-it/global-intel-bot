@@ -897,3 +897,322 @@ z-index:9999;
 box-shadow:0 4px 12px rgba(0,0,0,.08);
 
 }
+/* ===== NYT STYLE LONG HOMEPAGE SECTIONS ===== */
+
+.nyt-alert-board,
+.more-free-section,
+.editorial-row,
+.sports-live,
+.video-home,
+.more-news,
+.athletic-section,
+.well-section,
+.culture-section,
+.audio-section,
+.games-section {
+  max-width: 1240px;
+  margin: 28px auto;
+  padding: 18px 0;
+  border-top: 1px solid #111;
+}
+
+.section-kicker {
+  font-weight: 800;
+  font-size: 18px;
+  margin-bottom: 16px;
+}
+
+.section-kicker span {
+  font-weight: 400;
+  font-style: italic;
+  margin-left: 8px;
+}
+
+.nyt-alert-board {
+  display: grid;
+  grid-template-columns: 260px 1fr 260px;
+  gap: 22px;
+  border: 1px solid #111;
+  padding: 18px;
+}
+
+.live-dot {
+  color: #d0021b;
+  font-weight: 900;
+  font-size: 12px;
+  margin-right: 8px;
+}
+
+.alert-left h2,
+.split-feature h2,
+.sports-feature h2,
+.athletic-left h2,
+.culture-layout h2 {
+  font-size: 30px;
+  line-height: 1.05;
+  margin: 10px 0;
+}
+
+.alert-left ul {
+  margin-left: 18px;
+  color: #333;
+}
+
+.alert-media img,
+.split-feature img,
+.sports-feature img,
+.athletic-center img,
+.culture-layout img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.alert-side {
+  border-left: 1px solid #ddd;
+  padding-left: 16px;
+}
+
+.mini-map-card {
+  border: 1px solid #ddd;
+  padding: 16px;
+  margin-top: 12px;
+  background: #f6f6f6;
+}
+
+.free-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 18px;
+}
+
+.free-grid article {
+  border-right: 1px solid #ddd;
+  padding-right: 14px;
+}
+
+.free-grid img {
+  width: 100%;
+  height: 85px;
+  object-fit: cover;
+  margin-bottom: 8px;
+}
+
+.free-grid h3 {
+  font-size: 19px;
+  line-height: 1.15;
+}
+
+.free-grid span,
+.split-feature span,
+.video-card span {
+  text-transform: uppercase;
+  font-size: 11px;
+  color: #666;
+}
+
+.row-tabs {
+  display: flex;
+  gap: 18px;
+  flex-wrap: wrap;
+  font-size: 14px;
+  margin-bottom: 14px;
+}
+
+.row-tabs a {
+  color: #111;
+}
+
+.split-feature,
+.sports-feature,
+.culture-layout,
+.athletic-layout {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 18px;
+  align-items: stretch;
+}
+
+.split-feature img,
+.sports-feature img {
+  min-height: 300px;
+}
+
+.score-strip {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  border-top: 1px solid #ddd;
+  border-bottom: 1px solid #ddd;
+  margin-bottom: 18px;
+}
+
+.score-strip div {
+  padding: 12px;
+  border-right: 1px solid #ddd;
+}
+
+.score-strip span {
+  display: block;
+  margin-top: 6px;
+}
+
+.video-grid,
+.well-grid,
+.audio-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 18px;
+}
+
+.video-card {
+  position: relative;
+  border-right: 1px solid #ddd;
+  padding-right: 14px;
+}
+
+.video-card img,
+.well-grid img,
+.audio-grid img {
+  width: 100%;
+  height: 210px;
+  object-fit: cover;
+}
+
+.video-card h3,
+.well-grid h3,
+.audio-grid h3 {
+  font-size: 18px;
+  line-height: 1.15;
+  margin-top: 10px;
+}
+
+.play-btn {
+  position: absolute;
+  top: 82px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0,0,0,.75);
+  color: #fff;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 20px;
+}
+
+#moreNewsGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border-top: 1px solid #ddd;
+}
+
+.more-news-card {
+  padding: 16px;
+  border-right: 1px solid #ddd;
+  border-bottom: 1px solid #ddd;
+}
+
+.more-news-card h3 {
+  font-size: 20px;
+  line-height: 1.15;
+}
+
+.more-news-card span {
+  font-size: 11px;
+  text-transform: uppercase;
+  color: #666;
+}
+
+.athletic-layout {
+  grid-template-columns: 280px 1fr 300px;
+}
+
+.athletic-right h3 {
+  border-bottom: 1px solid #ddd;
+  padding: 12px 0;
+}
+
+.culture-layout {
+  grid-template-columns: 280px 1fr 300px;
+}
+
+.culture-layout h3 {
+  border-bottom: 1px solid #ddd;
+  padding: 12px 0;
+}
+
+.games-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  border-top: 1px solid #ddd;
+}
+
+.game-box {
+  padding: 22px;
+  border-right: 1px solid #ddd;
+  min-height: 120px;
+}
+
+.game-box h3 {
+  font-size: 22px;
+}
+
+.homepage-ad {
+  height: 250px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #777;
+  background: #f7f7f7;
+  border-top: 1px solid #ddd;
+  border-bottom: 1px solid #ddd;
+  margin: 36px 0;
+  text-transform: uppercase;
+  font-size: 12px;
+}
+
+.footer-logo {
+  font-size: 34px;
+  font-weight: 900;
+  margin-bottom: 12px;
+}
+
+.footer-links {
+  display: flex;
+  justify-content: center;
+  gap: 18px;
+  margin-bottom: 10px;
+}
+
+/* Mobile */
+@media (max-width: 900px) {
+  .nyt-alert-board,
+  .split-feature,
+  .sports-feature,
+  .athletic-layout,
+  .culture-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .free-grid,
+  .video-grid,
+  .well-grid,
+  .audio-grid,
+  .score-strip,
+  .games-grid,
+  #moreNewsGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .alert-side {
+    border-left: none;
+    padding-left: 0;
+  }
+
+  .video-card img,
+  .well-grid img,
+  .audio-grid img {
+    height: 240px;
+  }
+}
