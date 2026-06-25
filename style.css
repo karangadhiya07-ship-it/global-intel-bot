@@ -662,3 +662,42 @@ a,
     height: 420px;
   }
 }
+.symbol-search-box {
+  position: relative;
+  width: 260px;
+}
+
+#symbolSearch {
+  width: 100%;
+  padding: 11px;
+  border: 1px solid #111;
+  font-weight: 700;
+}
+
+.symbol-suggestions {
+  position: absolute;
+  top: 44px;
+  left: 0;
+  right: 0;
+  background: #fff;
+  border: 1px solid #111;
+  z-index: 9999;
+  display: none;
+  max-height: 260px;
+  overflow-y: auto;
+}
+
+.symbol-suggestions div {
+  padding: 10px;
+  cursor: pointer;
+  border-bottom: 1px solid #eee;
+}
+
+.symbol-suggestions div:hover {
+  background: #111;
+  color: #fff;
+}
+
+.symbol-suggestions small {
+  color: #666;
+}
