@@ -15,56 +15,56 @@ let marketIndex = 0;
 
 const MAX_HOME_ARTICLES = 30;
 
-const FALLBACK_ARTICLES = [
-  {
-    title: "White House Faces New Economic Pressure as Markets Watch Washington",
-    description: "US policymakers continue discussions around inflation, jobs, interest rates and economic growth.",
-    section: "U.S.",
-    source: "Global Intel Times",
-    image: "https://images.unsplash.com/photo-1529107386315-e1a2ed48a620?w=1200",
-    publishedAt: new Date().toISOString()
-  },
-  {
-    title: "Nvidia, Microsoft and Apple Keep AI Investors Focused on Big Tech",
-    description: "Artificial intelligence remains one of the strongest themes across Wall Street and Silicon Valley.",
-    section: "Technology",
-    source: "Global Intel Times",
-    image: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=1200",
-    publishedAt: new Date().toISOString()
-  },
-  {
-    title: "US Stock Market Opens Higher as Traders Track Economic Data",
-    description: "Investors are watching earnings, Treasury yields, inflation data and Federal Reserve signals.",
-    section: "Business",
-    source: "Global Intel Times",
-    image: "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=1200",
-    publishedAt: new Date().toISOString()
-  },
-  {
-    title: "Bitcoin Traders Watch Key Levels as Crypto Volatility Continues",
-    description: "Crypto markets remain active as investors monitor liquidity, institutional demand and global risk sentiment.",
-    section: "Crypto",
-    source: "Global Intel Times",
-    image: "https://images.unsplash.com/photo-1518546305927-5a555bb7020d?w=1200",
-    publishedAt: new Date().toISOString()
-  },
-  {
-    title: "Congress Faces New Debate Over Spending, Taxes and the Economy",
-    description: "Lawmakers are under pressure as voters focus on prices, jobs, housing and national priorities.",
-    section: "Politics",
-    source: "Global Intel Times",
-    image: "https://images.unsplash.com/photo-1541872705-1f73c6400ec9?w=1200",
-    publishedAt: new Date().toISOString()
-  },
-  {
-    title: "Storm Systems Bring Weather Concerns Across Parts of the United States",
-    description: "Forecast models show changing weather patterns that could affect travel, energy demand and local communities.",
-    section: "Weather",
-    source: "Global Intel Times",
-    image: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=1200",
-    publishedAt: new Date().toISOString()
-  }
+const fallbackImages = [
+  "https://images.unsplash.com/photo-1529107386315-e1a2ed48a620?w=1200",
+  "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=1200",
+  "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=1200",
+  "https://images.unsplash.com/photo-1518546305927-5a555bb7020d?w=1200",
+  "https://images.unsplash.com/photo-1541872705-1f73c6400ec9?w=1200",
+  "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=1200"
 ];
+
+const FALLBACK_ARTICLES = [
+  ["White House Faces New Economic Pressure", "US policymakers continue discussions around inflation, jobs, interest rates and economic growth.", "U.S."],
+  ["Nvidia And Microsoft Lead AI Market Expansion", "Artificial intelligence investments continue driving major technology companies higher.", "Technology"],
+  ["Bitcoin Traders Watch Key Resistance Levels", "Crypto investors remain focused on market liquidity and institutional demand.", "Crypto"],
+  ["US Stock Market Opens Higher", "Investors react to economic data and corporate earnings across Wall Street.", "Business"],
+  ["Congress Faces New Debate Over Spending And Taxes", "Lawmakers focus on taxes, budgets, jobs and national priorities.", "Politics"],
+  ["Weather Systems Bring Travel Concerns Across The United States", "Changing weather patterns could affect travel and energy demand.", "Weather"],
+  ["Apple Investors Watch New Product Strategy", "Wall Street continues to monitor Apple as investors look for growth in services and AI.", "Technology"],
+  ["Federal Reserve Signals Remain In Focus", "Markets are watching inflation data, employment numbers and interest rate expectations.", "Business"],
+  ["US Politics Enters A Critical Week", "Washington remains focused on policy, elections and economic priorities.", "Politics"],
+  ["AI Companies Race To Build Next Generation Tools", "Technology firms are investing heavily in artificial intelligence infrastructure.", "Technology"],
+  ["Bitcoin Market Volatility Continues", "Crypto traders remain alert as digital assets move with global risk sentiment.", "Crypto"],
+  ["Wall Street Watches Big Tech Earnings", "Investors are focused on Microsoft, Nvidia, Apple, Amazon and Meta results.", "Business"],
+  ["White House Announces New Policy Priorities", "The administration is expected to focus on economic growth, jobs and national security.", "U.S."],
+  ["Global Markets Track US Economic Signals", "World markets are responding to American inflation, rate and corporate data.", "World"],
+  ["Microsoft Expands AI Infrastructure", "Cloud and artificial intelligence spending remain key growth areas for the company.", "Technology"],
+  ["Tesla Shares Move As EV Competition Grows", "Investors are watching electric vehicle demand and pricing pressure.", "Business"],
+  ["Meta Pushes Forward With AI And Advertising", "Meta continues to invest in AI tools while expanding its advertising business.", "Technology"],
+  ["Amazon Focuses On Cloud And Retail Growth", "Amazon investors are tracking AWS performance and consumer demand.", "Business"],
+  ["Google Parent Alphabet Watches AI Search Shift", "Alphabet remains focused on search, cloud and AI competition.", "Technology"],
+  ["Gold Prices Hold Firm As Investors Watch Rates", "Precious metals remain in focus as traders monitor inflation and central bank policy.", "Markets"],
+  ["Silver Market Tracks Industrial Demand", "Silver prices are influenced by industrial use, dollar movement and investor demand.", "Markets"],
+  ["US Economy Shows Mixed Signals", "New data points to strength in some sectors while households continue to watch prices.", "Business"],
+  ["Technology Stocks Continue To Drive Market Momentum", "Large-cap technology names remain central to market performance.", "Technology"],
+  ["Crypto Investors Watch Regulation News", "Digital asset markets remain focused on policy, adoption and institutional flows.", "Crypto"],
+  ["Congressional Leaders Debate Budget Priorities", "Lawmakers face pressure over spending, taxation and economic policy.", "Politics"],
+  ["Weather Risks Affect Travel And Energy Markets", "Storm systems and temperature changes may influence transportation and demand.", "Weather",
+  ],
+  ["US Markets Prepare For Another Active Session", "Traders are watching earnings, Treasury yields and global headlines.", "Markets"],
+  ["AI Chip Demand Keeps Nvidia In Focus", "Nvidia remains a key company for investors tracking artificial intelligence growth.", "Technology"],
+  ["Bitcoin And Gold Draw Investor Attention", "Alternative assets are being watched as investors evaluate risk and inflation.", "Markets"],
+  ["Washington And Wall Street Watch Inflation Data", "Policy and market decisions remain tied to the latest inflation indicators.", "U.S."]
+].map((a, i) => ({
+  title: a[0],
+  description: a[1],
+  section: a[2],
+  source: "Global Intel Times",
+  image: fallbackImages[i % fallbackImages.length],
+  publishedAt: new Date().toISOString(),
+  link: "#"
+}));
 
 const blockedKeywords = [
   "prediction", "betting", "odds", "casino", "promo code", "coupon",
@@ -112,11 +112,12 @@ function detectSection(title) {
   const t = String(title || "").toLowerCase();
 
   if (t.includes("bitcoin") || t.includes("crypto") || t.includes("ethereum")) return "Crypto";
+  if (t.includes("gold") || t.includes("silver")) return "Markets";
   if (t.includes("stock") || t.includes("market") || t.includes("economy") || t.includes("fed") || t.includes("nasdaq") || t.includes("inflation")) return "Business";
   if (t.includes("ai") || t.includes("openai") || t.includes("technology") || t.includes("nvidia") || t.includes("microsoft") || t.includes("apple")) return "Technology";
   if (t.includes("weather") || t.includes("storm") || t.includes("rain")) return "Weather";
   if (t.includes("trump") || t.includes("biden") || t.includes("election") || t.includes("white house") || t.includes("congress")) return "Politics";
-  if (t.includes("new york") || t.includes("nyc")) return "U.S.";
+  if (t.includes("new york") || t.includes("nyc") || t.includes("u.s.") || t.includes("us ")) return "U.S.";
 
   return "News";
 }
@@ -213,6 +214,7 @@ function updateTrendAnalysis() {
     Crypto: allNews.filter(x => x.section === "Crypto").length,
     Technology: allNews.filter(x => x.section === "Technology").length,
     Business: allNews.filter(x => x.section === "Business").length,
+    Markets: allNews.filter(x => x.section === "Markets").length,
     Weather: allNews.filter(x => x.section === "Weather").length,
     Politics: allNews.filter(x => x.section === "Politics").length,
     News: allNews.filter(x => x.section === "News").length
@@ -225,6 +227,7 @@ function updateTrendAnalysis() {
     counts.Crypto * 10 +
     counts.Technology * 10 +
     counts.Business * 9 +
+    counts.Markets * 8 +
     counts.Politics * 8 +
     counts.Weather * 6 +
     allNews.length * 2
@@ -235,7 +238,7 @@ function updateTrendAnalysis() {
     <p><b>Top Category:</b> ${topCategory}</p>
     <p><b>Total Headlines:</b> ${allNews.length}</p>
     <p><b>AI Mentions:</b> ${counts.Technology}</p>
-    <p><b>Finance Mentions:</b> ${counts.Business}</p>
+    <p><b>Finance Mentions:</b> ${counts.Business + counts.Markets}</p>
     <p><b>Crypto Mentions:</b> ${counts.Crypto}</p>
     <p><b>Weather Mentions:</b> ${counts.Weather}</p>
   `;
@@ -292,7 +295,26 @@ function updateHomeSchema() {
   document.head.appendChild(schema);
 }
 
+function fillToThirty() {
+  if (allNews.length >= MAX_HOME_ARTICLES) return;
+
+  let index = 0;
+
+  while (allNews.length < MAX_HOME_ARTICLES) {
+    const item = FALLBACK_ARTICLES[index % FALLBACK_ARTICLES.length];
+
+    allNews.push({
+      ...item,
+      title: item.title
+    });
+
+    index++;
+  }
+}
+
 function renderPage() {
+  fillToThirty();
+
   allNews = allNews.slice(0, MAX_HOME_ARTICLES);
   localStorage.setItem("articles", JSON.stringify(allNews));
 
@@ -319,6 +341,7 @@ async function fetchNews(topic) {
   isLoading = true;
 
   const cached = localStorage.getItem("cachedNews");
+
   if (cached) {
     try {
       allNews = JSON.parse(cached);
@@ -368,6 +391,7 @@ async function fetchNews(topic) {
     allNews = fresh.slice(0, MAX_HOME_ARTICLES);
 
     if (allNews.length) {
+      fillToThirty();
       localStorage.setItem("cachedNews", JSON.stringify(allNews));
       renderPage();
     } else {
@@ -420,6 +444,9 @@ function acceptCookies() {
   const banner = document.getElementById("cookieBanner");
   if (banner) banner.style.display = "none";
 }
+
+window.acceptCookies = acceptCookies;
+window.trackArticleClick = trackArticleClick;
 
 function setupNewsletter() {
   const input = document.querySelector(".newsletter-input");
