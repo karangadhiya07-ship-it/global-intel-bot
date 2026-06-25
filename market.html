@@ -60,12 +60,11 @@
     <p id="marketSubtitle">Live market chart and analysis</p>
 
     <div class="market-tools">
-      <select id="symbolSelect">
+     <select id="symbolSelect" onchange="changeSymbol()">
         <option>AAPL</option><option>MSFT</option><option>NVDA</option><option>AMZN</option>
         <option>META</option><option>GOOGL</option><option>TSLA</option><option>BTC</option>
         <option>GOLD</option><option>SILVER</option>
       </select>
-      <button onclick="changeSymbol()">Open Symbol</button>
       <button onclick="addWatchlist()">+ Add Watchlist</button>
       <button onclick="toggleDark()">Dark Mode</button>
     </div>
@@ -188,22 +187,63 @@ new TradingView.widget({
   container_id:"tradingview_chart"
 });
 
-function changeSymbol(){
-  const s = document.getElementById("symbolSelect").value;
-  location.href = `market.html?symbol=${s}`;
+function changeSymbol() {
+    const symbol = document.getElementById("symbolSelect").value;
+    window.location.href = `market.html?symbol=${symbol}`;
 }
 
-function addWatchlist(){
-  const list = JSON.parse(localStorage.getItem("watchlist") || "[]");
-  if(!list.includes(rawSymbol)) list.push(rawSymbol);
-  localStorage.setItem("watchlist", JSON.stringify(list));
-  renderWatchlist();
+function addWatchlist() {
+
+    let watchlist = JSON.parse(localStorage.getItem("watchlist") || "[]");
+
+    if (!watchlist.includes(rawSymbol)) {
+        watchlist.push(rawSymbol);
+    }
+
+    localStorage.setItem("watchlist", JSON.stringify(watchlist));
+
+    renderWatchlist();
+
+    alert(rawSymbol + " added to Watchlist");
 }
 
-function renderWatchlist(){
-  const box = document.getElementById("watchlistBox");
-  const list = JSON.parse(localStorage.getItem("watchlist") || "[]");
-  box.innerHTML = list.length ? list.map(s => `<a class="mini-card" href="market.html?symbol=${s}"><b>${s}</b><br>Open chart</a>`).join("") : "<p>No watchlist yet.</p>";
+function renderWatchlist() {
+
+    const box = document.getElementById("watchlistBox");
+
+    let watchlist = JSON.parse(localStorage.getItem("watchlist") || "[]");
+
+    if (watchlist.length === 0) {
+        box.innerHTML = "<p>No stocks in watchlist.</p>";
+        return;
+    }
+
+    box.innerHTML = watchlist.map(symbol => `
+        <div class="mini-card">
+            <b>${symbol}</b><br><br>
+
+            <button onclick="window.location='market.html?symbol=${symbol}'">
+                Open
+            </button>
+
+            <button onclick="removeWatch('${symbol}')">
+                Remove
+            </button>
+
+        </div>
+    `).join("");
+}
+
+  function removeWatch(symbol){
+
+    let watchlist = JSON.parse(localStorage.getItem("watchlist") || "[]");
+
+    watchlist = watchlist.filter(item => item !== symbol);
+
+    localStorage.setItem("watchlist", JSON.stringify(watchlist));
+
+    renderWatchlist();
+
 }
 
 function toggleDark(){
