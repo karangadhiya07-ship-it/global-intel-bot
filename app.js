@@ -312,32 +312,25 @@ function openMegaPanel(menuName) {
 
   if (!wrap || !menu) return;
 
-  let html = `
-    <div class="nyt-panel">
-      <div class="nyt-panel-title">
-        <h2>${menuName}</h2>
-        <p>${menu.desc}</p>
-      </div>
-  `;
+  let html = "";
+  html += '<div class="nyt-panel">';
+  html += '<div class="nyt-panel-title">';
+  html += '<h2>' + menuName + '</h2>';
+  html += '<p>' + menu.desc + '</p>';
+  html += '</div>';
 
-  menu.cols.forEach(col => {
-    html += `
-      <div class="nyt-panel-col">
-        <h4>${col[0]}</h4>
-    `;
+  menu.cols.forEach(function (col) {
+    html += '<div class="nyt-panel-col">';
+    html += '<h4>' + col[0] + '</h4>';
 
     for (let i = 1; i < col.length; i++) {
-      html += `
-        <a href="category.html?topic=${slugify(col[i])}">
-          ${col[i]}
-        </a>
-      `;
+      html += '<a href="category.html?topic=' + slugify(col[i]) + '">' + col[i] + '</a>';
     }
 
-    html += `</div>`;
+    html += '</div>';
   });
 
-  html += `</div>`;
+  html += '</div>';
 
   wrap.innerHTML = html;
   wrap.classList.add("active");
