@@ -1,4 +1,3 @@
-```js
 export async function onRequestGet(context) {
   const { request, env } = context;
 
@@ -379,4 +378,3 @@ function json(data) {
     }
   });
 }
-```
