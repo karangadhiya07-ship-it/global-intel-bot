@@ -3,314 +3,244 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
   <title>Market Data | Global Intel Times</title>
-  <meta name="description" content="Live market charts, stock analysis, crypto analysis and finance updates from Global Intel Times." />
-
-  <meta property="og:title" content="Market Data | Global Intel Times" />
-  <meta property="og:description" content="Track AAPL, MSFT, NVDA, AMZN, META, GOOGL, TSLA, BTC, GOLD and SILVER." />
-  <meta property="og:type" content="website" />
-
-  <meta name="twitter:card" content="summary_large_image" />
-
+  <meta name="description" content="Live market charts, watchlist, top gainers, top losers and market analysis." />
   <link rel="stylesheet" href="style.css" />
+
+  <style>
+    .market-tools{display:flex;gap:10px;flex-wrap:wrap;margin:15px 0}
+    .market-tools select,.market-tools button{padding:10px;border:1px solid #111;background:#fff;font-weight:700;cursor:pointer}
+    .market-grid{display:grid;grid-template-columns:1fr 320px;gap:20px}
+    .chart-box{height:560px;width:100%;border:1px solid #ddd;overflow:hidden}
+    #tradingview_chart,#tradingview_chart iframe{height:100%!important;width:100%!important}
+    .stat-card{border:1px solid #ddd;padding:15px;margin-bottom:10px}
+    .stat-card span{display:block;color:#666;font-size:13px}
+    .stat-card strong{font-size:22px}
+    .market-section{margin-top:25px;border-top:2px solid #111;padding-top:15px}
+    .market-list-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+    .mini-card{border:1px solid #ddd;padding:12px}
+    .up{color:green}.down{color:#b00020}
+    .ad-slot{border:2px dashed #bbb;height:120px;display:flex;align-items:center;justify-content:center;margin:20px 0;color:#777}
+    .dark-mode{background:#0f1115;color:#eee}
+    .dark-mode .masthead,.dark-mode .nav,.dark-mode .stat-card,.dark-mode .mini-card,.dark-mode .chart-box,.dark-mode table{background:#151821;color:#eee;border-color:#333}
+    @media(max-width:850px){.market-grid{grid-template-columns:1fr}.chart-box{height:420px}.market-list-grid{grid-template-columns:1fr}}
+  </style>
 </head>
 
 <body>
 
-  <div class="top-strip">
-    <div id="todayDate">Loading date...</div>
-    <div class="market-mini">LIVE MARKETS</div>
+<div class="top-strip">
+  <div id="todayDate">Loading date...</div>
+  <div class="market-mini">LIVE MARKETS</div>
+</div>
+
+<header class="masthead">
+  <a href="index.html"><h1>Global Intel Times</h1></a>
+  <p>USA News • Markets • AI • Politics • World Affairs</p>
+</header>
+
+<nav class="nav">
+  <a href="index.html">Home</a>
+  <a href="market.html?symbol=AAPL">AAPL</a>
+  <a href="market.html?symbol=MSFT">MSFT</a>
+  <a href="market.html?symbol=NVDA">NVDA</a>
+  <a href="market.html?symbol=AMZN">AMZN</a>
+  <a href="market.html?symbol=META">META</a>
+  <a href="market.html?symbol=GOOGL">GOOGL</a>
+  <a href="market.html?symbol=TSLA">TSLA</a>
+  <a href="market.html?symbol=BTC">BTC</a>
+  <a href="market.html?symbol=GOLD">GOLD</a>
+  <a href="market.html?symbol=SILVER">SILVER</a>
+</nav>
+
+<main class="market-page">
+
+  <section class="market-header">
+    <h1 id="marketTitle">Market</h1>
+    <p id="marketSubtitle">Live market chart and analysis</p>
+
+    <div class="market-tools">
+      <select id="symbolSelect">
+        <option>AAPL</option><option>MSFT</option><option>NVDA</option><option>AMZN</option>
+        <option>META</option><option>GOOGL</option><option>TSLA</option><option>BTC</option>
+        <option>GOLD</option><option>SILVER</option>
+      </select>
+      <button onclick="changeSymbol()">Open Symbol</button>
+      <button onclick="addWatchlist()">+ Add Watchlist</button>
+      <button onclick="toggleDark()">Dark Mode</button>
+    </div>
+  </section>
+
+  <section class="market-grid">
+    <div class="chart-box">
+      <div id="tradingview_chart"></div>
+    </div>
+
+    <aside>
+      <div class="stat-card"><span>Market Cap</span><strong id="marketCap">Loading...</strong></div>
+      <div class="stat-card"><span>P/E Ratio</span><strong id="peRatio">Loading...</strong></div>
+      <div class="stat-card"><span>52 Week Range</span><strong id="weekRange">Dynamic</strong></div>
+      <div class="stat-card"><span>Analyst Signal</span><strong id="analystSignal">Loading...</strong></div>
+      <div class="stat-card"><span>EPS</span><strong id="eps">Loading...</strong></div>
+      <div class="stat-card"><span>Dividend</span><strong id="dividend">Loading...</strong></div>
+    </aside>
+  </section>
+
+  <div class="ad-slot">Advertisement</div>
+
+  <section class="market-section">
+    <h2>Market Analysis</h2>
+    <p id="marketAnalysis">Loading market analysis...</p>
+  </section>
+
+  <section class="market-section">
+    <h2>Your Watchlist</h2>
+    <div id="watchlistBox" class="market-list-grid"></div>
+  </section>
+
+  <section class="market-section">
+    <h2>Top Gainers</h2>
+    <div id="gainersBox" class="market-list-grid"></div>
+  </section>
+
+  <section class="market-section">
+    <h2>Top Losers</h2>
+    <div id="losersBox" class="market-list-grid"></div>
+  </section>
+
+  <section class="market-section">
+    <h2>Related Market News</h2>
+    <div id="relatedNewsBox" class="market-list-grid"></div>
+  </section>
+
+  <section class="market-section">
+    <h2>Related Companies</h2>
+    <table class="related-table">
+      <thead>
+        <tr><th>Symbol</th><th>Company / Asset</th><th>Sector</th></tr>
+      </thead>
+      <tbody id="relatedCompanies"></tbody>
+    </table>
+  </section>
+
+</main>
+
+<footer class="footer">
+  <a href="about.html">About</a>
+  <a href="contact.html">Contact</a>
+  <a href="privacy.html">Privacy</a>
+  <p>© 2026 Global Intel Times. All rights reserved.</p>
+</footer>
+
+<script src="https://s3.tradingview.com/tv.js"></script>
+
+<script>
+const params = new URLSearchParams(window.location.search);
+const rawSymbol = (params.get("symbol") || "AAPL").toUpperCase();
+
+document.getElementById("todayDate").textContent = new Date().toLocaleDateString("en-US", {
+  weekday:"long", year:"numeric", month:"long", day:"numeric"
+});
+
+const marketData = {
+  AAPL:{tv:"NASDAQ:AAPL",name:"Apple Inc.",cap:"$3T+",pe:"High 20s",eps:"6.40+",dividend:"Yes",signal:"Moderate Buy",sector:"Technology",analysis:"Apple remains one of the most closely watched technology stocks. Investors are focused on iPhone demand, services revenue, AI strategy and capital returns.",related:[["MSFT","Microsoft","Technology"],["GOOGL","Alphabet","Technology"],["AMZN","Amazon","Cloud / Retail"]]},
+  MSFT:{tv:"NASDAQ:MSFT",name:"Microsoft Corporation",cap:"$3T+",pe:"High 30s",eps:"11+",dividend:"Yes",signal:"Buy",sector:"AI / Cloud",analysis:"Microsoft continues to benefit from cloud growth and AI demand. Azure, enterprise software and Copilot adoption remain major themes.",related:[["AAPL","Apple","Technology"],["NVDA","Nvidia","AI Chips"],["GOOGL","Alphabet","Cloud"]]},
+  NVDA:{tv:"NASDAQ:NVDA",name:"Nvidia Corporation",cap:"$3T+",pe:"Growth Premium",eps:"Strong",dividend:"Low",signal:"Strong Buy",sector:"AI Chips",analysis:"Nvidia remains central to the AI infrastructure boom. Investors watch data center demand, margins and chip supply.",related:[["MSFT","Microsoft","AI Cloud"],["AMD","AMD","Semiconductors"],["AVGO","Broadcom","Chips"]]},
+  AMZN:{tv:"NASDAQ:AMZN",name:"Amazon.com Inc.",cap:"$2T+",pe:"Growth",eps:"Growing",dividend:"No",signal:"Buy",sector:"Cloud / Retail",analysis:"Amazon is watched for AWS growth, advertising revenue, retail margins and AI spending.",related:[["MSFT","Microsoft","Cloud"],["GOOGL","Alphabet","Cloud"],["META","Meta","Ads"]]},
+  META:{tv:"NASDAQ:META",name:"Meta Platforms Inc.",cap:"$1T+",pe:"Mid 20s",eps:"Strong",dividend:"Yes",signal:"Buy",sector:"Social / AI",analysis:"Meta remains focused on advertising strength, AI tools and user engagement.",related:[["GOOGL","Alphabet","Ads"],["AMZN","Amazon","Ads"],["SNAP","Snap","Social"]]},
+  GOOGL:{tv:"NASDAQ:GOOGL",name:"Alphabet Inc.",cap:"$2T+",pe:"Mid 20s",eps:"Strong",dividend:"Yes",signal:"Buy",sector:"Search / AI",analysis:"Alphabet investors watch AI search, YouTube, cloud growth and regulatory pressure.",related:[["MSFT","Microsoft","AI"],["META","Meta","Ads"],["AMZN","Amazon","Cloud"]]},
+  TSLA:{tv:"NASDAQ:TSLA",name:"Tesla Inc.",cap:"Large Cap",pe:"High Growth",eps:"Volatile",dividend:"No",signal:"Hold",sector:"EV",analysis:"Tesla remains volatile as investors monitor EV demand, margins, autonomous driving and competition.",related:[["RIVN","Rivian","EV"],["GM","General Motors","Auto"],["F","Ford","Auto"]]},
+  BTC:{tv:"BINANCE:BTCUSDT",name:"Bitcoin",cap:"Crypto Leader",pe:"N/A",eps:"N/A",dividend:"No",signal:"Volatile",sector:"Crypto",analysis:"Bitcoin remains the most important crypto asset. Traders watch ETF demand, liquidity, regulation and macro risk sentiment.",related:[["ETH","Ethereum","Crypto"],["SOL","Solana","Crypto"],["COIN","Coinbase","Crypto Equity"]]},
+  GOLD:{tv:"TVC:GOLD",name:"Gold",cap:"Global Commodity",pe:"N/A",eps:"N/A",dividend:"N/A",signal:"Defensive",sector:"Commodity",analysis:"Gold is watched as a hedge against inflation, currency risk and geopolitical uncertainty.",related:[["SILVER","Silver","Commodity"],["GLD","Gold ETF","ETF"],["GDX","Gold Miners","ETF"]]},
+  SILVER:{tv:"TVC:SILVER",name:"Silver",cap:"Global Commodity",pe:"N/A",eps:"N/A",dividend:"N/A",signal:"Neutral",sector:"Commodity",analysis:"Silver moves with precious metals demand and industrial demand. Investors watch the dollar, rates and manufacturing trends.",related:[["GOLD","Gold","Commodity"],["SLV","Silver ETF","ETF"],["COPPER","Copper","Commodity"]]}
+};
+
+const current = marketData[rawSymbol] || marketData.AAPL;
+document.getElementById("symbolSelect").value = rawSymbol in marketData ? rawSymbol : "AAPL";
+
+document.title = `${rawSymbol} Market Data | Global Intel Times`;
+document.getElementById("marketTitle").textContent = `${rawSymbol} — ${current.name}`;
+document.getElementById("marketSubtitle").textContent = `${current.sector} live chart, analysis and related assets.`;
+document.getElementById("marketCap").textContent = current.cap;
+document.getElementById("peRatio").textContent = current.pe;
+document.getElementById("eps").textContent = current.eps;
+document.getElementById("dividend").textContent = current.dividend;
+document.getElementById("analystSignal").textContent = current.signal;
+document.getElementById("marketAnalysis").textContent = current.analysis;
+
+document.getElementById("relatedCompanies").innerHTML = current.related.map(row => `
+<tr>
+  <td><a href="market.html?symbol=${row[0]}">${row[0]}</a></td>
+  <td>${row[1]}</td>
+  <td>${row[2]}</td>
+</tr>`).join("");
+
+new TradingView.widget({
+  autosize:true,
+  symbol:current.tv,
+  interval:"D",
+  timezone:"Etc/UTC",
+  theme:"light",
+  style:"1",
+  locale:"en",
+  enable_publishing:false,
+  allow_symbol_change:true,
+  container_id:"tradingview_chart"
+});
+
+function changeSymbol(){
+  const s = document.getElementById("symbolSelect").value;
+  location.href = `market.html?symbol=${s}`;
+}
+
+function addWatchlist(){
+  const list = JSON.parse(localStorage.getItem("watchlist") || "[]");
+  if(!list.includes(rawSymbol)) list.push(rawSymbol);
+  localStorage.setItem("watchlist", JSON.stringify(list));
+  renderWatchlist();
+}
+
+function renderWatchlist(){
+  const box = document.getElementById("watchlistBox");
+  const list = JSON.parse(localStorage.getItem("watchlist") || "[]");
+  box.innerHTML = list.length ? list.map(s => `<a class="mini-card" href="market.html?symbol=${s}"><b>${s}</b><br>Open chart</a>`).join("") : "<p>No watchlist yet.</p>";
+}
+
+function toggleDark(){
+  document.body.classList.toggle("dark-mode");
+  localStorage.setItem("darkMode", document.body.classList.contains("dark-mode") ? "yes" : "no");
+}
+
+if(localStorage.getItem("darkMode") === "yes") document.body.classList.add("dark-mode");
+
+const gainers = [
+  ["NVDA","+2.31%"],["AAPL","+1.24%"],["META","+1.09%"],["MSFT","+0.82%"],["GOOGL","+0.55%"]
+];
+
+const losers = [
+  ["TSLA","-1.76%"],["AMZN","-0.44%"],["SILVER","-0.22%"]
+];
+
+document.getElementById("gainersBox").innerHTML = gainers.map(x => `<a class="mini-card" href="market.html?symbol=${x[0]}"><b>${x[0]}</b><br><span class="up">${x[1]}</span></a>`).join("");
+document.getElementById("losersBox").innerHTML = losers.map(x => `<a class="mini-card" href="market.html?symbol=${x[0]}"><b>${x[0]}</b><br><span class="down">${x[1]}</span></a>`).join("");
+
+const relatedNews = [
+  `${rawSymbol} investors watch latest market signals`,
+  `${rawSymbol} remains active as traders track Wall Street`,
+  `Analysts review ${rawSymbol} outlook amid changing economy`,
+  `${rawSymbol} chart shows key levels for investors`,
+  `Market volatility keeps ${rawSymbol} in focus`
+];
+
+document.getElementById("relatedNewsBox").innerHTML = relatedNews.map((t,i)=>`
+  <div class="mini-card">
+    <b>${t}</b>
+    <p>Global Intel Times market desk is tracking this developing market story.</p>
   </div>
+`).join("");
 
-  <header class="masthead">
-    <a href="index.html">
-      <h1>Global Intel Times</h1>
-    </a>
-    <p>USA News • Markets • AI • Politics • World Affairs</p>
-  </header>
-
-  <nav class="nav">
-    <a href="index.html">Home</a>
-    <a href="market.html?symbol=AAPL">AAPL</a>
-    <a href="market.html?symbol=MSFT">MSFT</a>
-    <a href="market.html?symbol=NVDA">NVDA</a>
-    <a href="market.html?symbol=AMZN">AMZN</a>
-    <a href="market.html?symbol=META">META</a>
-    <a href="market.html?symbol=GOOGL">GOOGL</a>
-    <a href="market.html?symbol=TSLA">TSLA</a>
-    <a href="market.html?symbol=BTC">BTC</a>
-    <a href="market.html?symbol=GOLD">GOLD</a>
-    <a href="market.html?symbol=SILVER">SILVER</a>
-  </nav>
-
-  <main class="market-page">
-
-    <section class="market-header">
-      <h1 id="marketTitle">Market</h1>
-      <p id="marketSubtitle">Live market chart and analysis</p>
-    </section>
-
-    <section class="market-grid">
-
-      <div class="chart-box">
-       <div id="tradingview_chart" style="height:560px;width:100%;"></div>
-      </div>
-
-      <aside class="market-stats">
-        <div class="stat-card">
-          <span>Market Cap</span>
-          <strong id="marketCap">Loading...</strong>
-        </div>
-
-        <div class="stat-card">
-          <span>P/E Ratio</span>
-          <strong id="peRatio">Loading...</strong>
-        </div>
-
-        <div class="stat-card">
-          <span>52 Week Range</span>
-          <strong id="weekRange">Loading...</strong>
-        </div>
-
-        <div class="stat-card">
-          <span>Analyst Signal</span>
-          <strong id="analystSignal">Loading...</strong>
-        </div>
-      </aside>
-
-    </section>
-
-    <section class="analysis-box">
-      <h2>Market Analysis</h2>
-      <p id="marketAnalysis">
-        Loading market analysis...
-      </p>
-    </section>
-
-    <section class="analysis-box">
-      <h2>Related Companies</h2>
-
-      <table class="related-table">
-        <thead>
-          <tr>
-            <th>Symbol</th>
-            <th>Company / Asset</th>
-            <th>Sector</th>
-          </tr>
-        </thead>
-        <tbody id="relatedCompanies">
-          <tr>
-            <td>Loading</td>
-            <td>Loading</td>
-            <td>Loading</td>
-          </tr>
-        </tbody>
-      </table>
-    </section>
-
-  </main>
-
-  <footer class="footer">
-    <a href="about.html">About</a>
-    <a href="contact.html">Contact</a>
-    <a href="privacy.html">Privacy</a>
-    <p>© 2026 Global Intel Times. All rights reserved.</p>
-  </footer>
-
-  <script src="https://s3.tradingview.com/tv.js"></script>
-
-  <script>
-    const params = new URLSearchParams(window.location.search);
-    const rawSymbol = (params.get("symbol") || "AAPL").toUpperCase();
-
-    const marketData = {
-      AAPL: {
-        tv: "NASDAQ:AAPL",
-        name: "Apple Inc.",
-        cap: "$3T+",
-        pe: "High 20s",
-        range: "Dynamic",
-        signal: "Moderate Buy",
-        sector: "Technology",
-        analysis: "Apple remains one of the most closely watched technology stocks. Investors are focused on iPhone demand, services revenue, AI strategy and capital returns.",
-        related: [
-          ["MSFT", "Microsoft", "Technology"],
-          ["GOOGL", "Alphabet", "Technology"],
-          ["AMZN", "Amazon", "Consumer / Cloud"]
-        ]
-      },
-      MSFT: {
-        tv: "NASDAQ:MSFT",
-        name: "Microsoft Corporation",
-        cap: "$3T+",
-        pe: "High 30s",
-        range: "Dynamic",
-        signal: "Buy",
-        sector: "Technology",
-        analysis: "Microsoft continues to benefit from cloud growth and artificial intelligence demand. Azure, enterprise software and AI integration remain major investor themes.",
-        related: [
-          ["AAPL", "Apple", "Technology"],
-          ["NVDA", "Nvidia", "Semiconductors"],
-          ["GOOGL", "Alphabet", "Technology"]
-        ]
-      },
-      NVDA: {
-        tv: "NASDAQ:NVDA",
-        name: "Nvidia Corporation",
-        cap: "$3T+",
-        pe: "Growth Premium",
-        range: "Dynamic",
-        signal: "Strong Buy",
-        sector: "Semiconductors / AI",
-        analysis: "Nvidia remains central to the AI infrastructure boom. Investors are focused on data center demand, chip supply, margins and competition.",
-        related: [
-          ["MSFT", "Microsoft", "AI / Cloud"],
-          ["AMD", "Advanced Micro Devices", "Semiconductors"],
-          ["AVGO", "Broadcom", "Semiconductors"]
-        ]
-      },
-      AMZN: {
-        tv: "NASDAQ:AMZN",
-        name: "Amazon.com Inc.",
-        cap: "$2T+",
-        pe: "Growth",
-        range: "Dynamic",
-        signal: "Buy",
-        sector: "E-commerce / Cloud",
-        analysis: "Amazon is watched for AWS growth, retail margins, advertising revenue and AI investment across cloud infrastructure.",
-        related: [
-          ["MSFT", "Microsoft", "Cloud"],
-          ["GOOGL", "Alphabet", "Cloud / Ads"],
-          ["META", "Meta", "Advertising"]
-        ]
-      },
-      META: {
-        tv: "NASDAQ:META",
-        name: "Meta Platforms Inc.",
-        cap: "$1T+",
-        pe: "Mid 20s",
-        range: "Dynamic",
-        signal: "Buy",
-        sector: "Social Media / AI",
-        analysis: "Meta remains focused on advertising strength, AI tools, user growth and long-term investment in new platforms.",
-        related: [
-          ["GOOGL", "Alphabet", "Advertising"],
-          ["SNAP", "Snap", "Social Media"],
-          ["AMZN", "Amazon", "Advertising"]
-        ]
-      },
-      GOOGL: {
-        tv: "NASDAQ:GOOGL",
-        name: "Alphabet Inc.",
-        cap: "$2T+",
-        pe: "Mid 20s",
-        range: "Dynamic",
-        signal: "Buy",
-        sector: "Search / Cloud / AI",
-        analysis: "Alphabet investors are watching AI search, YouTube, cloud growth, advertising trends and regulatory pressure.",
-        related: [
-          ["MSFT", "Microsoft", "AI / Cloud"],
-          ["META", "Meta", "Advertising"],
-          ["AMZN", "Amazon", "Cloud"]
-        ]
-      },
-      TSLA: {
-        tv: "NASDAQ:TSLA",
-        name: "Tesla Inc.",
-        cap: "Large Cap",
-        pe: "High Growth",
-        range: "Dynamic",
-        signal: "Hold",
-        sector: "Electric Vehicles",
-        analysis: "Tesla remains volatile as investors monitor EV demand, margins, autonomous driving, energy storage and competition.",
-        related: [
-          ["RIVN", "Rivian", "Electric Vehicles"],
-          ["GM", "General Motors", "Autos"],
-          ["F", "Ford", "Autos"]
-        ]
-      },
-      BTC: {
-        tv: "BINANCE:BTCUSDT",
-        name: "Bitcoin",
-        cap: "Crypto Market Leader",
-        pe: "N/A",
-        range: "Dynamic",
-        signal: "Volatile",
-        sector: "Crypto",
-        analysis: "Bitcoin remains the most important crypto asset. Traders are watching ETF demand, liquidity, regulation and macro risk sentiment.",
-        related: [
-          ["ETH", "Ethereum", "Crypto"],
-          ["SOL", "Solana", "Crypto"],
-          ["COIN", "Coinbase", "Crypto Equity"]
-        ]
-      },
-      GOLD: {
-        tv: "TVC:GOLD",
-        name: "Gold",
-        cap: "Global Commodity",
-        pe: "N/A",
-        range: "Dynamic",
-        signal: "Defensive",
-        sector: "Commodity",
-        analysis: "Gold is watched as a hedge against inflation, currency risk and geopolitical uncertainty. Rate expectations remain important for price movement.",
-        related: [
-          ["SILVER", "Silver", "Commodity"],
-          ["GLD", "SPDR Gold Trust", "ETF"],
-          ["GDX", "Gold Miners ETF", "ETF"]
-        ]
-      },
-      SILVER: {
-        tv: "TVC:SILVER",
-        name: "Silver",
-        cap: "Global Commodity",
-        pe: "N/A",
-        range: "Dynamic",
-        signal: "Neutral",
-        sector: "Commodity",
-        analysis: "Silver moves with both precious metals demand and industrial demand. Investors watch the dollar, rates and manufacturing trends.",
-        related: [
-          ["GOLD", "Gold", "Commodity"],
-          ["SLV", "iShares Silver Trust", "ETF"],
-          ["COPPER", "Copper", "Commodity"]
-        ]
-      }
-    };
-
-    const current = marketData[rawSymbol] || marketData.AAPL;
-
-    document.title = `${rawSymbol} Market Data | Global Intel Times`;
-    document.getElementById("marketTitle").textContent = `${rawSymbol} — ${current.name}`;
-    document.getElementById("marketSubtitle").textContent = `${current.sector} live chart, analysis and related assets.`;
-    document.getElementById("marketCap").textContent = current.cap;
-    document.getElementById("peRatio").textContent = current.pe;
-    document.getElementById("weekRange").textContent = current.range;
-    document.getElementById("analystSignal").textContent = current.signal;
-    document.getElementById("marketAnalysis").textContent = current.analysis;
-
-    document.getElementById("relatedCompanies").innerHTML = current.related
-      .map(row => `
-        <tr>
-          <td><a href="market.html?symbol=${row[0]}">${row[0]}</a></td>
-          <td>${row[1]}</td>
-          <td>${row[2]}</td>
-        </tr>
-      `)
-      .join("");
-
-    new TradingView.widget({
-      "autosize": true,
-      "symbol": current.tv,
-      "interval": "D",
-      "timezone": "Etc/UTC",
-      "theme": "light",
-      "style": "1",
-      "locale": "en",
-      "enable_publishing": false,
-      "allow_symbol_change": true,
-      "container_id": "tradingview_chart"
-    });
-  </script>
+renderWatchlist();
+</script>
 
 </body>
 </html>
