@@ -4,444 +4,319 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <title>Global Intel Times | USA News, Markets, AI & Politics</title>
-  <meta name="description" content="Global Intel Times delivers USA-focused news, markets, AI, business, politics and world affairs." />
+  <title>Global Intel Times | Premium USA News Portal</title>
+  <meta name="description" content="Global Intel Times delivers breaking U.S. news, world updates, business, markets, technology, AI, crypto, sports, lifestyle and opinion." />
+  <meta name="keywords" content="USA news, breaking news, politics, business, markets, technology, AI, crypto, sports, weather" />
+  <meta name="author" content="Global Intel Times" />
+  <meta name="robots" content="index, follow" />
 
   <meta property="og:title" content="Global Intel Times" />
-  <meta property="og:description" content="Professional USA-focused news, markets and analysis." />
+  <meta property="og:description" content="Premium American news portal covering USA, world, business, markets, AI, crypto, sports and more." />
   <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://globalinteltimes.com/" />
+  <meta property="og:image" content="/assets/images/og-image.jpg" />
 
   <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Global Intel Times" />
+  <meta name="twitter:description" content="Premium USA and global news coverage." />
+  <meta name="twitter:image" content="/assets/images/og-image.jpg" />
 
-  <link rel="stylesheet" href="style.css" />
+  <link rel="canonical" href="https://globalinteltimes.com/" />
+  <link rel="icon" href="/assets/images/favicon.png" />
+  <link rel="stylesheet" href="/assets/css/style.css" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "NewsMediaOrganization",
+    "name": "Global Intel Times",
+    "url": "https://globalinteltimes.com",
+    "logo": "https://globalinteltimes.com/assets/images/logo.png"
+  }
+  </script>
 </head>
 
 <body>
 
+  <div id="readingProgress"></div>
+
+  <!-- TOP STRIP -->
   <div class="top-strip">
-    <div id="todayDate">Loading date...</div>
-    <div class="market-mini" id="topTrendBox">AAPL +1.24% ↑</div>
+    <div class="container top-strip-inner">
+      <div id="todayDate">Loading date...</div>
+
+      <div id="marketTicker" class="market-ticker">
+        Loading market ticker...
+      </div>
+
+      <div class="top-actions">
+        <input id="siteSearch" class="site-search" type="search" placeholder="Search news..." autocomplete="off" />
+        <div id="searchSuggestions" class="search-suggestions"></div>
+
+        <button id="themeToggle" class="theme-toggle" type="button">
+          Dark
+        </button>
+      </div>
+    </div>
   </div>
 
-  <header class="masthead">
-    <h1>Global Intel Times</h1>
-    <p>USA News • Markets • AI • Politics • World Affairs</p>
-  </header>
-
-  <nav class="nav mega-nav" id="megaNav"></nav>
-  <div class="mega-menu-wrap" id="megaMenuWrap"></div>
-
-  <div class="breaking-bar">
-    <strong>Breaking</strong>
-    <span id="breakingTicker">Loading live updates...</span>
-  </div>
-
-  <main class="page">
-
-    <section class="hero-grid">
-      <div id="leadLeft"></div>
-      <div id="leadMain"></div>
-      <div id="leadRight"></div>
-    </section>
-
-    <section class="nyt-alert-board">
-      <div class="alert-left">
-        <span class="live-dot">LIVE</span>
-        <small>20 min ago</small>
-        <h2>At Least 32 Killed and 700 Hurt; Officials Issue National Call for Help</h2>
-        <ul>
-          <li>Emergency teams are monitoring damage, travel risk and public safety.</li>
-          <li>Officials warn that new updates may arrive throughout the day.</li>
-        </ul>
-        <a href="category.html?topic=breaking-news">See more updates ›</a>
-      </div>
-
-      <div class="alert-media">
-        <img loading="lazy" src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=1200" alt="Breaking news scene">
-      </div>
-
-      <div class="alert-side">
-        <h3>See Maps of the Affected Areas ›</h3>
-        <div class="mini-map-card">Regional impact tracker</div>
-        <div class="mini-map-card">Updated emergency watch</div>
-      </div>
-    </section>
-
-    <section class="more-free-section">
-      <div class="section-kicker">More to read <b>for free.</b></div>
-
-      <div class="free-grid">
-        <article>
-          <h3>The Wearable Data Your Doctor Actually Wants</h3>
-          <span>4 min read</span>
-        </article>
-        <article>
-          <img loading="lazy" src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=500" alt="">
-          <h3>Searching for Clues in a High-Profile Childhood</h3>
-          <span>19 min read</span>
-        </article>
-        <article>
-          <h3>Do Intense Workouts Spike My Cortisol?</h3>
-          <span>4 min read</span>
-        </article>
-        <article>
-          <img loading="lazy" src="https://images.unsplash.com/photo-1495020689067-958852a7765e?w=500" alt="">
-          <h3>Is Florida Finally Tiring of Toxic Republican Politics?</h3>
-          <span>7 min read</span>
-        </article>
-      </div>
-    </section>
-
-    <section class="editorial-row">
-      <div class="row-tabs">
-        <b>Extreme Heat</b>
-        <a href="category.html?topic=weather">Weather Tracker</a>
-        <a href="category.html?topic=climate">Climate Change and Heat</a>
-        <a href="category.html?topic=photos">Photos and Video</a>
-      </div>
-
-      <div class="split-feature">
-        <div>
-          <span class="live-dot">LIVE</span>
-          <small>24m ago</small>
-          <h2>Scorching Weather Persists After a Dangerous Heat Wave</h2>
-          <p>Large parts of the country remain under alerts as temperatures affect travel, health and energy demand.</p>
-        </div>
-        <img loading="lazy" src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=1200" alt="">
-      </div>
-    </section>
-
-    <section class="editorial-row">
-      <div class="row-tabs">
-        <b>War in the Middle East</b>
-        <a href="category.html?topic=iran">U.S.-Iran Talks</a>
-        <a href="category.html?topic=middle-east">Agreement Text</a>
-        <a href="category.html?topic=world">What Are the Issues?</a>
-      </div>
-
-      <div class="split-feature">
-        <div>
-          <h2>From ‘Terrible People’ to ‘Smart People’: The Trump-Led Right Rethinks Iran</h2>
-          <p>The president’s push to recast foreign policy reflects a wider debate inside American politics.</p>
-          <span>5 min read</span>
-        </div>
-        <img loading="lazy" src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=1200" alt="">
-      </div>
-    </section>
-
-    <section class="sports-live">
-      <div class="section-kicker">World Cup <span>Live scores and sports coverage</span></div>
-
-      <div class="score-strip">
-        <div><b>4 p.m. ET</b><span>Germany 0 — Ecuador 0</span></div>
-        <div><b>4 p.m. ET</b><span>Ivory Coast 1 — Curacao 1</span></div>
-        <div><b>7 p.m. ET</b><span>Netherlands 2 — Tunisia 0</span></div>
-        <div><b>7 p.m. ET</b><span>Sweden 0 — Japan 0</span></div>
-        <div><b>10 p.m. ET</b><span>United States 1 — Turkey 1</span></div>
-      </div>
-
-      <div class="sports-feature">
-        <div>
-          <h2>The World Cup of Jerseys</h2>
-          <p>Forty-eight countries compete. Vote for your favorite designs and track how teams rank with readers.</p>
-        </div>
-        <img loading="lazy" src="https://images.unsplash.com/photo-1431324155629-1a6deb1dec8d?w=1200" alt="">
-      </div>
-    </section>
-        <!-- ========================= -->
-    <!-- WATCH TODAY'S VIDEOS -->
-    <!-- ========================= -->
-
-    <section class="video-home">
-
-      <div class="section-kicker">
-        Watch Today's Videos
-      </div>
-
-      <div class="video-grid">
-
-        <div class="video-card">
-          <img src="https://images.unsplash.com/photo-1495020689067-958852a7765e?w=600" alt="">
-          <div class="play-btn">▶</div>
-          <h3>Why Milder Symptoms Could Make This Outbreak More Dangerous</h3>
-        </div>
-
-        <div class="video-card">
-          <img src="https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=600" alt="">
-          <div class="play-btn">▶</div>
-          <h3>Mamdani Allies Sweep New York Primaries</h3>
-        </div>
-
-        <div class="video-card">
-          <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=600" alt="">
-          <div class="play-btn">▶</div>
-          <h3>How Trump Is Prioritizing White House Refugees</h3>
-        </div>
-
-        <div class="video-card">
-          <img src="https://images.unsplash.com/photo-1545239351-1141bd82e8a6?w=600" alt="">
-          <div class="play-btn">▶</div>
-          <h3>Community Sports Stories From Ukraine</h3>
-        </div>
-
-        <div class="video-card">
-          <img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=600" alt="">
-          <div class="play-btn">▶</div>
-          <h3>Healthy Food That Actually Tastes Good</h3>
-        </div>
-
-      </div>
-
-    </section>
-
-
-    <!-- ========================= -->
-    <!-- MORE NEWS -->
-    <!-- ========================= -->
-
-    <section class="more-news">
-
-      <div class="section-kicker">
-        More News
-      </div>
-
-      <div id="moreNewsGrid"></div>
-
-    </section>
-
-
-    <!-- ========================= -->
-    <!-- ATHLETIC -->
-    <!-- ========================= -->
-
-    <section class="athletic-section">
-
-      <div class="section-kicker">
-        The Athletic
-      </div>
-
-      <div class="athletic-layout">
-
-        <div class="athletic-left">
-
-          <h2>Has Brazil Created a Problem With Neymar?</h2>
-
-          <p>
-            The aging superstar's appearance continues
-            to spark debate among football fans.
-          </p>
-
-        </div>
-
-        <div class="athletic-center">
-
-          <img
-          src="https://images.unsplash.com/photo-1517466787929-bc90951d0974?w=1200">
-
-        </div>
-
-        <div class="athletic-right">
-
-          <h3>Predicting Every Match This Week</h3>
-
-          <h3>Messi vs Ronaldo Debate Continues</h3>
-
-          <h3>South America Dominates Qualifiers</h3>
-
-          <h3>World Cup Power Rankings Updated</h3>
-
-        </div>
-
-      </div>
-
-    </section>
-
-
-    <!-- ========================= -->
-    <!-- WELL -->
-    <!-- ========================= -->
-
-    <section class="well-section">
-
-      <div class="section-kicker">
-        Well
-      </div>
-
-      <div class="well-grid">
-
-      </div>
-
-    </section>
-
-
-    <!-- ========================= -->
-    <!-- CULTURE -->
-    <!-- ========================= -->
-
-    <section class="culture-section">
-
-      <div class="section-kicker">
-        Culture & Lifestyle
-      </div>
-
-      <div class="culture-layout">
-
-        <div>
-
-          <h2>
-            An Eclipse Is About To Lift
-            Spain Out Of The Shadows
-          </h2>
-
-          <p>
-
-            Scientists say millions of people
-            will witness the event.
-
-          </p>
-
-        </div>
-
-        <img
-        src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=1200">
-
-        <div>
-
-          <h3>8 Must See Broadway Shows</h3>
-
-          <h3>Outdoor Art Exhibition Opens</h3>
-
-          <h3>Music Festival Draws Thousands</h3>
-
-          <h3>Hollywood Weekend Preview</h3>
-
-        </div>
-
-      </div>
-
-    </section>
-
-
-    <!-- ========================= -->
-    <!-- AUDIO -->
-    <!-- ========================= -->
-
-    <section class="audio-section">
-
-      <div class="section-kicker">
-
-        Audio & Podcasts
-
-      </div>
-
-      <div class="audio-grid">
-
-      </div>
-
-    </section>
-
-
-    <!-- ========================= -->
-    <!-- GAMES -->
-    <!-- ========================= -->
-
-    <section class="games-section">
-
-      <div class="section-kicker">
-
-        Daily Games
-
-      </div>
-
-      <div class="games-grid">
-
-        <div class="game-box">
-
-          <h3>Wordle</h3>
-
-          <p>Guess today's word.</p>
-
-        </div>
-
-        <div class="game-box">
-
-          <h3>Connections</h3>
-
-          <p>Find matching words.</p>
-
-        </div>
-
-        <div class="game-box">
-
-          <h3>Spelling Bee</h3>
-
-          <p>Create as many words as possible.</p>
-
-        </div>
-
-        <div class="game-box">
-
-          <h3>Mini Crossword</h3>
-
-          <p>Quick daily puzzle.</p>
-
-        </div>
-
-      </div>
-
-    </section>
-
-
-    <!-- ========================= -->
-    <!-- ADS -->
-    <!-- ========================= -->
-
-    <div class="homepage-ad">
-
-      Advertisement
-
+  <!-- HEADER -->
+  <header class="site-header">
+    <div class="container brand-wrap">
+      <a href="index.html" class="site-logo">Global Intel Times</a>
+      <p class="site-tagline">Independent Intelligence. Global Perspective. American Focus.</p>
     </div>
 
+    <div class="nav-shell">
+      <div class="container">
+        <nav id="megaNav" class="mega-nav" aria-label="Main Navigation"></nav>
+      </div>
+      <div id="megaMenuWrap" class="mega-menu-wrap"></div>
+    </div>
+  </header>
 
-    <!-- ========================= -->
-    <!-- FOOTER -->
-    <!-- ========================= -->
+  <!-- LIVE BREAKING -->
+  <section class="live-breaking-section">
+    <div class="container">
+      <div id="liveBreakingBar" class="live-breaking-bar">
+        Loading live breaking news...
+      </div>
+    </div>
+  </section>
 
-    <footer>
+  <!-- BREAKING TICKER -->
+  <section class="breaking-ticker-section">
+    <div class="container">
+      <strong>Breaking News</strong>
+      <div id="breakingTicker" class="breaking-ticker">
+        Loading breaking updates...
+      </div>
+    </div>
+  </section>
 
-      <div class="footer-logo">
+  <main>
 
-        Global Intel Times
+    <!-- HERO AREA -->
+    <section class="container hero-layout">
+      <div id="leadLeft" class="lead-left"></div>
+      <div id="leadMain" class="lead-main"></div>
+      <div id="leadRight" class="lead-right"></div>
+    </section>
 
+    <!-- MORE NEWS -->
+    <section class="container section-block">
+      <div class="section-header">
+        <h2>More To Read</h2>
+        <a href="category.html?topic=latest">View All</a>
+      </div>
+      <div id="moreNewsGrid" class="article-grid"></div>
+    </section>
+
+    <!-- LIVE DASHBOARD STRIPS -->
+    <section class="container dashboard-grid">
+      <div class="dashboard-card">
+        <h2>Weather</h2>
+        <div id="weatherBox" class="weather-box"></div>
       </div>
 
-      <div class="footer-links">
-
-        <a href="#">About</a>
-
-        <a href="#">Contact</a>
-
-        <a href="#">Privacy</a>
-
-        <a href="#">Terms</a>
-
-        <a href="#">Advertise</a>
-
+      <div class="dashboard-card">
+        <h2>Crypto</h2>
+        <div id="cryptoBox" class="crypto-box"></div>
       </div>
 
-      <p>
+      <div class="dashboard-card">
+        <h2>Top Market</h2>
+        <div id="topTrendBox" class="top-trend-box">Loading...</div>
+      </div>
+    </section>
 
-        © 2026 Global Intel Times.
-        All Rights Reserved.
+    <!-- SPORTS -->
+    <section class="sports-strip-section">
+      <div class="container">
+        <h2>Live Sports Scores</h2>
+        <div class="score-strip"></div>
+        <div id="liveSportsStrip" class="live-sports-strip"></div>
+      </div>
+    </section>
 
-      </p>
+    <!-- MARKET / CRYPTO / WEATHER STRIPS -->
+    <section class="container mini-live-grid">
+      <div>
+        <h2>Stock Heat Map</h2>
+        <div id="stockHeatMap" class="heat-map"></div>
+      </div>
 
-    </footer>
+      <div>
+        <h2>Crypto Heat Map</h2>
+        <div id="cryptoHeatMap" class="heat-map"></div>
+      </div>
+
+      <div>
+        <h2>Weather Across America</h2>
+        <div id="weatherStrip" class="weather-strip"></div>
+      </div>
+    </section>
+
+    <!-- AI / VISITOR ANALYTICS -->
+    <section class="container analytics-layout">
+      <div>
+        <h2>AI Trending Engine</h2>
+        <div id="aiTrendingEngine" class="ai-trending-engine"></div>
+      </div>
+
+      <div>
+        <h2>Live Audience</h2>
+        <div id="visitorAnalytics"></div>
+      </div>
+
+      <div>
+        <h2>News Intelligence Scores</h2>
+        <div id="analyticsPanel"></div>
+      </div>
+    </section>
+
+    <!-- TOP STORIES / EXTRA SECTIONS FROM APP.JS -->
+    <section id="topStoriesSection" class="container"></section>
+    <section id="extremeWeatherSection" class="container"></section>
+    <section id="economySection" class="container"></section>
+    <section id="videoSectionDynamic" class="container"></section>
+    <section id="latestNewsSection" class="container"></section>
+
+    <!-- MAIN CATEGORY SECTIONS -->
+    <section id="politicsSection" class="container"></section>
+    <section id="worldSection" class="container"></section>
+    <section id="businessSection" class="container"></section>
+    <section id="marketsSection" class="container"></section>
+    <section id="technologySection" class="container"></section>
+    <section id="aiSection" class="container"></section>
+    <section id="newYorkSection" class="container"></section>
+    <section id="healthSection" class="container"></section>
+    <section id="scienceSection" class="container"></section>
+    <section id="cultureSection" class="container"></section>
+    <section id="opinionSection" class="container"></section>
+
+    <!-- VIDEO -->
+    <section class="container section-block">
+      <div class="section-header">
+        <h2>Video</h2>
+        <a href="video.html">Watch More</a>
+      </div>
+      <div class="video-grid"></div>
+    </section>
+
+    <!-- WELL -->
+    <section class="container section-block">
+      <h2>Health, Science & Lifestyle</h2>
+      <div class="well-grid article-grid"></div>
+    </section>
+
+    <!-- AUDIO -->
+    <section class="container section-block">
+      <div class="section-header">
+        <h2>Audio</h2>
+        <a href="audio.html">Listen More</a>
+      </div>
+      <div class="audio-grid"></div>
+    </section>
+
+    <!-- TRENDING / MOST READ / SIDEBAR -->
+    <section class="container sidebar-layout">
+      <aside>
+        <h2>Trending</h2>
+        <div id="trendingStories" class="story-list"></div>
+      </aside>
+
+      <aside>
+        <h2>Most Read</h2>
+        <div id="mostRead" class="story-list"></div>
+      </aside>
+
+      <aside>
+        <h2>Newsletter</h2>
+        <div id="newsletterBox"></div>
+      </aside>
+
+      <aside>
+        <h2>Visitors</h2>
+        <div id="visitorCounter"></div>
+      </aside>
+    </section>
+
+    <!-- LATEST UPDATES -->
+    <section class="container section-block">
+      <h2>Latest Updates</h2>
+      <div id="latestUpdates" class="latest-updates"></div>
+    </section>
+
+    <!-- INFINITE SCROLL -->
+    <section class="container section-block">
+      <h2>Continue Reading</h2>
+      <div id="infiniteNews" class="article-grid"></div>
+    </section>
+
+    <!-- ADS -->
+    <section class="container ads-layout">
+      <div data-ad></div>
+      <div data-ad></div>
+      <div data-ad></div>
+    </section>
+
+    <!-- NEWSLETTER CTA -->
+    <section class="newsletter-section">
+      <div class="container newsletter-box">
+        <h2>Stay Ahead of the Story</h2>
+        <p>Get breaking U.S. and global intelligence delivered to your inbox.</p>
+        <form>
+          <input type="email" placeholder="Enter your email" required />
+          <button type="submit">Subscribe</button>
+        </form>
+      </div>
+    </section>
 
   </main>
 
-  <script src="app.js"></script>
+  <!-- FOOTER -->
+  <footer class="site-footer">
+    <div class="container footer-grid">
+      <div>
+        <h3>Global Intel Times</h3>
+        <p>Premium independent coverage for America and the world.</p>
+      </div>
 
+      <div>
+        <h4>News</h4>
+        <a href="category.html?topic=us">U.S.</a>
+        <a href="category.html?topic=world">World</a>
+        <a href="category.html?topic=politics">Politics</a>
+        <a href="category.html?topic=business">Business</a>
+      </div>
+
+      <div>
+        <h4>Markets</h4>
+        <a href="market.html?symbol=AAPL">AAPL</a>
+        <a href="market.html?symbol=MSFT">MSFT</a>
+        <a href="market.html?symbol=NVDA">NVDA</a>
+        <a href="market.html?symbol=BTC">Bitcoin</a>
+      </div>
+
+      <div>
+        <h4>Company</h4>
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+        <a href="privacy.html">Privacy Policy</a>
+        <a href="terms.html">Terms</a>
+      </div>
+    </div>
+
+    <div id="dynamicFooter" class="dynamic-footer"></div>
+
+    <div class="footer-bottom">
+      <p>© 2026 Global Intel Times. All Rights Reserved.</p>
+    </div>
+  </footer>
+
+  <button id="scrollTopBtn" type="button">↑</button>
+
+  <script src="/assets/js/app.js"></script>
 </body>
-
 </html>
