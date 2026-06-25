@@ -1153,7 +1153,6 @@ function articleSchema(article) {
 
 window.updateTradingView = updateTradingView;
 window.loadMoreArticles = loadMoreArticles;
-```=js
 /* =====================================================
    GLOBAL INTEL TIMES — NYT STYLE MEGA MENU + STRICT PAGES
 ===================================================== */
@@ -1565,5 +1564,3 @@ document.addEventListener("DOMContentLoaded", () => {
     setTimeout(renderStrictTopicPage, 300);
   }
 });
-```
-
