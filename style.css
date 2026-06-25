@@ -83,25 +83,37 @@ img {
   margin: 0 auto;
   padding: 12px 18px;
   display: flex;
-  gap: 8px;
+  justify-content: center;
+  align-items: center;
+  gap: 22px;
   overflow-x: auto;
   border-bottom: 1px solid #111;
+  text-align: center;
 }
 
-.nav button {
-  background: #fff;
+.nav button,
+.nav a {
+  background: transparent;
   border: none;
   font-family: Arial, sans-serif;
   font-size: 13px;
   font-weight: 700;
   cursor: pointer;
-  padding: 7px 10px;
+  padding: 7px 0;
   white-space: nowrap;
+  color: #111;
 }
 
-.nav button:hover {
-  background: #111;
-  color: #fff;
+.nav button:hover,
+.nav a:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 720px) {
+  .nav {
+    justify-content: flex-start;
+    gap: 18px;
+  }
 }
 
 .breaking-bar {
