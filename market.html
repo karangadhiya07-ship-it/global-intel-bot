@@ -60,11 +60,18 @@
     <p id="marketSubtitle">Live market chart and analysis</p>
 
     <div class="market-tools">
-     <select id="symbolSelect" onchange="changeSymbol()">
-        <option>AAPL</option><option>MSFT</option><option>NVDA</option><option>AMZN</option>
-        <option>META</option><option>GOOGL</option><option>TSLA</option><option>BTC</option>
-        <option>GOLD</option><option>SILVER</option>
-      </select>
+     <div class="symbol-search-box">
+  <input
+    id="symbolSearch"
+    type="text"
+    placeholder="Search stock, crypto, gold..."
+    autocomplete="off"
+    oninput="showSymbolSuggestions()"
+    onkeydown="handleSymbolEnter(event)"
+  />
+
+  <div id="symbolSuggestions" class="symbol-suggestions"></div>
+</div>
       <button onclick="addWatchlist()">+ Add Watchlist</button>
       <button onclick="toggleDark()">Dark Mode</button>
     </div>
