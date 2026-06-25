@@ -17,8 +17,9 @@
     .symbol-suggestions small{color:#666}
     .symbol-suggestions div:hover small,.symbol-suggestions .active small{color:#ddd}
     .market-grid{display:grid;grid-template-columns:1fr 320px;gap:20px}
-    .chart-box{height:560px;width:100%;border:1px solid #ddd;overflow:hidden}
-    #tradingview_chart,#tradingview_chart iframe{height:100%!important;width:100%!important}
+    .chart-box{height:560px;width:100%;border:1px solid #ddd;overflow:hidden;background:#fff}
+    #tradingview_chart{height:100%!important;width:100%!important}
+    #tradingview_chart iframe{height:100%!important;width:100%!important}
     .stat-card{border:1px solid #ddd;padding:15px;margin-bottom:10px}
     .stat-card span{display:block;color:#666;font-size:13px}
     .stat-card strong{font-size:22px}
@@ -171,7 +172,10 @@ const searchableSymbols = [
 ];
 
 document.getElementById("todayDate").textContent = new Date().toLocaleDateString("en-US", {
-  weekday:"long", year:"numeric", month:"long", day:"numeric"
+  weekday:"long",
+  year:"numeric",
+  month:"long",
+  day:"numeric"
 });
 
 const marketData = {
@@ -188,6 +192,7 @@ const marketData = {
 };
 
 const searchFound = searchableSymbols.find(x => x.symbol === rawSymbol);
+
 const current = marketData[rawSymbol] || {
   tv: searchFound ? searchFound.tv : "NASDAQ:AAPL",
   name: searchFound ? searchFound.name : "Apple Inc.",
@@ -219,18 +224,29 @@ document.getElementById("relatedCompanies").innerHTML = current.related.map(row 
   <td>${row[2]}</td>
 </tr>`).join("");
 
-new TradingView.widget({
-  autosize:true,
-  symbol:current.tv,
-  interval:"D",
-  timezone:"Etc/UTC",
-  theme:localStorage.getItem("darkMode") === "yes" ? "dark" : "light",
-  style:"1",
-  locale:"en",
-  enable_publishing:false,
-  allow_symbol_change:true,
-  container_id:"tradingview_chart"
-});
+function loadTradingViewChart(){
+  const chartBox = document.getElementById("tradingview_chart");
+  chartBox.innerHTML = "";
+
+  new TradingView.widget({
+    autosize: true,
+    symbol: current.tv || "NASDAQ:AAPL",
+    interval: "D",
+    timezone: "Etc/UTC",
+    theme: localStorage.getItem("darkMode") === "yes" ? "dark" : "light",
+    style: "1",
+    locale: "en",
+    enable_publishing: false,
+    hide_side_toolbar: false,
+    details: true,
+    hotlist: true,
+    calendar: false,
+    allow_symbol_change: true,
+    container_id: "tradingview_chart"
+  });
+}
+
+setTimeout(loadTradingViewChart, 300);
 
 let activeSuggestionIndex = -1;
 
