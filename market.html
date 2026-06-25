@@ -4,12 +4,18 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Market Data | Global Intel Times</title>
-  <meta name="description" content="Live market charts, watchlist, top gainers, top losers and market analysis." />
   <link rel="stylesheet" href="style.css" />
 
   <style>
-    .market-tools{display:flex;gap:10px;flex-wrap:wrap;margin:15px 0}
-    .market-tools select,.market-tools button{padding:10px;border:1px solid #111;background:#fff;font-weight:700;cursor:pointer}
+    .market-tools{display:flex;gap:10px;flex-wrap:wrap;margin:15px 0;align-items:flex-start}
+    .market-tools button{padding:11px 14px;border:1px solid #111;background:#fff;font-weight:700;cursor:pointer}
+    .symbol-search-box{position:relative;width:320px}
+    #symbolSearch{width:100%;padding:12px 14px;border:1px solid #111;font-weight:700;font-size:15px}
+    .symbol-suggestions{position:absolute;top:48px;left:0;right:0;background:#fff;border:1px solid #111;z-index:9999;display:none;max-height:320px;overflow-y:auto;box-shadow:0 8px 20px rgba(0,0,0,.15)}
+    .symbol-suggestions div{padding:12px;cursor:pointer;border-bottom:1px solid #eee;font-family:Arial,sans-serif}
+    .symbol-suggestions div:hover,.symbol-suggestions .active{background:#111;color:#fff}
+    .symbol-suggestions small{color:#666}
+    .symbol-suggestions div:hover small,.symbol-suggestions .active small{color:#ddd}
     .market-grid{display:grid;grid-template-columns:1fr 320px;gap:20px}
     .chart-box{height:560px;width:100%;border:1px solid #ddd;overflow:hidden}
     #tradingview_chart,#tradingview_chart iframe{height:100%!important;width:100%!important}
@@ -18,12 +24,14 @@
     .stat-card strong{font-size:22px}
     .market-section{margin-top:25px;border-top:2px solid #111;padding-top:15px}
     .market-list-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-    .mini-card{border:1px solid #ddd;padding:12px}
+    .mini-card{border:1px solid #ddd;padding:12px;background:#fff}
+    .mini-card button{margin-top:8px;padding:7px 10px;border:1px solid #111;background:#fff;cursor:pointer}
     .up{color:green}.down{color:#b00020}
     .ad-slot{border:2px dashed #bbb;height:120px;display:flex;align-items:center;justify-content:center;margin:20px 0;color:#777}
     .dark-mode{background:#0f1115;color:#eee}
-    .dark-mode .masthead,.dark-mode .nav,.dark-mode .stat-card,.dark-mode .mini-card,.dark-mode .chart-box,.dark-mode table{background:#151821;color:#eee;border-color:#333}
-    @media(max-width:850px){.market-grid{grid-template-columns:1fr}.chart-box{height:420px}.market-list-grid{grid-template-columns:1fr}}
+    .dark-mode .masthead,.dark-mode .nav,.dark-mode .stat-card,.dark-mode .mini-card,.dark-mode .chart-box,.dark-mode table,.dark-mode .symbol-suggestions{background:#151821;color:#eee;border-color:#333}
+    .dark-mode #symbolSearch,.dark-mode .market-tools button{background:#151821;color:#eee;border-color:#555}
+    @media(max-width:850px){.market-grid{grid-template-columns:1fr}.chart-box{height:420px}.market-list-grid{grid-template-columns:1fr}.symbol-search-box{width:100%}}
   </style>
 </head>
 
@@ -44,13 +52,8 @@
   <a href="market.html?symbol=AAPL">AAPL</a>
   <a href="market.html?symbol=MSFT">MSFT</a>
   <a href="market.html?symbol=NVDA">NVDA</a>
-  <a href="market.html?symbol=AMZN">AMZN</a>
-  <a href="market.html?symbol=META">META</a>
-  <a href="market.html?symbol=GOOGL">GOOGL</a>
-  <a href="market.html?symbol=TSLA">TSLA</a>
   <a href="market.html?symbol=BTC">BTC</a>
   <a href="market.html?symbol=GOLD">GOLD</a>
-  <a href="market.html?symbol=SILVER">SILVER</a>
 </nav>
 
 <main class="market-page">
@@ -60,18 +63,18 @@
     <p id="marketSubtitle">Live market chart and analysis</p>
 
     <div class="market-tools">
-     <div class="symbol-search-box">
-  <input
-    id="symbolSearch"
-    type="text"
-    placeholder="Search stock, crypto, gold..."
-    autocomplete="off"
-    oninput="showSymbolSuggestions()"
-    onkeydown="handleSymbolEnter(event)"
-  />
+      <div class="symbol-search-box">
+        <input
+          id="symbolSearch"
+          type="text"
+          placeholder="Search Apple, Nvidia, Bitcoin..."
+          autocomplete="off"
+          oninput="showSymbolSuggestions()"
+          onkeydown="handleSymbolEnter(event)"
+        />
+        <div id="symbolSuggestions" class="symbol-suggestions"></div>
+      </div>
 
-  <div id="symbolSuggestions" class="symbol-suggestions"></div>
-</div>
       <button onclick="addWatchlist()">+ Add Watchlist</button>
       <button onclick="toggleDark()">Dark Mode</button>
     </div>
@@ -144,6 +147,29 @@
 const params = new URLSearchParams(window.location.search);
 const rawSymbol = (params.get("symbol") || "AAPL").toUpperCase();
 
+const searchableSymbols = [
+  { symbol:"AAPL", name:"Apple Inc.", tv:"NASDAQ:AAPL" },
+  { symbol:"MSFT", name:"Microsoft Corporation", tv:"NASDAQ:MSFT" },
+  { symbol:"NVDA", name:"Nvidia Corporation", tv:"NASDAQ:NVDA" },
+  { symbol:"AMZN", name:"Amazon.com Inc.", tv:"NASDAQ:AMZN" },
+  { symbol:"META", name:"Meta Platforms", tv:"NASDAQ:META" },
+  { symbol:"GOOGL", name:"Alphabet / Google", tv:"NASDAQ:GOOGL" },
+  { symbol:"TSLA", name:"Tesla Inc.", tv:"NASDAQ:TSLA" },
+  { symbol:"AMD", name:"Advanced Micro Devices", tv:"NASDAQ:AMD" },
+  { symbol:"AVGO", name:"Broadcom Inc.", tv:"NASDAQ:AVGO" },
+  { symbol:"NFLX", name:"Netflix Inc.", tv:"NASDAQ:NFLX" },
+  { symbol:"COIN", name:"Coinbase Global", tv:"NASDAQ:COIN" },
+  { symbol:"BTC", name:"Bitcoin", tv:"BINANCE:BTCUSDT" },
+  { symbol:"ETH", name:"Ethereum", tv:"BINANCE:ETHUSDT" },
+  { symbol:"SOL", name:"Solana", tv:"BINANCE:SOLUSDT" },
+  { symbol:"GOLD", name:"Gold Commodity", tv:"TVC:GOLD" },
+  { symbol:"SILVER", name:"Silver Commodity", tv:"TVC:SILVER" },
+  { symbol:"OIL", name:"Crude Oil", tv:"TVC:USOIL" },
+  { symbol:"DXY", name:"US Dollar Index", tv:"TVC:DXY" },
+  { symbol:"SPY", name:"S&P 500 ETF", tv:"AMEX:SPY" },
+  { symbol:"QQQ", name:"Nasdaq 100 ETF", tv:"NASDAQ:QQQ" }
+];
+
 document.getElementById("todayDate").textContent = new Date().toLocaleDateString("en-US", {
   weekday:"long", year:"numeric", month:"long", day:"numeric"
 });
@@ -161,9 +187,21 @@ const marketData = {
   SILVER:{tv:"TVC:SILVER",name:"Silver",cap:"Global Commodity",pe:"N/A",eps:"N/A",dividend:"N/A",signal:"Neutral",sector:"Commodity",analysis:"Silver moves with precious metals demand and industrial demand. Investors watch the dollar, rates and manufacturing trends.",related:[["GOLD","Gold","Commodity"],["SLV","Silver ETF","ETF"],["COPPER","Copper","Commodity"]]}
 };
 
-const current = marketData[rawSymbol] || marketData.AAPL;
-document.getElementById("symbolSelect").value = rawSymbol in marketData ? rawSymbol : "AAPL";
+const searchFound = searchableSymbols.find(x => x.symbol === rawSymbol);
+const current = marketData[rawSymbol] || {
+  tv: searchFound ? searchFound.tv : "NASDAQ:AAPL",
+  name: searchFound ? searchFound.name : "Apple Inc.",
+  cap:"Dynamic",
+  pe:"Dynamic",
+  eps:"Dynamic",
+  dividend:"Dynamic",
+  signal:"Watch",
+  sector:"Market Asset",
+  analysis:`${rawSymbol} is being tracked by Global Intel Times market desk. Investors should watch price action, volume, sector performance and broader market sentiment.`,
+  related:[["AAPL","Apple","Technology"],["MSFT","Microsoft","Technology"],["NVDA","Nvidia","AI Chips"]]
+};
 
+document.getElementById("symbolSearch").value = `${rawSymbol} — ${current.name}`;
 document.title = `${rawSymbol} Market Data | Global Intel Times`;
 document.getElementById("marketTitle").textContent = `${rawSymbol} — ${current.name}`;
 document.getElementById("marketSubtitle").textContent = `${current.sector} live chart, analysis and related assets.`;
@@ -186,7 +224,7 @@ new TradingView.widget({
   symbol:current.tv,
   interval:"D",
   timezone:"Etc/UTC",
-  theme:"light",
+  theme:localStorage.getItem("darkMode") === "yes" ? "dark" : "light",
   style:"1",
   locale:"en",
   enable_publishing:false,
@@ -194,79 +232,136 @@ new TradingView.widget({
   container_id:"tradingview_chart"
 });
 
-function changeSymbol() {
-    const symbol = document.getElementById("symbolSelect").value;
-    window.location.href = `market.html?symbol=${symbol}`;
+let activeSuggestionIndex = -1;
+
+function showSymbolSuggestions(){
+  const input = document.getElementById("symbolSearch");
+  const box = document.getElementById("symbolSuggestions");
+  const q = input.value.toLowerCase().replace(rawSymbol.toLowerCase(),"").trim();
+
+  activeSuggestionIndex = -1;
+
+  if(!q){
+    box.style.display = "none";
+    box.innerHTML = "";
+    return;
+  }
+
+  const matches = searchableSymbols.filter(item =>
+    item.symbol.toLowerCase().includes(q) ||
+    item.name.toLowerCase().includes(q)
+  ).slice(0, 10);
+
+  if(!matches.length){
+    box.style.display = "block";
+    box.innerHTML = `<div>No result found</div>`;
+    return;
+  }
+
+  box.style.display = "block";
+  box.innerHTML = matches.map(item => `
+    <div onclick="openSymbol('${item.symbol}')">
+      <b>${item.symbol}</b><br>
+      <small>${item.name}</small>
+    </div>
+  `).join("");
 }
 
-function addWatchlist() {
+function handleSymbolEnter(event){
+  const box = document.getElementById("symbolSuggestions");
+  const items = box.querySelectorAll("div");
 
-    let watchlist = JSON.parse(localStorage.getItem("watchlist") || "[]");
+  if(event.key === "ArrowDown"){
+    event.preventDefault();
+    activeSuggestionIndex = Math.min(activeSuggestionIndex + 1, items.length - 1);
+    updateActiveSuggestion(items);
+    return;
+  }
 
-    if (!watchlist.includes(rawSymbol)) {
-        watchlist.push(rawSymbol);
+  if(event.key === "ArrowUp"){
+    event.preventDefault();
+    activeSuggestionIndex = Math.max(activeSuggestionIndex - 1, 0);
+    updateActiveSuggestion(items);
+    return;
+  }
+
+  if(event.key === "Enter"){
+    event.preventDefault();
+
+    if(activeSuggestionIndex >= 0 && items[activeSuggestionIndex]){
+      items[activeSuggestionIndex].click();
+      return;
     }
 
-    localStorage.setItem("watchlist", JSON.stringify(watchlist));
+    const value = document.getElementById("symbolSearch").value.toLowerCase().trim();
 
-    renderWatchlist();
+    const found = searchableSymbols.find(item =>
+      item.symbol.toLowerCase() === value ||
+      item.name.toLowerCase().includes(value)
+    );
 
+    if(found) openSymbol(found.symbol);
+  }
+}
+
+function updateActiveSuggestion(items){
+  items.forEach(x => x.classList.remove("active"));
+  if(items[activeSuggestionIndex]) items[activeSuggestionIndex].classList.add("active");
+}
+
+function openSymbol(symbol){
+  window.location.href = `market.html?symbol=${symbol}`;
+}
+
+function addWatchlist(){
+  let list = JSON.parse(localStorage.getItem("watchlist") || "[]");
+
+  if(!list.includes(rawSymbol)){
+    list.push(rawSymbol);
+    localStorage.setItem("watchlist", JSON.stringify(list));
     alert(rawSymbol + " added to Watchlist");
+  }else{
+    alert(rawSymbol + " already in Watchlist");
+  }
+
+  renderWatchlist();
 }
 
-function renderWatchlist() {
-
-    const box = document.getElementById("watchlistBox");
-
-    let watchlist = JSON.parse(localStorage.getItem("watchlist") || "[]");
-
-    if (watchlist.length === 0) {
-        box.innerHTML = "<p>No stocks in watchlist.</p>";
-        return;
-    }
-
-    box.innerHTML = watchlist.map(symbol => `
-        <div class="mini-card">
-            <b>${symbol}</b><br><br>
-
-            <button onclick="window.location='market.html?symbol=${symbol}'">
-                Open
-            </button>
-
-            <button onclick="removeWatch('${symbol}')">
-                Remove
-            </button>
-
-        </div>
-    `).join("");
+function removeWatch(symbol){
+  let list = JSON.parse(localStorage.getItem("watchlist") || "[]");
+  list = list.filter(x => x !== symbol);
+  localStorage.setItem("watchlist", JSON.stringify(list));
+  renderWatchlist();
 }
 
-  function removeWatch(symbol){
+function renderWatchlist(){
+  const box = document.getElementById("watchlistBox");
+  const list = JSON.parse(localStorage.getItem("watchlist") || "[]");
 
-    let watchlist = JSON.parse(localStorage.getItem("watchlist") || "[]");
+  if(!list.length){
+    box.innerHTML = "<p>No stocks in watchlist.</p>";
+    return;
+  }
 
-    watchlist = watchlist.filter(item => item !== symbol);
-
-    localStorage.setItem("watchlist", JSON.stringify(watchlist));
-
-    renderWatchlist();
-
+  box.innerHTML = list.map(symbol => `
+    <div class="mini-card">
+      <b>${symbol}</b><br>
+      <button onclick="window.location='market.html?symbol=${symbol}'">Open</button>
+      <button onclick="removeWatch('${symbol}')">Remove</button>
+    </div>
+  `).join("");
 }
 
 function toggleDark(){
   document.body.classList.toggle("dark-mode");
   localStorage.setItem("darkMode", document.body.classList.contains("dark-mode") ? "yes" : "no");
+  setTimeout(() => location.reload(), 300);
 }
 
 if(localStorage.getItem("darkMode") === "yes") document.body.classList.add("dark-mode");
 
-const gainers = [
-  ["NVDA","+2.31%"],["AAPL","+1.24%"],["META","+1.09%"],["MSFT","+0.82%"],["GOOGL","+0.55%"]
-];
-
-const losers = [
-  ["TSLA","-1.76%"],["AMZN","-0.44%"],["SILVER","-0.22%"]
-];
+const gainers = [["NVDA","+2.31%"],["AAPL","+1.24%"],["META","+1.09%"],["MSFT","+0.82%"],["GOOGL","+0.55%"]];
+const losers = [["TSLA","-1.76%"],["AMZN","-0.44%"],["SILVER","-0.22%"]];
 
 document.getElementById("gainersBox").innerHTML = gainers.map(x => `<a class="mini-card" href="market.html?symbol=${x[0]}"><b>${x[0]}</b><br><span class="up">${x[1]}</span></a>`).join("");
 document.getElementById("losersBox").innerHTML = losers.map(x => `<a class="mini-card" href="market.html?symbol=${x[0]}"><b>${x[0]}</b><br><span class="down">${x[1]}</span></a>`).join("");
@@ -279,12 +374,18 @@ const relatedNews = [
   `Market volatility keeps ${rawSymbol} in focus`
 ];
 
-document.getElementById("relatedNewsBox").innerHTML = relatedNews.map((t,i)=>`
+document.getElementById("relatedNewsBox").innerHTML = relatedNews.map(t => `
   <div class="mini-card">
     <b>${t}</b>
     <p>Global Intel Times market desk is tracking this developing market story.</p>
   </div>
 `).join("");
+
+document.addEventListener("click", function(e){
+  if(!e.target.closest(".symbol-search-box")){
+    document.getElementById("symbolSuggestions").style.display = "none";
+  }
+});
 
 renderWatchlist();
 </script>
