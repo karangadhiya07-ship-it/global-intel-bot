@@ -1,0 +1,1 @@
+import {json} from './_utils.js';export async function onRequestGet(){return json({visitors:1000+Math.floor(Math.random()*900),aiScore:82,trendingScore:76,marketScore:68,weatherScore:71,sportsScore:64})}
