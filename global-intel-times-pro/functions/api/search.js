@@ -1,1 +1,0 @@
-export async function onRequestGet({request}){const q=new URL(request.url).searchParams.get("q")||"usa news";return fetch(new URL(`/api/news?topic=${encodeURIComponent(q)}`,request.url),{headers:request.headers})}
