@@ -29,7 +29,7 @@ const FEEDS = [
   'https://www.pbs.org/newshour/feeds/rss/world',
 
   'https://feeds.feedburner.com/time/topstories',
-  'https://feeds.feedburner.com/fortune/headlines',
+  'https://www.forbes.com/business/feed/',
   'https://feeds.feedburner.com/businessinsider'
 ];
 
