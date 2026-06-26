@@ -1,33 +1,36 @@
 import { loadFeeds, sendNews } from './_rss.js';
 
 const FEEDS = [
-  'https://news.google.com/rss/search?q=new%20york&hl=en-US&gl=US&ceid=US:en',
-  'https://news.google.com/rss/search?q=california&hl=en-US&gl=US&ceid=US:en',
-  'https://news.google.com/rss/search?q=washington%20dc&hl=en-US&gl=US&ceid=US:en',
-  'https://news.google.com/rss/search?q=crime%20usa&hl=en-US&gl=US&ceid=US:en',
-  'https://news.google.com/rss/search?q=immigration%20usa&hl=en-US&gl=US&ceid=US:en',
-  'https://news.google.com/rss/search?q=education%20usa&hl=en-US&gl=US&ceid=US:en',
-  'https://news.google.com/rss/search?q=weather%20usa&hl=en-US&gl=US&ceid=US:en',
-  'https://news.google.com/rss/search?q=markets%20wall%20street&hl=en-US&gl=US&ceid=US:en',
-  'https://news.google.com/rss/search?q=bitcoin&hl=en-US&gl=US&ceid=US:en',
-  'https://news.google.com/rss/search?q=stock%20market&hl=en-US&gl=US&ceid=US:en',
+  'https://feeds.a.dj.com/rss/RSSWorldNews.xml',
+  'https://feeds.a.dj.com/rss/RSSMarketsMain.xml',
+  'https://feeds.a.dj.com/rss/WSJcomUSBusiness.xml',
 
-  'https://news.google.com/rss/search?q=trump&hl=en-US&gl=US&ceid=US:en',
-  'https://news.google.com/rss/search?q=white%20house&hl=en-US&gl=US&ceid=US:en',
-  'https://news.google.com/rss/search?q=congress&hl=en-US&gl=US&ceid=US:en',
-  'https://news.google.com/rss/search?q=ukraine&hl=en-US&gl=US&ceid=US:en',
-  'https://news.google.com/rss/search?q=china&hl=en-US&gl=US&ceid=US:en',
-  'https://news.google.com/rss/search?q=middle%20east&hl=en-US&gl=US&ceid=US:en',
-  'https://news.google.com/rss/search?q=climate&hl=en-US&gl=US&ceid=US:en',
-  'https://news.google.com/rss/search?q=nasa&hl=en-US&gl=US&ceid=US:en',
-  'https://news.google.com/rss/search?q=hollywood&hl=en-US&gl=US&ceid=US:en',
-  'https://news.google.com/rss/search?q=music&hl=en-US&gl=US&ceid=US:en',
+  'https://rss.nytimes.com/services/xml/rss/nyt/US.xml',
+  'https://rss.nytimes.com/services/xml/rss/nyt/Politics.xml',
+  'https://rss.nytimes.com/services/xml/rss/nyt/Economy.xml',
+  'https://rss.nytimes.com/services/xml/rss/nyt/Science.xml',
+  'https://rss.nytimes.com/services/xml/rss/nyt/Health.xml',
 
-  'https://news.google.com/rss/search?q=food&hl=en-US&gl=US&ceid=US:en',
-  'https://news.google.com/rss/search?q=travel&hl=en-US&gl=US&ceid=US:en',
-  'https://news.google.com/rss/search?q=real%20estate&hl=en-US&gl=US&ceid=US:en',
-  'https://news.google.com/rss/search?q=energy&hl=en-US&gl=US&ceid=US:en',
-  'https://news.google.com/rss/search?q=oil%20prices&hl=en-US&gl=US&ceid=US:en'
+  'https://www.cbsnews.com/latest/rss/us',
+  'https://www.cbsnews.com/latest/rss/world',
+  'https://www.cbsnews.com/latest/rss/politics',
+  'https://www.cbsnews.com/latest/rss/moneywatch',
+  'https://www.cbsnews.com/latest/rss/technology',
+
+  'https://abcnews.go.com/abcnews/usheadlines',
+  'https://abcnews.go.com/abcnews/internationalheadlines',
+  'https://abcnews.go.com/abcnews/politicsheadlines',
+  'https://abcnews.go.com/abcnews/moneyheadlines',
+  'https://abcnews.go.com/abcnews/technologyheadlines',
+
+  'https://www.pbs.org/newshour/feeds/rss/headlines',
+  'https://www.pbs.org/newshour/feeds/rss/politics',
+  'https://www.pbs.org/newshour/feeds/rss/economy',
+  'https://www.pbs.org/newshour/feeds/rss/world',
+
+  'https://feeds.feedburner.com/time/topstories',
+  'https://feeds.feedburner.com/fortune/headlines',
+  'https://feeds.feedburner.com/businessinsider'
 ];
 
 export async function onRequestGet({ request }) {
