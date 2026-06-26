@@ -1,6 +1,6 @@
 "use strict";
 
-const DEFAULT_IMG = "./assets/images/og-image.svg";
+window.DEFAULT_IMG = window.DEFAULT_IMG || "./assets/images/og-image.svg";
 
 document.addEventListener("DOMContentLoaded", async () => {
   await Promise.allSettled([
