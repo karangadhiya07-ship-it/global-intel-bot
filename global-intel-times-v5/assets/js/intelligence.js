@@ -69,7 +69,7 @@ async function renderConflicts(){
 async function renderRisk(){
   const el=document.getElementById("riskBox"); if(!el) return;
   try{
-    const d=await getJSON("./api/risk");
+    const d=await getJSON("/api/risk");
     html("riskBox",`<div class="risk-score">${d.score}</div>${badge(d.level)}<p>Global risk level based on earthquakes, wildfires, conflicts and weather alerts.</p><small>Updated ${new Date(d.updatedAt).toLocaleString()}</small>`);
   }catch(e){html("riskBox","Risk engine unavailable.");}
 }
