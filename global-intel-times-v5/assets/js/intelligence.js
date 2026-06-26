@@ -85,8 +85,7 @@ async function renderCountries(){
       const d=await getJSON(`./api/countries?country=${encodeURIComponent(country)}`);
       document.title=`${country} Intelligence | Global Intel Times`;
       html("countryTitle",`${esc(country)} Intelligence`);
-      html("countryDetail",`<div class="intel-card"><h3>Risk Score</h3><div class="risk-score">${d.riskScore}</div>${badge(d.risk)}</div><div class="article-grid">${(d.articles||[]).slice(0,18).map(a=>`<article class="news-card"><a href="${a.url}" target="_blank" rel="noopener"><img src="${a.image||DEFAULT_IMG}" onerror="this.src='${DEFAULT_IMG}'"><span class="news-category">${esc(a.source)}</span><h3>${esc(a.title)}</h3><p>${esc(a.description||"Country intelligence update.")}</p></a></article>`).join("")}</div>`);
-    }catch(e){html("countryDetail","Country data unavailable.");}
+     html("countryDetail",`<div class="intel-card"><h3>Risk Score</h3><div class="risk-score">${d.riskScore}</div>${badge(d.risk)}</div><div class="article-grid">${(d.articles||[]).slice(0,18).map(a=>`<article class="news-card"><a href="${a.url}" target="_blank" rel="noopener"><img src="${a.image||window.DEFAULT_IMG}" onerror="this.src='${window.DEFAULT_IMG}'"><span class="news-category">${esc(a.source)}</span><h3>${esc(a.title)}</h3><p>${esc(a.description||"Country intelligence update.")}</p></a></article>`).join("")}</div>`);
   }
   if(list){
     try{
