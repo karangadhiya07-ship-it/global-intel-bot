@@ -1,0 +1,1 @@
+import {json,fallbackArticles} from './_utils.js';export async function onRequestGet({request}){const q=new URL(request.url).searchParams.get('q')||'';return json({q,results:fallbackArticles(q).filter(a=>(a.title+a.description).toLowerCase().includes(q.toLowerCase())||!q)})}
