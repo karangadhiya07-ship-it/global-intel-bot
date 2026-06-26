@@ -1,0 +1,1 @@
+export async function onRequestGet({request}){const symbol=new URL(request.url).searchParams.get("symbol")||"AAPL";return new Response(JSON.stringify({symbol,summary:`${symbol} analysis combines price trend, volume, news flow, macro risk and market sentiment.`}),{headers:{"content-type":"application/json"}})}

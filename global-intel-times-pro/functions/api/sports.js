@@ -1,0 +1,1 @@
+export async function onRequestGet(){return new Response(JSON.stringify({scores:[{league:"NBA",homeTeam:"Lakers",awayTeam:"Warriors",homeScore:102,awayScore:98},{league:"NFL",homeTeam:"Cowboys",awayTeam:"Eagles",homeScore:21,awayScore:24},{league:"MLB",homeTeam:"Yankees",awayTeam:"Mets",homeScore:4,awayScore:2}]}),{headers:{"content-type":"application/json"}})}
