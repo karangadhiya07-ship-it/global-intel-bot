@@ -47,7 +47,7 @@ function normalizeArticles(items){return items.map((item,i)=>{const title=clean(
 function normalizeVideos(items){return items.map(v=>({id:v.id||slugify(v.title),title:clean(v.title||"Video Briefing"),summary:clean(v.description||v.summary||""),thumbnail:v.thumbnail||DEFAULT_IMG,url:v.url||"#"}))}
 function removeDuplicateArticles(list){const titles=new Set(),images=new Set();return list.filter(a=>{const t=slugify(a.title).slice(0,90),img=a.image||"";if(titles.has(t)||images.has(img))return false;titles.add(t);if(img&&img!==DEFAULT_IMG)images.add(img);return true})}
 function removeDuplicateVideos(list){const seen=new Set();return list.filter(v=>{const k=slugify(v.title);if(seen.has(k))return false;seen.add(k);return true})}
-function isFresh(date){const d=new Date(date);if(Number.isNaN(d.getTime()))return true;return Date.now()-d.getTime()<36*60*60*1000}
+function isFresh(date){return true}
 function getCategoryArticles(topic){topic=(topic||"us").toLowerCase();const words=CATEGORY_RULES[topic]||[topic.replace(/-/g," ")];return allArticles.filter(a=>words.some(w=>articleText(a).includes(w.toLowerCase())))}
 function articleText(a){return`${a.title||""} ${a.summary||""} ${a.category||""} ${a.topic||""} ${a.section||""}`.toLowerCase()}
 function detectTopic(text){const value=` ${clean(text).toLowerCase()} `.replace(/-/g," ");for(const t in CATEGORY_RULES){if(CATEGORY_RULES[t].some(w=>value.includes(w)))return t}return"us"}
