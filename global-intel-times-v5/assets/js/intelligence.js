@@ -1,5 +1,5 @@
 "use strict";
-
+console.log("VERSION 27-JUNE-TEST");
 window.DEFAULT_IMG = window.DEFAULT_IMG || "./assets/images/og-image.svg";
 
 document.addEventListener("DOMContentLoaded", async () => {
