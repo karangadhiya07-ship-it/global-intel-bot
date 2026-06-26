@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://global-intel-times.pages.dev/sitemap.xml
