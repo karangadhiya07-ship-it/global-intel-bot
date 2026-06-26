@@ -14,3 +14,4 @@ Environment variables:
 - SPORTS_API_KEY
 
 Included: homepage, mega menu, categories, article pages, market dashboard, TradingView chart, watchlist, buy/sell signal, weather, crypto, sports, video, search, SEO, dark mode, bookmarks, recently viewed, duplicate filtering, 5-minute auto refresh.
+
