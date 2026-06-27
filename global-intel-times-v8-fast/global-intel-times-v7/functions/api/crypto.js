@@ -1,2 +1,0 @@
-import {json,fetchJson} from './_utils.js';
-export async function onRequestGet({request}){const coin=new URL(request.url).searchParams.get('coin')||'bitcoin';try{const d=await fetchJson(`https://api.coingecko.com/api/v3/simple/price?ids=${encodeURIComponent(coin)}&vs_currencies=usd&include_24hr_change=true`);return json({name:coin,price:d[coin]?.usd||0,change:d[coin]?.usd_24h_change||0,sentiment:(d[coin]?.usd_24h_change||0)>=0?'Positive momentum':'Cautious momentum'})}catch(e){return json({name:coin,price:0,change:0,sentiment:'API dependent',error:e.message})}}

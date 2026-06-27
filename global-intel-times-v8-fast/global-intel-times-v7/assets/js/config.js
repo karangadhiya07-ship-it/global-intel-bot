@@ -1,1 +1,0 @@
-window.GIT_CONFIG={version:"v8.1",articleTarget:650,feedTarget:113,features:["RSS aggregation","NewsAPI/GNews env support","Cloudflare edge cache","risk scoring","country detection","infinite scroll","admin health"]};
