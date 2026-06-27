@@ -1,0 +1,1 @@
+{"scripts":{"check":"node --check assets/js/app.js && for f in functions/api/*.js; do node --check \"$f\"; done"},"devDependencies":{}}

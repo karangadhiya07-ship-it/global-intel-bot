@@ -1,0 +1,9 @@
+name = "global-intel-times"
+pages_build_output_dir = "."
+compatibility_date = "2026-06-27"
+
+# Optional secrets for live APIs:
+# wrangler pages secret put NEWSAPI_KEY
+# wrangler pages secret put GNEWS_API_KEY
+# wrangler pages secret put FINNHUB_API_KEY
+# wrangler pages secret put OPENWEATHER_API_KEY
